@@ -1,0 +1,145 @@
+{
+ "comparison": {
+  "agree": true,
+  "fields": [
+   {
+    "agree": true,
+    "expected": "yes",
+    "field": "criteria_committed_before_check",
+    "ours": "yes"
+   },
+   {
+    "agree": true,
+    "expected": "match",
+    "field": "criteria_hash",
+    "ours": "match"
+   },
+   {
+    "agree": true,
+    "expected": "independent",
+    "field": "independence",
+    "ours": "independent"
+   },
+   {
+    "agree": true,
+    "expected": [],
+    "field": "problem_codes",
+    "ours": []
+   },
+   {
+    "agree": true,
+    "expected": "imprint_match",
+    "field": "receipt_timestamp",
+    "ours": "imprint_match"
+   },
+   {
+    "agree": true,
+    "expected": true,
+    "field": "signature_valid",
+    "ours": true
+   },
+   {
+    "agree": true,
+    "expected": "pass",
+    "field": "verdict_recomputed",
+    "ours": "pass"
+   },
+   {
+    "agree": true,
+    "expected": "pass",
+    "field": "verdict_stated",
+    "ours": "pass"
+   },
+   {
+    "agree": true,
+    "expected": [],
+    "field": "warning_codes",
+    "ours": []
+   }
+  ]
+ },
+ "report": {
+  "accepted_as_stated": true,
+  "cannot_run": [],
+  "criteria_committed_before_check": "yes",
+  "criteria_hash": "match",
+  "details": {
+   "canonical_receipt_sha256": "4c7273afcdb5333586b0a41c4238a968f3dedc23f66f71c5a1928ff3d279ab3d",
+   "commitment_time": "2026-10-18T00:52:03Z",
+   "criteria_token_genTime": "20261018005203Z",
+   "criteria_token_tsa": {
+    "chain": [
+     "ST=Bayern,C=DE,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@mailbox.org,CN=www.freetsa.org,2.5.4.13=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services,OU=TSA,O=Free TSA",
+     "C=DE,ST=Bayern,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@gmail.com,CN=www.freetsa.org,OU=Root CA,O=Free TSA"
+    ],
+    "ess": "ESSCertID",
+    "reasons": [],
+    "revocation": "not checked",
+    "signer_subject": "ST=Bayern,C=DE,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@mailbox.org,CN=www.freetsa.org,2.5.4.13=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services,OU=TSA,O=Free TSA",
+    "status": "valid"
+   },
+   "key_source": "inputs.keys (travels with the record: not a trust anchor)",
+   "ordering_provable_under_accuracy": "yes",
+   "record_token_genTime": "20261018005209Z",
+   "record_token_tsa": {
+    "chain": [
+     "ST=Bayern,C=DE,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@mailbox.org,CN=www.freetsa.org,2.5.4.13=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services,OU=TSA,O=Free TSA",
+     "C=DE,ST=Bayern,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@gmail.com,CN=www.freetsa.org,OU=Root CA,O=Free TSA"
+    ],
+    "ess": "ESSCertID",
+    "reasons": [],
+    "revocation": "not checked",
+    "signer_subject": "ST=Bayern,C=DE,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@mailbox.org,CN=www.freetsa.org,2.5.4.13=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services,OU=TSA,O=Free TSA",
+    "status": "valid"
+   },
+   "reference_source": "record token genTime",
+   "reference_time": "2026-10-18T00:52:09Z",
+   "signer_key_status": "active",
+   "token_authentication": {
+    "criteria_token": "valid",
+    "record_token": "valid"
+   },
+   "verification_key_id": "invinoveritas-checker-a4cecab2"
+  },
+  "extension_codes": [
+   "X_KEY_FROM_INPUT"
+  ],
+  "files": {
+   "original": "not-supplied",
+   "remediated": "not-supplied"
+  },
+  "independence": "independent",
+  "local_blocks": [
+   "X_KEY_FROM_INPUT"
+  ],
+  "notes": [
+   "criteria document member 'criteria_set' not interpreted",
+   "criteria document member 'result_vocabulary' not interpreted",
+   "criteria document member 'title' not interpreted",
+   "criteria document member 'version' not interpreted",
+   "criteria document member criteria[0].requirement not interpreted",
+   "criteria document member criteria[1].requirement not interpreted",
+   "criteria document member criteria[2].requirement not interpreted"
+  ],
+  "options": {
+   "accuracy": "ignore",
+   "correspondence": "ids-required",
+   "ed25519": "strict",
+   "key_id_agreement": "require",
+   "key_id_source": "envelope",
+   "name_compare": "exact",
+   "reference_time": "covering-token",
+   "time_agreement": "truncate",
+   "tokens": "pkix",
+   "unknown_fields": "refuse"
+  },
+  "problem_codes": [],
+  "receipt_timestamp": "imprint_match",
+  "results_presented": true,
+  "signature_valid": true,
+  "verdict_recomputed": "pass",
+  "verdict_stated": "pass",
+  "warning_codes": []
+ },
+ "verifier": "war_verify 0.1.0"
+}

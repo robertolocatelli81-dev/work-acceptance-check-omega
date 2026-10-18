@@ -1,0 +1,11 @@
+valid signature                                                             engine=True  pure=True  rfc8032=True  strict=True
+S + L (non-canonical S)                                                     engine=False pure=False rfc8032=False strict=False
+A = identity, R = identity, S = 0                                           engine=True  pure=True  rfc8032=True  strict=False
+A = identity, R = identity, S = 0, other msg                                engine=True  pure=True  rfc8032=True  strict=False
+A = identity, R = identity non-canonical (y=1+p), S = 0                     engine=False pure=False rfc8032=False strict=False
+A = identity non-canonical (y=1+p), R = identity, S = 0                     engine=True  pure=False rfc8032=False strict=False
+A order 2, R = identity, S = 0: engine accepts N/64 messages                engine=29    pure=29    rfc8032=29    strict=0
+A' = A + T8 (mixed order): signatures by A accepted under A' out of 256     engine=0     pure=0     rfc8032=0     strict=0
+point class of A, A' and identity                                           engine=-     pure=-     rfc8032=['prime-order', 'mixed-order', 'small-order'] strict=-
+{'A': 'e795b03df1f64a14d17241f9066cfbe4a631a980cc55d9037096dae27f80ecdd', 'Amix': 'f25343523c041dd023145e7f175a07fcf4b88730b1341c68fa22fff4c4d85d42', 'seed': '4ab7b3463f348ec0ea5d12f901798036198f579a475b0e17d7309b43103b9abb'}
+same scalar, signing for A+T8, n=256: ({'engine': 35, 'pure_rfc8032': 35, 'rfc8032': 35, 'strict': 0, 'ground': 2}, 'f25343523c041dd023145e7f175a07fcf4b88730b1341c68fa22fff4c4d85d42')

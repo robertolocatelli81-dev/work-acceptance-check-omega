@@ -1,0 +1,152 @@
+{
+ "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of README f7d8984",
+ "description": "The criteria token's hashAlgorithm is sha3-256, a 32-byte hash: same length as SHA-256, so a length check alone does not catch it; the bytes equal criteria.sha256.",
+ "expected": {
+  "criteria_committed_before_check": "yes",
+  "criteria_hash": "match",
+  "independence": "independent",
+  "problem_codes": [
+   "CRITERIA_TIMESTAMP_MISMATCH"
+  ],
+  "receipt_timestamp": "imprint_match",
+  "signature_valid": true,
+  "verdict_recomputed": "pass",
+  "verdict_stated": "pass",
+  "warning_codes": [
+   "CRITERIA_COMMITMENT_UNVERIFIED"
+  ]
+ },
+ "inputs": {
+  "criteria_file_base64": "eyJjcml0ZXJpYSI6W3siaWQiOiJjMSIsInJlcXVpcmVkIjp0cnVlLCJyZXF1aXJlbWVudCI6IlRoZSBmaXJzdCByZXF1aXJlbWVudC4iLCJ0aXRsZSI6IkZpcnN0IHJlcXVpcmVkIGNyaXRlcmlvbiJ9LHsiaWQiOiJjMiIsInJlcXVpcmVkIjp0cnVlLCJyZXF1aXJlbWVudCI6IlRoZSBzZWNvbmQgcmVxdWlyZW1lbnQuIiwidGl0bGUiOiJTZWNvbmQgcmVxdWlyZWQgY3JpdGVyaW9uIn0seyJpZCI6ImMzIiwicmVxdWlyZWQiOmZhbHNlLCJyZXF1aXJlbWVudCI6IkFuIG9wdGlvbmFsIHJlcXVpcmVtZW50LiIsInRpdGxlIjoiT3B0aW9uYWwgY3JpdGVyaW9uIn1dLCJjcml0ZXJpYV9zZXQiOiJleGFtcGxlLWNyaXRlcmlhIiwicmVzdWx0X3ZvY2FidWxhcnkiOlsicGFzcyIsImZhaWwiLCJub3QtZXZhbHVhdGVkIiwiZXJyb3IiXSwidGl0bGUiOiJFeGFtcGxlIGNyaXRlcmlhIGZvciB0ZXN0IHZlY3RvcnMiLCJ2ZXJzaW9uIjoiMSJ9",
+  "criteria_tsr_base64": "MH8wAwIBADB4BgkqhkiG9w0BBwKgazBpAgEDMQAwYgYLKoZIhvcNAQkQAQSgUwRRME8CAQEGAyoDBDAxMA0GCWCGSAFlAwQCCAUABCBEE+mdc9dD17Y6g2LPPUf/ZGybZOOXKy+2mECTyOmt1wIBBxgPMjAyNjAzMDEwMDAwMDBa",
+  "keys": {
+   "issuer": "war-verify-omega (TEST keys, never trust)",
+   "keys": [
+    {
+     "alg": "Ed25519",
+     "key_id": "omega-test-1",
+     "public_key_base64": "LQqgDnG21TlYF2nKKcvlYtWvn133k+v1UH5/4Jb9mrU=",
+     "status": "test"
+    },
+    {
+     "alg": "Ed25519",
+     "key_id": "omega-test-2",
+     "public_key_base64": "5G7HMnCCy+VTUdt2xlROaIo1tfVUwEcLeoRpbCfGvlQ=",
+     "status": "test"
+    }
+   ]
+  },
+  "receipt": {
+   "receipt": {
+    "canonicalization": "JCS-RFC8785",
+    "client_ref": "test vector",
+    "criteria": {
+     "commitment": "rfc3161",
+     "committed_at": "2026-03-01T00:00:00Z",
+     "id": "example-criteria",
+     "sha256": "4413e99d73d743d7b63a8362cf3d47ff646c9b64e3972b2fb6984093c8e9add7",
+     "version": "1"
+    },
+    "files": {
+     "original": {
+      "bytes": 22,
+      "name": "original.pdf",
+      "pages": 1,
+      "sha256": "4cbaf696bbf09c7f9c08d2fc5cb4e93235d0d9ff94a916b7dd90b91ef057e4be"
+     },
+     "remediated": {
+      "bytes": 23,
+      "name": "delivered.pdf",
+      "pages": 1,
+      "sha256": "b520ef4eb7a0f3e0d725ea92167e4962fe43584c7747b44e0acd4d846eaa4cf8"
+     }
+    },
+    "human_review": {
+     "scope": [
+      "Example review scope"
+     ],
+     "status": "pending"
+    },
+    "independence": "independent",
+    "issued_utc": "2026-06-01T12:00:00Z",
+    "issuer": "Example Checker",
+    "key_id": "omega-test-1",
+    "notice": "Test vector. Not a real check.",
+    "parties": {
+     "checker": {
+      "key_id": "omega-test-1",
+      "name": "Example Checker"
+     },
+     "producer": {
+      "key_id": null,
+      "name": "Example Vendor"
+     }
+    },
+    "receipt_id": "EX-0001",
+    "results": [
+     {
+      "finding": "Met.",
+      "id": "c1",
+      "required": true,
+      "result": "pass",
+      "title": "First required criterion"
+     },
+     {
+      "finding": "Met.",
+      "id": "c2",
+      "required": true,
+      "result": "pass",
+      "title": "Second required criterion"
+     },
+     {
+      "finding": "No review recorded.",
+      "id": "c3",
+      "required": false,
+      "result": "not-evaluated",
+      "title": "Optional criterion"
+     }
+    ],
+    "revision": 1,
+    "schema": "trilatic.acceptance-receipt/1.2",
+    "suite": {
+     "digest": "sha-256",
+     "signature": "Ed25519"
+    },
+    "tools": {
+     "profile": "example profile",
+     "validator": "example 1.0"
+    },
+    "verdict": "pass"
+   },
+   "signature": {
+    "alg": "Ed25519",
+    "key_id": "omega-test-1",
+    "value": "itOECVaLc0KYTVBcqfwZWkAmSZwvPrggbSkNdCcvCO8Fsg8uvGsco3X4fAAbAI24jZwEiggKaiPGO0rLMBSYBg=="
+   },
+   "timestamp": {
+    "covers": "sha256 of the canonical receipt object",
+    "digest_sha256": "c92380561b189bde58bbabf46ba375dce8eb0c8c2c72122cf04d792b203943f8",
+    "gen_time": "20260601120005Z",
+    "status": "granted",
+    "tsa": "test-tsa.invalid",
+    "tsr_file": "receipt.tsr"
+   }
+  },
+  "receipt_tsr_base64": "MH8wAwIBADB4BgkqhkiG9w0BBwKgazBpAgEDMQAwYgYLKoZIhvcNAQkQAQSgUwRRME8CAQEGAyoDBDAxMA0GCWCGSAFlAwQCAQUABCDJI4BWGxib3li7q/Rro3Xc6OsMjCxyEizwTXkrIDlD+AIBBxgPMjAyNjA2MDExMjAwMDVa"
+ },
+ "license": "CC0-1.0",
+ "reading": "step 5: 'its imprint must equal criteria.sha256' (an imprint is algorithm + value, RFC 3161 2.4.1)",
+ "test_key": {
+  "omega-test-1": {
+   "private_seed_hex": "37ccef94c15a84981185191fcb7ebc5bfd1959aba341b929e0ec50414fdc8792",
+   "public_key_base64": "LQqgDnG21TlYF2nKKcvlYtWvn133k+v1UH5/4Jb9mrU="
+  },
+  "omega-test-2": {
+   "private_seed_hex": "fb701416979afb7b5352d46f234902cd60e6db897fbf7dbcc47163c5db7896e2",
+   "public_key_base64": "5G7HMnCCy+VTUdt2xlROaIo1tfVUwEcLeoRpbCfGvlQ="
+  }
+ },
+ "title": "omega-15-criteria-token-imprint-oid-sha3-256",
+ "vector": "omega-15-criteria-token-imprint-oid-sha3-256",
+ "warning": "TEST keys: the private seeds are published in this file. Never trust a record signed by them."
+}

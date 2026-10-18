@@ -1,0 +1,37 @@
+{
+ "acceptance": {
+  "payload": "eyJhY2NlcHRhbmNlX3ZlcnNpb24iOiJhY2NlcHRhbmNlLXJlY29yZC12MCIsImFjY2VwdGVkX2F0IjoiMjAyNi0wNi0wMlQwOTowMDowMC4wMDBaIiwiYWNjZXB0ZWRfcmVjb3JkX3NoYTI1NiI6IjQ5YmU4ODI4Yzg2MTQ0ZTNlYmExODU0YTI0YWQ0NmUyOTRmYzlmYmVjN2FjMTI2ZjU1NTM1ZWQxNDFhM2VjMDEiLCJjb25maXJtaW5nX3BhcnR5IjoiRXhhbXBsZSBDbGllbnQiLCJkaXNwb3NpdGlvbiI6ImFjY2VwdGVkIiwib3V0Y29tZV9zaGEyNTYiOiJiNTIwZWY0ZWI3YTBmM2UwZDcyNWVhOTIxNjdlNDk2MmZlNDM1ODRjNzc0N2I0NGUwYWNkNGQ4NDZlYWE0Y2Y4IiwidGVybXNfc2hhMjU2IjoiNDQxM2U5OWQ3M2Q3NDNkN2I2M2E4MzYyY2YzZDQ3ZmY2NDZjOWI2NGUzOTcyYjJmYjY5ODQwOTNjOGU5YWRkNyJ9",
+  "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNwLTEifQ",
+  "signature": "X8PZk1wAT6v4Lh8t1zd8Uirxeughr51Mnhs0LcaR1ezHZ8GdEDqT9h7f2zboZE8AGeXCH1nM5qmEjQlVum8yAw"
+ },
+ "accepted_record": {
+  "issuer": "Example Checker",
+  "issuer_kid": "omega-test-1",
+  "outcome_at": "2026-06-01T12:00:00.000Z",
+  "outcome_sha256": "b520ef4eb7a0f3e0d725ea92167e4962fe43584c7747b44e0acd4d846eaa4cf8",
+  "record_id": "war-sha256:0b81da3de162147d68608bf68c47c68751388d55ed9399b5a324244680126906",
+  "terms_sha256": "4413e99d73d743d7b63a8362cf3d47ff646c9b64e3972b2fb6984093c8e9add7"
+ },
+ "delegation": {
+  "Example Client": [
+   "cp-1"
+  ]
+ },
+ "trust_material": {
+  "keys": [
+   {
+    "crv": "Ed25519",
+    "kid": "cp-1",
+    "kty": "OKP",
+    "x": "wV9lvw-Mg-4-ImY9rIoYmuVaeIhtZGH_p6WSr4oc7bI"
+   },
+   {
+    "crv": "Ed25519",
+    "kid": "omega-test-1",
+    "kty": "OKP",
+    "x": "LQqgDnG21TlYF2nKKcvlYtWvn133k-v1UH5_4Jb9mrU"
+   }
+  ]
+ },
+ "trust_material_complete": true
+}

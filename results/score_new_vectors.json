@@ -1,0 +1,303 @@
+[
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-01-required-downgraded-in-results.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-02-criterion-without-result.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-03-duplicate-result-id.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-04-criteria-document-not-a-criteria-list.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-05-criterion-without-required-flag.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-06-duplicate-criterion-id.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-07-no-required-criterion.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-08-required-error-optional-fail.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-09-producer-key-is-checker-key-under-another-id.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-10-producer-key-is-signing-key.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-11-receipt-key-id-names-another-key.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-12-signing-key-not-in-key-file.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-13-checker-key-id-null.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-14-producer-name-equals-checker-name-after-normalisation.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-15-criteria-token-imprint-oid-sha3-256.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-16-criteria-token-imprint-oid-sha512-256.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-17-criteria-token-sha256-with-parameters.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-18-criteria-digest-only-in-nonce.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-19-criteria-gentime-fraction-same-second.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-20-timestamp-metadata-disagrees-with-token.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-21-token-supplied-record-declares-none.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-22-criteria-token-rejected.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-23-record-token-rejected.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-24-ordering-not-provable-under-accuracy.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-25-ordering-true-same-tsa.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-26-delivered-file-differs.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-27-identity-key-universal-forgery.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-28-mixed-order-key-in-key-file.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-29-non-canonical-key-encoding.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-30-unknown-member-in-receipt.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-31-commitment-not-rfc3161.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-32-independence-other-value.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-33-results-not-a-list.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-34-required-not-boolean.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-35-human-review-scope-not-list.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-36-pages-not-integer.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-37-original-bytes-not-integer.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-38-timestamp-covers-other-object.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-39-timestamp-status-other.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-40-signature-alg-other.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-41-criteria-gentime-leap-second.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-42-duplicate-member-in-receipt.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 1,
+  "fields_agree": 1,
+  "file": "vectors/omega-43-lone-surrogate-in-finding.json"
+ }
+]

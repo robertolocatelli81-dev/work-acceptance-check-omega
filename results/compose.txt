@@ -1,0 +1,6 @@
+WAR receipt object passed unchanged as accepted_record                   x402 exit=3 result=input_error ["unknown accepted_record member(s): ['canonicalization', 'client_ref', 'criteria', 'files', 'human_review', 'independence', 'issued_utc', 'key_id', 'notice', 'parties', 'receipt_id', 'results', 'revision', 'schema', 'suite', 'tools', 'verdict']"] glue=None
+string projection of a valid WAR                                         x402 exit=0 result=verified [] glue={'war_accepted_as_stated': True, 'war_verdict': 'pass', 'record_id_binds_war': True, 'projection_equal': True}
+same acceptance, relying party holds a different WAR (verdict fail)      x402 exit=0 result=verified [] glue={'war_accepted_as_stated': True, 'war_verdict': 'fail', 'record_id_binds_war': False, 'projection_equal': False}
+counterparty 'accepted' a WAR whose recomputed verdict is fail           x402 exit=0 result=verified [] glue={'war_accepted_as_stated': True, 'war_verdict': 'fail', 'record_id_binds_war': True, 'projection_equal': True}
+outcome_at = issued_utc copied unchanged (seconds precision)             x402 exit=3 result=input_error ['accepted_record.outcome_at is not in canonical form'] glue=None
+the checker's own key signs the counterparty acceptance                  x402 exit=1 result=malformed ['acceptance_signer_is_issuer'] glue=None

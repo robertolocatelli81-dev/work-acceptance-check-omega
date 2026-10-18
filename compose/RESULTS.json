@@ -1,0 +1,65 @@
+[
+ {
+  "case": "WAR receipt object passed unchanged as accepted_record",
+  "glue": null,
+  "x402_detail": [
+   "unknown accepted_record member(s): ['canonicalization', 'client_ref', 'criteria', 'files', 'human_review', 'independence', 'issued_utc', 'key_id', 'notice', 'parties', 'receipt_id', 'results', 'revision', 'schema', 'suite', 'tools', 'verdict']"
+  ],
+  "x402_exit": 3,
+  "x402_result": "input_error"
+ },
+ {
+  "case": "string projection of a valid WAR",
+  "glue": {
+   "projection_equal": true,
+   "record_id_binds_war": true,
+   "war_accepted_as_stated": true,
+   "war_verdict": "pass"
+  },
+  "x402_detail": [],
+  "x402_exit": 0,
+  "x402_result": "verified"
+ },
+ {
+  "case": "same acceptance, relying party holds a different WAR (verdict fail)",
+  "glue": {
+   "projection_equal": false,
+   "record_id_binds_war": false,
+   "war_accepted_as_stated": true,
+   "war_verdict": "fail"
+  },
+  "x402_detail": [],
+  "x402_exit": 0,
+  "x402_result": "verified"
+ },
+ {
+  "case": "counterparty 'accepted' a WAR whose recomputed verdict is fail",
+  "glue": {
+   "projection_equal": true,
+   "record_id_binds_war": true,
+   "war_accepted_as_stated": true,
+   "war_verdict": "fail"
+  },
+  "x402_detail": [],
+  "x402_exit": 0,
+  "x402_result": "verified"
+ },
+ {
+  "case": "outcome_at = issued_utc copied unchanged (seconds precision)",
+  "glue": null,
+  "x402_detail": [
+   "accepted_record.outcome_at is not in canonical form"
+  ],
+  "x402_exit": 3,
+  "x402_result": "input_error"
+ },
+ {
+  "case": "the checker's own key signs the counterparty acceptance",
+  "glue": null,
+  "x402_detail": [
+   "acceptance_signer_is_issuer"
+  ],
+  "x402_exit": 1,
+  "x402_result": "malformed"
+ }
+]

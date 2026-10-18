@@ -1,0 +1,2229 @@
+{
+ "final_survivors": [
+  {
+   "function": "strict_json_loads",
+   "id": "m0004",
+   "line": 168,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "strict_json_loads",
+   "id": "m0005",
+   "line": 170,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0006",
+   "line": 190,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0007",
+   "line": 192,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_valid_date",
+   "id": "m0017",
+   "line": 324,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_valid_date",
+   "id": "m0018",
+   "line": 326,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "fmt_instant",
+   "id": "m0026",
+   "line": 382,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed_decode",
+   "id": "m0028",
+   "line": 453,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed_decode",
+   "id": "m0032",
+   "line": 468,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed_same_key",
+   "id": "m0037",
+   "line": 493,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed_same_key",
+   "id": "m0038",
+   "line": 496,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed_verify_pure",
+   "id": "m0039",
+   "line": 504,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed_verify_pure",
+   "id": "m0041",
+   "line": 511,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed25519_verify",
+   "id": "m0042",
+   "line": 519,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed25519_verify",
+   "id": "m0043",
+   "line": 521,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "ed25519_verify",
+   "id": "m0044",
+   "line": 523,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0048",
+   "line": 566,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0049",
+   "line": 569,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0050",
+   "line": 571,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0052",
+   "line": 595,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_expect",
+   "id": "m0054",
+   "line": 616,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "der_int",
+   "id": "m0055",
+   "line": 624,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "der_oid",
+   "id": "m0057",
+   "line": 634,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "der_octets",
+   "id": "m0058",
+   "line": 651,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "der_bool",
+   "id": "m0059",
+   "line": 658,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "der_alg_id",
+   "id": "m0060",
+   "line": 676,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0061",
+   "line": 689,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0062",
+   "line": 692,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0063",
+   "line": 695,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0064",
+   "line": 698,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0065",
+   "line": 701,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0066",
+   "line": 704,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0070",
+   "line": 719,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0071",
+   "line": 721,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0072",
+   "line": 724,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0073",
+   "line": 727,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0074",
+   "line": 730,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0075",
+   "line": 734,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0076",
+   "line": 736,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0077",
+   "line": 739,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0079",
+   "line": 747,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0081",
+   "line": 754,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0083",
+   "line": 770,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0085",
+   "line": 776,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0087",
+   "line": 787,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0088",
+   "line": 789,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0094",
+   "line": 829,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "imprint_status",
+   "id": "m0098",
+   "line": 870,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "load_roots",
+   "id": "m0099",
+   "line": 878,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "load_roots",
+   "id": "m0100",
+   "line": 882,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0102",
+   "line": 922,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0104",
+   "line": 934,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0105",
+   "line": 949,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0107",
+   "line": 986,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0108",
+   "line": 989,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0110",
+   "line": 995,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0111",
+   "line": 1029,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0114",
+   "line": 1097,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_str",
+   "id": "m0119",
+   "line": 1200,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0123",
+   "line": 1225,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0124",
+   "line": 1228,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "check_step1",
+   "id": "m0129",
+   "line": 1312,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0137",
+   "line": 1351,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0138",
+   "line": 1355,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0154",
+   "line": 1529,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0158",
+   "line": 1575,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "run_vector",
+   "id": "m0177",
+   "line": 1741,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0180",
+   "line": 1850,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0181",
+   "line": 1857,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0182",
+   "line": 1860,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0183",
+   "line": 1888,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0184",
+   "line": 1897,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0185",
+   "line": 1899,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_check_values",
+   "id": "m0188",
+   "line": 141,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "_check_values",
+   "id": "m0190",
+   "line": 148,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "strict_json_loads",
+   "id": "m0192",
+   "line": 169,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "strict_json_loads",
+   "id": "m0194",
+   "line": 171,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0195",
+   "line": 191,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0196",
+   "line": 193,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "fmt_instant",
+   "id": "m0229",
+   "line": 397,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_pequal",
+   "id": "m0232",
+   "line": 442,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "ed_decode",
+   "id": "m0234",
+   "line": 458,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "ed_same_key",
+   "id": "m0240",
+   "line": 496,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "ed_verify_pure",
+   "id": "m0243",
+   "line": 511,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "ed25519_verify",
+   "id": "m0244",
+   "line": 520,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "ed25519_verify",
+   "id": "m0246",
+   "line": 523,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "Node",
+   "id": "m0250",
+   "line": 558,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0252",
+   "line": 566,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0253",
+   "line": 567,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0255",
+   "line": 570,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0256",
+   "line": 571,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0257",
+   "line": 572,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0258",
+   "line": 575,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0261",
+   "line": 596,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_expect",
+   "id": "m0266",
+   "line": 617,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "der_int",
+   "id": "m0268",
+   "line": 625,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "der_oid",
+   "id": "m0271",
+   "line": 634,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "der_oid",
+   "id": "m0272",
+   "line": 635,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "der_octets",
+   "id": "m0276",
+   "line": 652,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "der_bool",
+   "id": "m0278",
+   "line": 659,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "der_alg_id",
+   "id": "m0282",
+   "line": 677,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0284",
+   "line": 690,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0286",
+   "line": 693,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0288",
+   "line": 696,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0291",
+   "line": 705,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0298",
+   "line": 720,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0300",
+   "line": 722,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0302",
+   "line": 725,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0304",
+   "line": 728,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0306",
+   "line": 731,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0308",
+   "line": 735,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0310",
+   "line": 737,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0312",
+   "line": 740,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_token",
+   "id": "m0317",
+   "line": 755,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0321",
+   "line": 771,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0325",
+   "line": 777,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0328",
+   "line": 787,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0329",
+   "line": 789,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0336",
+   "line": 830,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "load_roots",
+   "id": "m0342",
+   "line": 879,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_cert_time_ok",
+   "id": "m0347",
+   "line": 906,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "_cert_time_ok",
+   "id": "m0348",
+   "line": 907,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "_cert_time_ok",
+   "id": "m0349",
+   "line": 910,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_cert_time_ok",
+   "id": "m0350",
+   "line": 910,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0352",
+   "line": 924,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0354",
+   "line": 930,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0355",
+   "line": 934,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0356",
+   "line": 935,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0359",
+   "line": 962,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0360",
+   "line": 969,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0364",
+   "line": 995,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0366",
+   "line": 1001,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0372",
+   "line": 1074,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0375",
+   "line": 1093,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "Ctx",
+   "id": "m0383",
+   "line": 1181,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "Ctx",
+   "id": "m0384",
+   "line": 1184,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_str",
+   "id": "m0390",
+   "line": 1201,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0397",
+   "line": 1223,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0399",
+   "line": 1226,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0400",
+   "line": 1228,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0401",
+   "line": 1229,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0405",
+   "line": 1241,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0406",
+   "line": 1244,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "check_step1",
+   "id": "m0419",
+   "line": 1313,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0430",
+   "line": 1352,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0432",
+   "line": 1356,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0441",
+   "line": 1414,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0443",
+   "line": 1429,
+   "mutation": "ext.add(...) -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0468",
+   "line": 1519,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0472",
+   "line": 1530,
+   "mutation": "ext.add(...) -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0495",
+   "line": 1610,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "verify",
+   "id": "m0510",
+   "line": 1639,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_provable_order",
+   "id": "m0515",
+   "line": 1682,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_provable_order",
+   "id": "m0516",
+   "line": 1684,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_correspondence",
+   "id": "m0524",
+   "line": 1723,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "run_vector",
+   "id": "m0527",
+   "line": 1742,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "run_vector",
+   "id": "m0529",
+   "line": 1745,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0532",
+   "line": 1830,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0533",
+   "line": 1850,
+   "mutation": "Is -> IsNot"
+  },
+  {
+   "function": "main",
+   "id": "m0534",
+   "line": 1854,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0535",
+   "line": 1857,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "main",
+   "id": "m0536",
+   "line": 1860,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "main",
+   "id": "m0537",
+   "line": 1871,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0538",
+   "line": 1874,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0539",
+   "line": 1891,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0540",
+   "line": 1893,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_check_values",
+   "id": "m0543",
+   "line": 148,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "strict_json_loads",
+   "id": "m0547",
+   "line": 181,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0549",
+   "line": 193,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0550",
+   "line": 194,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0553",
+   "line": 200,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0554",
+   "line": 218,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0555",
+   "line": 218,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "b64_strict",
+   "id": "m0563",
+   "line": 305,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "Node",
+   "id": "m0576",
+   "line": 559,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0580",
+   "line": 579,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "der_oid",
+   "id": "m0587",
+   "line": 646,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0595",
+   "line": 698,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "parse_tsr",
+   "id": "m0596",
+   "line": 701,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0616",
+   "line": 816,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m0619",
+   "line": 840,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m0620",
+   "line": 842,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "load_roots",
+   "id": "m0623",
+   "line": 884,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0625",
+   "line": 923,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0626",
+   "line": 924,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0628",
+   "line": 935,
+   "mutation": "not removed"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0629",
+   "line": 962,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0630",
+   "line": 969,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0631",
+   "line": 975,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0632",
+   "line": 978,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0641",
+   "line": 1017,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0643",
+   "line": 1043,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0646",
+   "line": 1061,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0651",
+   "line": 1100,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0656",
+   "line": 1133,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0657",
+   "line": 1139,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "Ctx",
+   "id": "m0659",
+   "line": 1182,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "Ctx",
+   "id": "m0660",
+   "line": 1185,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0668",
+   "line": 1226,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0669",
+   "line": 1227,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "check_keyfile",
+   "id": "m0680",
+   "line": 1245,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0734",
+   "line": 1529,
+   "mutation": "NotEq -> Eq"
+  },
+  {
+   "function": "verify",
+   "id": "m0776",
+   "line": 1639,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "verify",
+   "id": "m0777",
+   "line": 1639,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_provable_order",
+   "id": "m0794",
+   "line": 1686,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "run_vector",
+   "id": "m0804",
+   "line": 1746,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "compare",
+   "id": "m0806",
+   "line": 1787,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "compare",
+   "id": "m0807",
+   "line": 1789,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0808",
+   "line": 1830,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "main",
+   "id": "m0809",
+   "line": 1832,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0810",
+   "line": 1854,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "main",
+   "id": "m0811",
+   "line": 1857,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "main",
+   "id": "m0812",
+   "line": 1857,
+   "mutation": "not removed"
+  },
+  {
+   "function": "main",
+   "id": "m0813",
+   "line": 1860,
+   "mutation": "NotEq -> Eq"
+  },
+  {
+   "function": "main",
+   "id": "m0814",
+   "line": 1891,
+   "mutation": "Is -> IsNot"
+  },
+  {
+   "function": "main",
+   "id": "m0815",
+   "line": 1901,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_check_values",
+   "id": "m0819",
+   "line": 153,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m0821",
+   "line": 220,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_days_from_civil",
+   "id": "m0826",
+   "line": 314,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "_valid_date",
+   "id": "m0830",
+   "line": 322,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_valid_date",
+   "id": "m0834",
+   "line": 328,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "parse_generalized_time",
+   "id": "m0835",
+   "line": 369,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "fmt_instant",
+   "id": "m0836",
+   "line": 389,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "fmt_instant",
+   "id": "m0837",
+   "line": 396,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0840",
+   "line": 580,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0841",
+   "line": 583,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0842",
+   "line": 585,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0843",
+   "line": 588,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "der_oid",
+   "id": "m0848",
+   "line": 646,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0852",
+   "line": 817,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0854",
+   "line": 822,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m0859",
+   "line": 842,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m0860",
+   "line": 843,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "load_roots",
+   "id": "m0865",
+   "line": 892,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0867",
+   "line": 924,
+   "mutation": "NotIn -> In"
+  },
+  {
+   "function": "_verify_sig",
+   "id": "m0868",
+   "line": 924,
+   "mutation": "not removed"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0869",
+   "line": 962,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0871",
+   "line": 969,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0874",
+   "line": 976,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0877",
+   "line": 1017,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0879",
+   "line": 1044,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0881",
+   "line": 1050,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0884",
+   "line": 1065,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0885",
+   "line": 1093,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0886",
+   "line": 1100,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0887",
+   "line": 1121,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "verify",
+   "id": "m0903",
+   "line": 1417,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0913",
+   "line": 1499,
+   "mutation": "ext.add(...) -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0915",
+   "line": 1522,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0919",
+   "line": 1544,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0922",
+   "line": 1559,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "verify",
+   "id": "m0932",
+   "line": 1612,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_provable_order",
+   "id": "m0935",
+   "line": 1679,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "_correspondence",
+   "id": "m0939",
+   "line": 1723,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "compare",
+   "id": "m0943",
+   "line": 1789,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "main",
+   "id": "m0944",
+   "line": 1832,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "main",
+   "id": "m0945",
+   "line": 1833,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0946",
+   "line": 1837,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m0947",
+   "line": 1854,
+   "mutation": "NotEq -> Eq"
+  },
+  {
+   "function": "main",
+   "id": "m0948",
+   "line": 1854,
+   "mutation": "NotIn -> In"
+  },
+  {
+   "function": "main",
+   "id": "m0949",
+   "line": 1901,
+   "mutation": "not removed"
+  },
+  {
+   "function": "_check_values",
+   "id": "m0952",
+   "line": 154,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0957",
+   "line": 583,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0958",
+   "line": 584,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0959",
+   "line": 585,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0960",
+   "line": 586,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_der_tlv",
+   "id": "m0962",
+   "line": 589,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "der_int",
+   "id": "m0966",
+   "line": 626,
+   "mutation": "Lt -> LtE"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0970",
+   "line": 816,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0971",
+   "line": 822,
+   "mutation": "not removed"
+  },
+  {
+   "function": "parse_tstinfo",
+   "id": "m0972",
+   "line": 823,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m0978",
+   "line": 850,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m0979",
+   "line": 852,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m0980",
+   "line": 856,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0982",
+   "line": 969,
+   "mutation": "NotEq -> Eq"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0987",
+   "line": 1065,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m0993",
+   "line": 1125,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify",
+   "id": "m0996",
+   "line": 1418,
+   "mutation": "ext.add(...) -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0997",
+   "line": 1523,
+   "mutation": "ext.add(...) -> pass"
+  },
+  {
+   "function": "verify",
+   "id": "m0998",
+   "line": 1526,
+   "mutation": "NotEq -> Eq"
+  },
+  {
+   "function": "verify",
+   "id": "m1000",
+   "line": 1545,
+   "mutation": "ext.add(...) -> pass"
+  },
+  {
+   "function": "run_vector",
+   "id": "m1004",
+   "line": 1760,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "compare",
+   "id": "m1008",
+   "line": 1789,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "main",
+   "id": "m1011",
+   "line": 1832,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "main",
+   "id": "m1012",
+   "line": 1833,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "main",
+   "id": "m1013",
+   "line": 1837,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "main",
+   "id": "m1014",
+   "line": 1838,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "main",
+   "id": "m1015",
+   "line": 1842,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_check_values",
+   "id": "m1016",
+   "line": 154,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "_check_values",
+   "id": "m1017",
+   "line": 155,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m1022",
+   "line": 847,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m1023",
+   "line": 847,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m1027",
+   "line": 853,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1030",
+   "line": 1021,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1031",
+   "line": 1065,
+   "mutation": "not removed"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1032",
+   "line": 1065,
+   "mutation": "NotEq -> Eq"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1033",
+   "line": 1125,
+   "mutation": "In -> NotIn"
+  },
+  {
+   "function": "main",
+   "id": "m1036",
+   "line": 1833,
+   "mutation": "IsNot -> Is"
+  },
+  {
+   "function": "main",
+   "id": "m1037",
+   "line": 1833,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "main",
+   "id": "m1038",
+   "line": 1837,
+   "mutation": "In -> NotIn"
+  },
+  {
+   "function": "main",
+   "id": "m1039",
+   "line": 1838,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "main",
+   "id": "m1040",
+   "line": 1842,
+   "mutation": "In -> NotIn"
+  },
+  {
+   "function": "main",
+   "id": "m1041",
+   "line": 1845,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_check_values",
+   "id": "m1042",
+   "line": 154,
+   "mutation": "NotEq -> Eq"
+  },
+  {
+   "function": "_check_values",
+   "id": "m1043",
+   "line": 154,
+   "mutation": "In -> NotIn"
+  },
+  {
+   "function": "_jcs_number",
+   "id": "m1044",
+   "line": 224,
+   "mutation": "GtE -> Gt"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m1048",
+   "line": 852,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_parse_accuracy",
+   "id": "m1049",
+   "line": 852,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1050",
+   "line": 1021,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1051",
+   "line": 1064,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "verify",
+   "id": "m1052",
+   "line": 1613,
+   "mutation": "And swapped"
+  },
+  {
+   "function": "main",
+   "id": "m1053",
+   "line": 1838,
+   "mutation": "In -> NotIn"
+  },
+  {
+   "function": "main",
+   "id": "m1054",
+   "line": 1838,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "main",
+   "id": "m1055",
+   "line": 1845,
+   "mutation": "Or swapped"
+  },
+  {
+   "function": "_jcs",
+   "id": "m1060",
+   "line": 285,
+   "mutation": "raise -> pass"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1061",
+   "line": 1060,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1062",
+   "line": 1064,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "verify_tsa",
+   "id": "m1063",
+   "line": 1064,
+   "mutation": "Eq -> NotEq"
+  },
+  {
+   "function": "main",
+   "id": "m1065",
+   "line": 1845,
+   "mutation": "IsNot -> Is"
+  },
+  {
+   "function": "_days_from_civil",
+   "id": "m1069",
+   "line": 316,
+   "mutation": "Gt -> GtE"
+  },
+  {
+   "function": "_jcs_string",
+   "id": "m1071",
+   "line": 249,
+   "mutation": "if-test -> False"
+  },
+  {
+   "function": "_jcs_string",
+   "id": "m1072",
+   "line": 249,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_jcs_string",
+   "id": "m1073",
+   "line": 249,
+   "mutation": "LtE -> Lt"
+  },
+  {
+   "function": "_jcs_string",
+   "id": "m1074",
+   "line": 250,
+   "mutation": "raise -> pass"
+  }
+ ],
+ "killed_by_exception_first": 23,
+ "killed_by_timeout": 1,
+ "mutants": 1073,
+ "new_vector_kills_stage1_survivors": {
+  "omega-01-required-downgraded-in-results.json": [
+   "m0523"
+  ],
+  "omega-02-criterion-without-result.json": [
+   "m0525"
+  ],
+  "omega-03-duplicate-result-id.json": [
+   "m0149",
+   "m0457",
+   "m0458",
+   "m0520",
+   "m1003"
+  ],
+  "omega-04-criteria-document-not-a-criteria-list.json": [
+   "m0176",
+   "m0517"
+  ],
+  "omega-05-criterion-without-required-flag.json": [
+   "m0518",
+   "m0797"
+  ],
+  "omega-06-duplicate-criterion-id.json": [
+   "m0519"
+  ],
+  "omega-07-no-required-criterion.json": [
+   "m0163",
+   "m0491",
+   "m0492",
+   "m1003"
+  ],
+  "omega-08-required-error-optional-fail.json": [],
+  "omega-09-producer-key-is-checker-key-under-another-id.json": [
+   "m0762",
+   "m1001",
+   "m1064"
+  ],
+  "omega-10-producer-key-is-signing-key.json": [
+   "m0762"
+  ],
+  "omega-11-receipt-key-id-names-another-key.json": [
+   "m0143",
+   "m0165",
+   "m0442",
+   "m0496",
+   "m0759",
+   "m0760",
+   "m1003"
+  ],
+  "omega-12-signing-key-not-in-key-file.json": [
+   "m0146",
+   "m0446"
+  ],
+  "omega-13-checker-key-id-null.json": [
+   "m0497"
+  ],
+  "omega-14-producer-name-equals-checker-name-after-normalisation.json": [
+   "m0134",
+   "m0169",
+   "m0427",
+   "m0505",
+   "m0768",
+   "m0769",
+   "m0770",
+   "m0771",
+   "m0772",
+   "m1003"
+  ],
+  "omega-15-criteria-token-imprint-oid-sha3-256.json": [
+   "m0095"
+  ],
+  "omega-16-criteria-token-imprint-oid-sha512-256.json": [
+   "m0095"
+  ],
+  "omega-17-criteria-token-sha256-with-parameters.json": [
+   "m0086",
+   "m0096",
+   "m0326",
+   "m0592",
+   "m0608"
+  ],
+  "omega-18-criteria-digest-only-in-nonce.json": [
+   "m0091",
+   "m0578",
+   "m0609",
+   "m0610",
+   "m0613",
+   "m0839",
+   "m0845",
+   "m0961",
+   "m0965"
+  ],
+  "omega-19-criteria-gentime-fraction-same-second.json": [
+   "m0512",
+   "m0578",
+   "m0839",
+   "m0961"
+  ],
+  "omega-20-timestamp-metadata-disagrees-with-token.json": [
+   "m0140",
+   "m1003"
+  ],
+  "omega-21-token-supplied-record-declares-none.json": [
+   "m0152",
+   "m0466",
+   "m0727",
+   "m0728",
+   "m0732",
+   "m1003"
+  ],
+  "omega-22-criteria-token-rejected.json": [
+   "m0150",
+   "m0462",
+   "m0593",
+   "m0598",
+   "m0601",
+   "m0723",
+   "m1003"
+  ],
+  "omega-23-record-token-rejected.json": [
+   "m0151",
+   "m0464",
+   "m0593",
+   "m0598",
+   "m0601",
+   "m0725",
+   "m1003"
+  ],
+  "omega-24-ordering-not-provable-under-accuracy.json": [
+   "m0089",
+   "m0159",
+   "m0337",
+   "m0484",
+   "m0578",
+   "m0609",
+   "m0748",
+   "m0749",
+   "m0839",
+   "m0857",
+   "m0858",
+   "m0961",
+   "m1003"
+  ],
+  "omega-25-ordering-true-same-tsa.json": [
+   "m0090",
+   "m0092",
+   "m0173",
+   "m0277",
+   "m0279",
+   "m0483",
+   "m0578",
+   "m0609",
+   "m0610",
+   "m0611",
+   "m0613",
+   "m0614",
+   "m0748",
+   "m0785",
+   "m0786",
+   "m0787",
+   "m0839",
+   "m0929",
+   "m0961",
+   "m1003"
+  ],
+  "omega-26-delivered-file-differs.json": [
+   "m0453",
+   "m0707",
+   "m0709",
+   "m0711",
+   "m0712",
+   "m1003"
+  ],
+  "omega-27-identity-key-universal-forgery.json": [
+   "m0035",
+   "m0407",
+   "m0682",
+   "m0894",
+   "m0895",
+   "m0994"
+  ],
+  "omega-28-mixed-order-key-in-key-file.json": [
+   "m0036",
+   "m0407",
+   "m0682",
+   "m0894",
+   "m0895",
+   "m0994"
+  ],
+  "omega-29-non-canonical-key-encoding.json": [
+   "m0034",
+   "m0407",
+   "m0682",
+   "m0895"
+  ],
+  "omega-30-unknown-member-in-receipt.json": [
+   "m0385",
+   "m0661",
+   "m0890",
+   "m0891"
+  ],
+  "omega-31-commitment-not-rfc3161.json": [
+   "m0125",
+   "m0409"
+  ],
+  "omega-32-independence-other-value.json": [
+   "m0127",
+   "m0414"
+  ],
+  "omega-33-results-not-a-list.json": [
+   "m0128",
+   "m0416"
+  ],
+  "omega-34-required-not-boolean.json": [
+   "m0417",
+   "m0688"
+  ],
+  "omega-35-human-review-scope-not-list.json": [
+   "m0126",
+   "m0411",
+   "m0412"
+  ],
+  "omega-36-pages-not-integer.json": [
+   "m0120",
+   "m0391",
+   "m0392",
+   "m0410",
+   "m0683",
+   "m0684",
+   "m0896"
+  ],
+  "omega-37-original-bytes-not-integer.json": [
+   "m0120",
+   "m0391",
+   "m0392",
+   "m0410",
+   "m0683"
+  ],
+  "omega-38-timestamp-covers-other-object.json": [
+   "m0140",
+   "m0697",
+   "m0900"
+  ],
+  "omega-39-timestamp-status-other.json": [
+   "m0140",
+   "m0902"
+  ],
+  "omega-40-signature-alg-other.json": [
+   "m0139",
+   "m0434"
+  ],
+  "omega-41-criteria-gentime-leap-second.json": [
+   "m0025",
+   "m0226"
+  ],
+  "omega-42-duplicate-member-in-receipt.json": [
+   "m0187",
+   "m0542",
+   "m0546"
+  ],
+  "omega-43-lone-surrogate-in-finding.json": [
+   "m0003",
+   "m0816",
+   "m0817",
+   "m0953",
+   "m1018"
+  ]
+ },
+ "new_vectors": 43,
+ "our_verifier_agrees_on_new_vectors": 43,
+ "source_sha256": "560a6200903cd28a1e92ca2be380cc6c9d8d0b62c7d878675da761ace366cb65",
+ "survivors_after": {
+  "+fuzz": 555,
+  "+local_blocks tests": 324,
+  "+newvectors": 597,
+  "+unittests+options+nemesis": 359,
+  "vectors23": 736
+ }
+}
