@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Build the new vectors in vectors/ (CC0). Every `expected` object below is written by hand from the README text
-(the sentence is in `reading`), never copied from a run of the verifier. Signed with the omega-test-* TEST keys
+(the sentence is in `reading`), never copied from a run of the verifier. Defaults follow profile 1.3
+(maximusrufus/work-acceptance-record@42b4ed0); where this verifier's profile 1.2.1 reading (war_verify 0.1.0, selected
+with --profile 1.2.1) gives other profile fields, they are in `expected_1_2_1`. Signed with the omega-test-* TEST keys
 whose private seeds are published in every vector. usage: python3 -B tools/make_vectors.py"""
 import base64
 import copy
@@ -51,8 +53,8 @@ def R(inp):
 V = []
 
 
-def vec(name, desc, reading, inputs, expected, ext=None, raw_text=None):
-    V.append((name, desc, reading, inputs, expected, ext, raw_text))
+def vec(name, desc, reading, inputs, expected, ext=None, raw_text=None, old=None):
+    V.append((name, desc, reading, inputs, expected, ext, raw_text, old))
 
 
 def build_all():
@@ -135,9 +137,13 @@ def build_all():
         "property 3 and step 8 CHECKER_NOT_SIGNER", keyed("omega-test-1", "omega-test-1", "omega-test-2", pk="omega-test-1"),
         exp(problem_codes=["CHECKER_NOT_SIGNER", "KEY_COLLISION", "INDEPENDENCE_INCONSISTENT"]))
     vec("receipt-key-id-names-another-key", "signature.key_id and parties.checker.key_id name the signing key; the "
-        "signed receipt.key_id names the other published key.", "step 2: 'the key identified by `key_id`' (this "
-        "verifier reads signature.key_id; see README, switches)", keyed("omega-test-1", "omega-test-2", "omega-test-1"),
-        exp(), {"include": ["X_KEY_ID_SPLIT", "X_RECEIPT_KEY_ID_NOT_SIGNER"]})
+        "signed receipt.key_id names the other published key.", "1.3 step 2: 'verify the Ed25519 signature with the "
+        "key named by the signed `receipt.key_id`. The envelope's `signature.key_id` must equal it, else "
+        "`SIGNATURE_INVALID`'; 'whether that key is `parties.checker.key_id` is a separate check "
+        "(`CHECKER_NOT_SIGNER`)'. Changed at 1.3: under 1.2.1 this verifier read signature.key_id (no code).",
+        keyed("omega-test-1", "omega-test-2", "omega-test-1"),
+        exp(signature_valid=False, problem_codes=["SIGNATURE_INVALID", "CHECKER_NOT_SIGNER"]),
+        {"include": ["X_KEY_ID_SPLIT"]}, old=exp())
     vec("signing-key-not-in-key-file", "signature.key_id names no key in the key file.",
         "step 2: the signature cannot be verified with 'the key identified by key_id'",
         keyed("omega-test-9", "omega-test-9", "omega-test-1", signer="omega-test-1"),
@@ -195,8 +201,12 @@ def build_all():
     vec("token-supplied-record-declares-none", "The unsigned envelope says no timestamp; a token covering this "
         "receipt (13:00) is supplied anyway. Criteria committed 12:30, issued_utc 12:00. The supplied token decides, "
         "not the unsigned envelope (otherwise deleting an unsigned member would change the outcome).",
-        "step 5: 'when a token covering the record is supplied'; step 6 imprint check on the supplied token", i,
-        exp(receipt_timestamp="imprint_match"), {"include": ["X_TOKEN_SUPPLIED_RECORD_DECLARES_NONE"]})
+        "1.3 step 5: 'the **earlier** of `issued_utc` and the genTime of the record's own token when a token covering "
+        "the record is supplied' (12:00 < 12:30: not committed before); step 6 imprint check on the supplied token. "
+        "Changed at 1.3: under 1.2.1 the covering token (13:00) was the reference (yes).", i,
+        exp(receipt_timestamp="imprint_match", criteria_committed_before_check="no",
+            problem_codes=["CRITERIA_COMMITTED_AFTER_CHECK"]), {"include": ["X_TOKEN_SUPPLIED_RECORD_DECLARES_NONE"]},
+        old=exp(receipt_timestamp="imprint_match"))
 
     i = copy.deepcopy(B)
     i["criteria_tsr_base64"] = base64.b64encode(tp.seq(tp.seq(tp.integer(2)))).decode()
@@ -215,10 +225,13 @@ def build_all():
     build.sign(i)
     build.record_token(i, gen="20260601120001Z", accuracy=(1, None, None))
     vec("ordering-not-provable-under-accuracy", "Criteria token 12:00:00 +-1 s, record token 12:00:01 +-1 s, no "
-        "ordering flag. The profile's strict comparison says yes; RFC 3161 2.4.2 says these two tokens can be "
-        "ordered only when the difference exceeds the sum of the accuracies.", "step 5 'strictly earlier' (profile); "
-        "RFC 3161 2.4.2 accuracy/ordering (not in the profile)", i, exp(),
-        {"include": ["X_ORDER_NOT_PROVABLE_UNDER_ACCURACY"]})
+        "ordering flag. Under profile 1.2.1 the strict comparison against the covering token said yes; RFC 3161 2.4.2 says these two tokens can be "
+        "ordered only when the difference exceeds the sum of the accuracies. issued_utc is 12:00:00.", "1.3 step 5: "
+        "the reference is the earlier of issued_utc (12:00:00) and the covering token (12:00:01), and the criteria "
+        "token's accuracy widens 12:00:00 to 12:00:01: not strictly earlier. Changed at 1.3: under 1.2.1 the "
+        "reference was the covering token and accuracy was ignored (yes). The accuracy cases with a later issued_utc "
+        "are omega-46 to omega-49.", i,
+        exp(criteria_committed_before_check="no", problem_codes=["CRITERIA_COMMITTED_AFTER_CHECK"]), old=exp())
     i = copy.deepcopy(B)
     name = tp._name("war-verify TEST TSA").public_bytes()
     build.criteria_token(i, gen="20260601120000Z", ordering=True, tsa_name_der=name)
@@ -226,8 +239,11 @@ def build_all():
     build.sign(i)
     build.record_token(i, gen="20260601120001Z", ordering=True, tsa_name_der=name)
     vec("ordering-true-same-tsa", "Both tokens carry ordering TRUE and the same TSA name, one second apart.",
-        "RFC 3161 2.4.2: with ordering TRUE, tokens from the same TSA can always be ordered", i, exp(),
-        {"exclude": ["X_ORDER_NOT_PROVABLE_UNDER_ACCURACY"]})
+        "1.3 step 5: the reference is the earlier of issued_utc (12:00:00, equal to the criteria token) and the "
+        "covering token; `ordering` is ignored: not strictly earlier. Changed at 1.3: under 1.2.1 the covering token "
+        "was the reference (yes; RFC 3161 2.4.2 ordering).", i,
+        exp(criteria_committed_before_check="no", problem_codes=["CRITERIA_COMMITTED_AFTER_CHECK"]),
+        {"exclude": ["X_ORDER_NOT_PROVABLE_UNDER_ACCURACY"]}, old=exp())
 
     # ---------------------------------------------------------------- delivered file (step 3: no code in the profile)
     i = copy.deepcopy(B)
@@ -248,18 +264,25 @@ def build_all():
     build.record_token(i)
     vec("identity-key-universal-forgery", "The key file lists the identity point as a key; the 'signature' is "
         "R = identity, S = 0, which satisfies the cofactorless equation for every message.",
-        "RFC 8032 5.1.7 does not exclude small-order keys; this verifier refuses them (--ed25519 strict)", i, REF)
+        "1.3 step 2 key rule: 'any other key (neutral point, small or mixed order, non-canonical) is `KEY_REJECTED` "
+        "and no signature check is run'. Changed at 1.3: under 1.2.1 this verifier refused the input.", i,
+        exp(signature_valid=False, problem_codes=["KEY_REJECTED"]), old=REF)
     A = wv.ed_decode(base64.b64decode(build.pub_b64("omega-test-2")))
     T8 = wv.ed_decode((0x7a03ac9277fdc74ec6cc392cfa53202a0f67100d760b3cba4fd84d3d706a17c7).to_bytes(32, "little"))
     i = copy.deepcopy(B)
     i["keys"]["keys"][1]["public_key_base64"] = base64.b64encode(wv._encode_point(wv._padd(A, T8))).decode()
     vec("mixed-order-key-in-key-file", "A key-file entry is a valid key plus an 8-torsion point: the holder of the "
         "original scalar can produce signatures accepted under it (about 1 in 8 nonces).",
-        "property 3 key equality; RFC 8032 5.1.7", i, REF)
+        "1.3 step 2 key rule applies to 'the key named by the signed receipt.key_id'; this entry (omega-test-2) "
+        "signs nothing here, so the profile fields are those of a valid record and this verifier blocks exit 0 "
+        "(X_UNUSED_KEY_REJECTED; --key-rule all-keys gives KEY_REJECTED). Changed at 1.3: under 1.2.1 refused.", i,
+        exp(), {"include": ["X_UNUSED_KEY_REJECTED"]}, old=REF)
     i = copy.deepcopy(B)
     i["keys"]["keys"][1]["public_key_base64"] = base64.b64encode((1 + wv._P).to_bytes(32, "little")).decode()
-    vec("non-canonical-key-encoding", "A key-file entry encodes y = 1 + p.", "RFC 8032 5.1.3: decoding fails if y >= p",
-        i, REF)
+    vec("non-canonical-key-encoding", "A key-file entry (omega-test-2, not the signer) encodes y = 1 + p.",
+        "1.3 step 2 key rule ('canonical encoding (y < p)') applies to the signer's key; this entry signs nothing: "
+        "X_UNUSED_KEY_REJECTED, a local block. Changed at 1.3: under 1.2.1 refused.", i, exp(),
+        {"include": ["X_UNUSED_KEY_REJECTED"]}, old=REF)
 
     # ---------------------------------------------------------------- grammar (closed by construction)
     def g(name, desc, edit, reading="this verifier: outside the grammar = refusal (README: 'refuse an unknown schema')",
@@ -305,18 +328,89 @@ def build_all():
     vec("lone-surrogate-in-finding", "A finding contains the escape \\ud800 (a lone surrogate).",
         "RFC 8785 3.2.2.2 / RFC 7493 2.1", copy.deepcopy(B), REF, raw_text="SURROGATE")
 
+    # ---------------------------------------------------------------- profile 1.3 rulings (added 2026-10-18)
+    vec("envelope-key-id-differs", "receipt.key_id and parties.checker.key_id name omega-test-1, which signed; the "
+        "unsigned signature.key_id names omega-test-2.", "1.3 step 2: 'The envelope's `signature.key_id` must equal "
+        "it, else `SIGNATURE_INVALID` (the envelope is unsigned, so it cannot choose the key)'",
+        keyed("omega-test-2", "omega-test-1", "omega-test-1", signer="omega-test-1"),
+        exp(signature_valid=False, problem_codes=["SIGNATURE_INVALID"]), {"include": ["X_KEY_ID_SPLIT"]},
+        old=exp(signature_valid=False, problem_codes=["SIGNATURE_INVALID", "CHECKER_NOT_SIGNER"]))
+    i = copy.deepcopy(B)
+    A1 = wv.ed_decode(base64.b64decode(build.pub_b64("omega-test-1")))
+    i["keys"]["keys"][0]["public_key_base64"] = base64.b64encode(wv._encode_point(wv._padd(A1, T8))).decode()
+    vec("signer-key-mixed-order", "The signer's key-file entry (omega-test-1) is its key plus an 8-torsion point.",
+        "1.3 step 2 key rule: 'small or mixed order ... is `KEY_REJECTED` and no signature check is run'", i,
+        exp(signature_valid=False, problem_codes=["KEY_REJECTED"]), old=REF)
+
+    def timed(issued, crit_gen, rec_gen, acc_c=None, acc_r=None, **kw):
+        i = copy.deepcopy(B)
+        R(i)["issued_utc"] = issued
+        build.criteria_token(i, gen=crit_gen, accuracy=acc_c, **kw)
+        R(i)["criteria"]["committed_at"] = "%s-%s-%sT%s:%s:%sZ" % (crit_gen[:4], crit_gen[4:6], crit_gen[6:8],
+                                                                   crit_gen[8:10], crit_gen[10:12], crit_gen[12:14])
+        build.sign(i)
+        build.record_token(i, gen=rec_gen, accuracy=acc_r, **kw)
+        return i
+    W = "1.3 step 5: 'A token's stated `accuracy` widens its time against \"committed before\"; a token stating none " \
+        "is taken at its genTime; `ordering` is ignored'"
+    vec("accuracy-widens-to-no", "issued_utc 12:00:05; criteria token 12:00:00 +-1 s; covering record token "
+        "12:00:01 +-1 s. The reference is the covering token (earlier than issued_utc).", W + ": 12:00:01 is not "
+        "strictly earlier than 12:00:00", timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120001Z",
+                                                 (1, None, None), (1, None, None)),
+        exp(criteria_committed_before_check="no", problem_codes=["CRITERIA_COMMITTED_AFTER_CHECK"]), old=exp())
+    vec("accuracy-apart-enough", "As omega-46 with the record token at 12:00:03 +-1 s.", W + ": 12:00:01 < "
+        "12:00:02", timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120003Z", (1, None, None),
+                          (1, None, None)), exp())
+    vec("no-accuracy-taken-at-gentime", "issued_utc 12:00:05; criteria token 12:00:00 and record token 12:00:01, "
+        "neither states accuracy.", W + " (this verifier's --accuracy interval would say undetermined)",
+        timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120001Z"), exp())
+    name = tp._name("war-verify TEST TSA").public_bytes()
+    vec("ordering-true-ignored", "As omega-46 (+-1 s, one second apart) with ordering TRUE and the same TSA name on "
+        "both tokens.", W + ": ordering does not narrow the comparison",
+        timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120001Z", (1, None, None), (1, None, None),
+              ordering=True, tsa_name_der=name),
+        exp(criteria_committed_before_check="no", problem_codes=["CRITERIA_COMMITTED_AFTER_CHECK"]), old=exp())
+    vec("covering-token-lower-bound-before-issued", "issued_utc 12:00:07; criteria token 12:00:06 (no accuracy); "
+        "covering record token 12:00:10 +-5 s, so the record may have existed from 12:00:05.", "this verifier's "
+        "reading of 1.3 step 5 (not pinned by a published vector): the reference is taken at its earliest, "
+        "min(issued_utc, genTime - accuracy) = 12:00:05, so 12:00:06 is not earlier. A literal reading that "
+        "compares genTime 12:00:10 with issued_utc first and then ignores the token gives yes.",
+        timed("2026-06-01T12:00:07Z", "20260601120006Z", "20260601120010Z", None, (5, None, None)),
+        exp(criteria_committed_before_check="no", problem_codes=["CRITERIA_COMMITTED_AFTER_CHECK"]), old=exp())
+    i = copy.deepcopy(B)
+    R(i)["independence"] = "self-checked"
+    build.refresh(i)
+    vec("stated-self-checked-derived-independent", "independence self-checked; producer 'Example Vendor' with no "
+        "key, checker 'Example Checker': the parties block derives independent.", "1.3 step 8: 'a stated "
+        "`independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`'", i,
+        exp(independence="self-checked", problem_codes=["INDEPENDENCE_INCONSISTENT"], warning_codes=["SELF_CHECKED"]),
+        old=exp(independence="self-checked", warning_codes=["SELF_CHECKED"]))
+    i = copy.deepcopy(B)
+    R(i)["independence"] = "self-checked"
+    R(i)["parties"]["producer"] = {"key_id": None, "name": None}
+    build.refresh(i)
+    vec("stated-self-checked-no-producer", "independence self-checked; no producer named.", "1.3 step 8: "
+        "'`PRODUCER_UNDECLARED` follows the parties block (no producer named), whatever the record states; a stated "
+        "`independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`' (derived: undeclared, "
+        "as for vector 20)", i,
+        exp(independence="self-checked", problem_codes=["INDEPENDENCE_INCONSISTENT"],
+            warning_codes=["SELF_CHECKED", "PRODUCER_UNDECLARED"]),
+        old=exp(independence="self-checked", warning_codes=["SELF_CHECKED", "PRODUCER_UNDECLARED"]))
+
 
 def write():
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
         if f.endswith(".json"):
             os.remove(os.path.join(OUT, f))
-    for n, (name, desc, reading, inputs, expected, ext, raw) in enumerate(V, 1):
+    for n, (name, desc, reading, inputs, expected, ext, raw, old) in enumerate(V, 1):
         vname = "omega-%02d-%s" % (n, name)
         doc = build.vector(vname, desc, inputs, expected)
         doc["reading"] = reading
         if ext:
             doc["expected_extensions"] = ext
+        if old is not None:
+            doc["expected_1_2_1"] = old
         text = build.dumps(doc)
         if raw == "DUP_VERDICT":
             text = text.replace('"verdict": "pass"', '"verdict": "fail",\n     "verdict": "pass"', 1)

@@ -1,9 +1,14 @@
 {
- "agree": 24,
+ "agree": 25,
  "fields": 227,
- "fields_agree": 223,
+ "fields_agree": 225,
  "options": {
-  "key_id_source": "receipt"
+  "accuracy": "ignore",
+  "independence_rule": "stated-independent",
+  "key_id_agreement": "require",
+  "key_id_source": "envelope",
+  "key_rule": "refuse",
+  "reference_time": "covering-token"
  },
  "rows": [
   {
@@ -84,27 +89,10 @@
    "file": "fonti/upstream_f7d8984/vectors/11-required-criterion-fails.json"
   },
   {
-   "agree": false,
-   "disagreements": [
-    {
-     "agree": false,
-     "expected": [
-      "CHECKER_NOT_SIGNER"
-     ],
-     "field": "problem_codes",
-     "ours": [
-      "SIGNATURE_INVALID"
-     ]
-    },
-    {
-     "agree": false,
-     "expected": true,
-     "field": "signature_valid",
-     "ours": false
-    }
-   ],
+   "agree": true,
+   "disagreements": [],
    "fields": 9,
-   "fields_agree": 7,
+   "fields_agree": 9,
    "file": "fonti/tetsurohhori_4f6cf49/12-signer-is-not-the-checker.json"
   },
   {
@@ -221,5 +209,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
+ "set": "1.2.1",
  "total": 26
 }

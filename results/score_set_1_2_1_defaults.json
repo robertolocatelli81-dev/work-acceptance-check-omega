@@ -1,10 +1,8 @@
 {
- "agree": 26,
+ "agree": 24,
  "fields": 227,
- "fields_agree": 227,
- "options": {
-  "reference_time": "earlier"
- },
+ "fields_agree": 224,
+ "options": {},
  "rows": [
   {
    "agree": true,
@@ -84,10 +82,27 @@
    "file": "fonti/upstream_f7d8984/vectors/11-required-criterion-fails.json"
   },
   {
-   "agree": true,
-   "disagreements": [],
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": [
+      "CHECKER_NOT_SIGNER"
+     ],
+     "field": "problem_codes",
+     "ours": [
+      "SIGNATURE_INVALID"
+     ]
+    },
+    {
+     "agree": false,
+     "expected": true,
+     "field": "signature_valid",
+     "ours": false
+    }
+   ],
    "fields": 9,
-   "fields_agree": 9,
+   "fields_agree": 7,
    "file": "fonti/tetsurohhori_4f6cf49/12-signer-is-not-the-checker.json"
   },
   {
@@ -140,10 +155,19 @@
    "file": "fonti/tetsurohhori_4f6cf49/19-result-outside-vocabulary.json"
   },
   {
-   "agree": true,
-   "disagreements": [],
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": [],
+     "field": "problem_codes",
+     "ours": [
+      "INDEPENDENCE_INCONSISTENT"
+     ]
+    }
+   ],
    "fields": 9,
-   "fields_agree": 9,
+   "fields_agree": 8,
    "file": "fonti/tetsurohhori_4f6cf49/20-producer-undeclared.json"
   },
   {
@@ -189,5 +213,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
+ "set": "1.2.1",
  "total": 26
 }

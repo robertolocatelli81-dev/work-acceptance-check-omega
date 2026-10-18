@@ -74,11 +74,17 @@ class Blocks(unittest.TestCase):
         i["criteria_tsr_base64"] = None
         i["receipt"]["receipt"]["key_id"] = "omega-test-2"
         build.sign(i)
-        rep = wv.verify(copy.deepcopy(i), None, active_keys())
+        old = dict(wv.PROFILE_1_2_1)                       # this verifier's 1.2.1 reading: a local block only
+        rep = wv.verify(copy.deepcopy(i), old, active_keys())
         self.assertEqual(rep["local_blocks"], ["X_KEY_ID_SPLIT", "X_RECEIPT_KEY_ID_NOT_SIGNER"])
-        rep = wv.verify(copy.deepcopy(i), {"key_id_agreement": "ignore"}, active_keys())
+        self.assertTrue(rep["signature_valid"])
+        rep = wv.verify(copy.deepcopy(i), dict(old, key_id_agreement="ignore"), active_keys())
         self.assertEqual(rep["local_blocks"], [])
         self.assertIn("X_KEY_ID_SPLIT", rep["extension_codes"])
+        rep = wv.verify(copy.deepcopy(i), None, active_keys())    # 1.3: the signed receipt.key_id names the key
+        self.assertIs(rep["signature_valid"], False)
+        self.assertEqual(rep["problem_codes"], ["CHECKER_NOT_SIGNER", "SIGNATURE_INVALID"])
+        self.assertIn("X_KEY_ID_SPLIT", rep["local_blocks"])
 
     def test_files(self):
         i = build.base(token=False)
@@ -132,7 +138,8 @@ class Blocks(unittest.TestCase):
             wv.verify(v01(), {"tokens": "bogus"})
         rep = wv.verify(v01())
         self.assertNotIn("tsa_roots", rep["options"])
-        self.assertEqual(rep["options"]["key_id_agreement"], "require")
+        self.assertEqual(rep["options"]["key_id_agreement"], "signature-invalid")      # profile 1.3 default
+        self.assertEqual(rep["options"]["key_rule"], "signer")
 
     def test_keys_override_note(self):
         rep = wv.verify(v01(), None, json.loads(json.dumps(v01()["keys"])))

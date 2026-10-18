@@ -1,7 +1,20 @@
 {
- "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of README f7d8984",
- "description": "Criteria token 12:00:00 +-1 s, record token 12:00:01 +-1 s, no ordering flag. The profile's strict comparison says yes; RFC 3161 2.4.2 says these two tokens can be ordered only when the difference exceeds the sum of the accuracies.",
+ "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of profile 1.3 (README 42b4ed0); expected_1_2_1 (where present): its reading of 1.2.1 (README f7d8984)",
+ "description": "Criteria token 12:00:00 +-1 s, record token 12:00:01 +-1 s, no ordering flag. Under profile 1.2.1 the strict comparison against the covering token said yes; RFC 3161 2.4.2 says these two tokens can be ordered only when the difference exceeds the sum of the accuracies. issued_utc is 12:00:00.",
  "expected": {
+  "criteria_committed_before_check": "no",
+  "criteria_hash": "match",
+  "independence": "independent",
+  "problem_codes": [
+   "CRITERIA_COMMITTED_AFTER_CHECK"
+  ],
+  "receipt_timestamp": "imprint_match",
+  "signature_valid": true,
+  "verdict_recomputed": "pass",
+  "verdict_stated": "pass",
+  "warning_codes": []
+ },
+ "expected_1_2_1": {
   "criteria_committed_before_check": "yes",
   "criteria_hash": "match",
   "independence": "independent",
@@ -11,11 +24,6 @@
   "verdict_recomputed": "pass",
   "verdict_stated": "pass",
   "warning_codes": []
- },
- "expected_extensions": {
-  "include": [
-   "X_ORDER_NOT_PROVABLE_UNDER_ACCURACY"
-  ]
  },
  "inputs": {
   "criteria_file_base64": "eyJjcml0ZXJpYSI6W3siaWQiOiJjMSIsInJlcXVpcmVkIjp0cnVlLCJyZXF1aXJlbWVudCI6IlRoZSBmaXJzdCByZXF1aXJlbWVudC4iLCJ0aXRsZSI6IkZpcnN0IHJlcXVpcmVkIGNyaXRlcmlvbiJ9LHsiaWQiOiJjMiIsInJlcXVpcmVkIjp0cnVlLCJyZXF1aXJlbWVudCI6IlRoZSBzZWNvbmQgcmVxdWlyZW1lbnQuIiwidGl0bGUiOiJTZWNvbmQgcmVxdWlyZWQgY3JpdGVyaW9uIn0seyJpZCI6ImMzIiwicmVxdWlyZWQiOmZhbHNlLCJyZXF1aXJlbWVudCI6IkFuIG9wdGlvbmFsIHJlcXVpcmVtZW50LiIsInRpdGxlIjoiT3B0aW9uYWwgY3JpdGVyaW9uIn1dLCJjcml0ZXJpYV9zZXQiOiJleGFtcGxlLWNyaXRlcmlhIiwicmVzdWx0X3ZvY2FidWxhcnkiOlsicGFzcyIsImZhaWwiLCJub3QtZXZhbHVhdGVkIiwiZXJyb3IiXSwidGl0bGUiOiJFeGFtcGxlIGNyaXRlcmlhIGZvciB0ZXN0IHZlY3RvcnMiLCJ2ZXJzaW9uIjoiMSJ9",
@@ -136,7 +144,7 @@
   "receipt_tsr_base64": "MIGEMAMCAQAwfQYJKoZIhvcNAQcCoHAwbgIBAzEAMGcGCyqGSIb3DQEJEAEEoFgEVjBUAgEBBgMqAwQwMTANBglghkgBZQMEAgEFAAQg0z9LL6ERACEfbxOnxVRpxiwu8mFunqTwATj5WIFkQLYCAQcYDzIwMjYwNjAxMTIwMDAxWjADAgEB"
  },
  "license": "CC0-1.0",
- "reading": "step 5 'strictly earlier' (profile); RFC 3161 2.4.2 accuracy/ordering (not in the profile)",
+ "reading": "1.3 step 5: the reference is the earlier of issued_utc (12:00:00) and the covering token (12:00:01), and the criteria token's accuracy widens 12:00:00 to 12:00:01: not strictly earlier. Changed at 1.3: under 1.2.1 the reference was the covering token and accuracy was ignored (yes). The accuracy cases with a later issued_utc are omega-46 to omega-49.",
  "test_key": {
   "omega-test-1": {
    "private_seed_hex": "37ccef94c15a84981185191fcb7ebc5bfd1959aba341b929e0ec50414fdc8792",

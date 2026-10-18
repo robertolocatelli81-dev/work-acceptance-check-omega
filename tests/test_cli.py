@@ -42,9 +42,14 @@ class CLI(unittest.TestCase):
         self.assertEqual(run(os.path.join(V, "02-criteria-committed-after-issue.json"))[0], 1)
         self.assertEqual(run(os.path.join(T, "21-unknown-schema.json"))[0], 2)
         self.assertEqual(run("--vector", os.path.join(V, "01-valid.json"))[0], 0)
-        self.assertEqual(run("--vector", os.path.join(B, "22-matching-record-token-later-than-issued.json"))[0], 3)
-        self.assertEqual(run("--vector", "--reference-time", "earlier",
-                             os.path.join(B, "22-matching-record-token-later-than-issued.json"))[0], 0)
+        v22 = os.path.join(B, "22-matching-record-token-later-than-issued.json")
+        self.assertEqual(run("--vector", v22)[0], 0)                                   # 1.3 default: earlier-of
+        self.assertEqual(run("--vector", "--reference-time", "covering-token", v22)[0], 3)
+        self.assertEqual(run("--vector", "--profile", "1.2.1", v22)[0], 3)
+        self.assertEqual(run("--vector", "--profile", "1.2.1", "--reference-time", "earlier", v22)[0], 0)
+        self.assertEqual(run("--profile", "1.3", v22)[0], 64)
+        self.assertEqual(run("--profile", "1.2.1", "--profile", "1.2.1", v22)[0], 64)
+        self.assertEqual(run("--key-rule", "bogus", v22)[0], 64)
         self.assertEqual(run()[0], 64)
         self.assertEqual(run("--tokens", "pkix", os.path.join(V, "01-valid.json"))[0], 64)
         self.assertEqual(run("--bogus", os.path.join(V, "01-valid.json"))[0], 64)

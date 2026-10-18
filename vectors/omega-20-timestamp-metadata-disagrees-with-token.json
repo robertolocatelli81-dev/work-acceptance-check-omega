@@ -1,5 +1,5 @@
 {
- "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of README f7d8984",
+ "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of profile 1.3 (README 42b4ed0); expected_1_2_1 (where present): its reading of 1.2.1 (README f7d8984)",
  "description": "The unsigned envelope says the token covers other bytes; the token itself covers this receipt.",
  "expected": {
   "criteria_committed_before_check": "yes",

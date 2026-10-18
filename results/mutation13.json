@@ -1,0 +1,755 @@
+{
+ "what": "mutation spot-check on the lines of war_verify.py changed for profile 1.3 (git diff against 6ee8677; main() excluded); operators of tools/mutate.py",
+ "selection": "tools/mutate.py --only (site indices whose line is in a changed hunk)",
+ "pass1": {
+  "suites": [
+   "vectors13",
+   "selftest",
+   "newvectors",
+   "profile13",
+   "localblocks",
+   "options"
+  ],
+  "mutants": 72,
+  "killed": 67,
+  "survivors": [
+   144,
+   699,
+   925,
+   1046,
+   1081
+  ],
+  "rows": [
+   {
+    "k": 144,
+    "killed_by": [],
+    "error": null
+   },
+   {
+    "k": 147,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 149,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 150,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 151,
+    "killed_by": [
+     "profile13"
+    ],
+    "error": null
+   },
+   {
+    "k": 152,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 164,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 174,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 176,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 177,
+    "killed_by": [
+     "localblocks"
+    ],
+    "error": null
+   },
+   {
+    "k": 413,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 454,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 455,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 457,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 458,
+    "killed_by": [
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 459,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 460,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 462,
+    "killed_by": [
+     "profile13"
+    ],
+    "error": null
+   },
+   {
+    "k": 463,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 464,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 465,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 498,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 499,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 519,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 520,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 521,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 522,
+    "killed_by": [
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 527,
+    "killed_by": [
+     "localblocks"
+    ],
+    "error": null
+   },
+   {
+    "k": 698,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 699,
+    "killed_by": [],
+    "error": null
+   },
+   {
+    "k": 700,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 701,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 725,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 726,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 727,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 728,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 729,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 730,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 731,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 732,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 774,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 775,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 794,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 795,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 796,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 797,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 798,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 924,
+    "killed_by": [
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 925,
+    "killed_by": [],
+    "error": null
+   },
+   {
+    "k": 926,
+    "killed_by": [
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 927,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 928,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 962,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 963,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 964,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 965,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 966,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 967,
+    "killed_by": [
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 971,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 972,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 973,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 974,
+    "killed_by": [
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 975,
+    "killed_by": [
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1035,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1036,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1037,
+    "killed_by": [
+     "vectors13",
+     "selftest",
+     "newvectors",
+     "profile13",
+     "localblocks",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1039,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1040,
+    "killed_by": [
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1045,
+    "killed_by": [
+     "vectors13",
+     "newvectors",
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1046,
+    "killed_by": [],
+    "error": null
+   },
+   {
+    "k": 1080,
+    "killed_by": [
+     "profile13",
+     "options"
+    ],
+    "error": null
+   },
+   {
+    "k": 1081,
+    "killed_by": [],
+    "error": null
+   }
+  ],
+  "source_sha256_note": "war_verify.py did not change between the three passes (only tests/test_profile13.py did); after them only its module docstring changed"
+ },
+ "pass2": {
+  "suites": [
+   "vectors13",
+   "selftest",
+   "newvectors",
+   "profile13",
+   "localblocks",
+   "options",
+   "unittests"
+  ],
+  "rows": [
+   {
+    "k": 144,
+    "killed_by": [
+     "profile13"
+    ],
+    "error": null
+   },
+   {
+    "k": 699,
+    "killed_by": [],
+    "error": null
+   },
+   {
+    "k": 925,
+    "killed_by": [],
+    "error": null
+   },
+   {
+    "k": 1046,
+    "killed_by": [
+     "unittests"
+    ],
+    "error": null
+   },
+   {
+    "k": 1081,
+    "killed_by": [
+     "profile13"
+    ],
+    "error": null
+   }
+  ],
+  "note": "after two assertions were added to tests/test_profile13.py"
+ },
+ "pass3": {
+  "suites": [
+   "profile13"
+  ],
+  "rows": [
+   {
+    "k": 699,
+    "killed_by": [
+     "profile13"
+    ],
+    "error": null
+   },
+   {
+    "k": 925,
+    "killed_by": [
+     "profile13"
+    ],
+    "error": null
+   }
+  ],
+  "note": "after the 31-byte refusal reason was asserted exactly"
+ },
+ "war_verify_sha256_at_run": "d7046b9b1a26c70aa25c1a3a719da3dbea5854e19200ffcd21ccddab72fd560c"
+}

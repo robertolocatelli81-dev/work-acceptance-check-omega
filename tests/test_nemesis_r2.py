@@ -75,7 +75,8 @@ class Order(unittest.TestCase):
         build.criteria_token(inp, gen="20260601120005Z", ordering=True, tsa_name_der=name)
         build.sign(inp)
         build.record_token(inp, gen="20260601120005Z", ordering=True, tsa_name_der=name)
-        rep = wv.verify(copy.deepcopy(inp), dict(wv.DEFAULT_OPTIONS, accuracy="interval"))
+        # a 1.2.1-reading test (the covering token is the reference): run under --profile 1.2.1 + interval
+        rep = wv.verify(copy.deepcopy(inp), dict(wv.DEFAULT_OPTIONS, **dict(wv.PROFILE_1_2_1, accuracy="interval")))
         self.assertEqual(rep["criteria_committed_before_check"], "no")
         self.assertEqual(rep["details"]["ordering_provable_under_accuracy"], "no")
         self.assertIn("CRITERIA_COMMITTED_AFTER_CHECK", rep["problem_codes"])

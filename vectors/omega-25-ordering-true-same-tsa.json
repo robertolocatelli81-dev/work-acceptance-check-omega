@@ -1,7 +1,20 @@
 {
- "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of README f7d8984",
+ "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of profile 1.3 (README 42b4ed0); expected_1_2_1 (where present): its reading of 1.2.1 (README f7d8984)",
  "description": "Both tokens carry ordering TRUE and the same TSA name, one second apart.",
  "expected": {
+  "criteria_committed_before_check": "no",
+  "criteria_hash": "match",
+  "independence": "independent",
+  "problem_codes": [
+   "CRITERIA_COMMITTED_AFTER_CHECK"
+  ],
+  "receipt_timestamp": "imprint_match",
+  "signature_valid": true,
+  "verdict_recomputed": "pass",
+  "verdict_stated": "pass",
+  "warning_codes": []
+ },
+ "expected_1_2_1": {
   "criteria_committed_before_check": "yes",
   "criteria_hash": "match",
   "independence": "independent",
@@ -136,7 +149,7 @@
   "receipt_tsr_base64": "MIHHMAMCAQAwgb8GCSqGSIb3DQEHAqCBsTCBrgIBAzEAMIGmBgsqhkiG9w0BCRABBKCBlgSBkzCBkAIBAQYDKgMEMDEwDQYJYIZIAWUDBAIBBQAEINM/Sy+hEQAhH28Tp8VUacYsLvJhbp6k8AE4+ViBZEC2AgEHGA8yMDI2MDYwMTEyMDAwMVoBAf+gPKQ6MDgxGDAWBgNVBAoMD3dhci12ZXJpZnkgVEVTVDEcMBoGA1UEAwwTd2FyLXZlcmlmeSBURVNUIFRTQQ=="
  },
  "license": "CC0-1.0",
- "reading": "RFC 3161 2.4.2: with ordering TRUE, tokens from the same TSA can always be ordered",
+ "reading": "1.3 step 5: the reference is the earlier of issued_utc (12:00:00, equal to the criteria token) and the covering token; `ordering` is ignored: not strictly earlier. Changed at 1.3: under 1.2.1 the covering token was the reference (yes; RFC 3161 2.4.2 ordering).",
  "test_key": {
   "omega-test-1": {
    "private_seed_hex": "37ccef94c15a84981185191fcb7ebc5bfd1959aba341b929e0ec50414fdc8792",

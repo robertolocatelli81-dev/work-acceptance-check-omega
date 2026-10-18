@@ -6,7 +6,7 @@ lone surrogate               40       40           39                      0
 numbers                      24       24           18                      9
 DER / TSTInfo                41       41           36                     30
 Ed25519                       5        5            3                      3
-key_id confusion              7        7            2                      1
-time ties and grammar         9        9            4                      0
+key_id confusion              7        7            4                      2
+time ties and grammar        10       10            5                      1
 criteria bytes               10       10            1                      1
-TOTAL cases 596, ours meets expectation 596, lax caught 557, lax wrongly accepted-as-stated 414
+TOTAL cases 597, ours meets expectation 597, lax caught 560, lax wrongly accepted-as-stated 416

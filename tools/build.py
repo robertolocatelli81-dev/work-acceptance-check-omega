@@ -104,7 +104,8 @@ def vector(name, description, inputs, expected, kills=None, extra=None):
     d = {"vector": name, "title": name, "description": description, "inputs": inputs, "expected": expected,
          "license": "CC0-1.0", "warning": TEST_KEY_WARNING,
          "test_key": {k: {"private_seed_hex": v, "public_key_base64": pub_b64(k)} for k, v in SEEDS.items()},
-         "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of README f7d8984"}
+         "contributed_by": "war-verify-omega (Roberto Locatelli), CC0; expected = this verifier's reading of profile 1.3 "
+                           "(README 42b4ed0); expected_1_2_1 (where present): its reading of 1.2.1 (README f7d8984)"}
     if kills:
         d["kills"] = kills
     if extra:

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.2.1 (schema 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.3 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@f7d8984, the test vectors listed in
-README.md ("What was read"), and the RFCs it names. No other implementation of this profile was read.
+Written from the profile README at maximusrufus/work-acceptance-record@42b4ed0 (profile 1.3; 1.2.1 at f7d8984
+before it), the test vectors listed in README.md ("What was read"), and the RFCs it names. No other implementation
+of this profile was read. The 1.2.1 readings of version 0.1.0 are selectable with --profile 1.2.1.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason. Where a standard says what to do with something unknown (RFC 5280 4.2: a non-critical extension that is
@@ -15,8 +16,9 @@ Standard library + `cryptography` (Ed25519 arithmetic engine, X.509 certificate 
 Exit codes:  0  the record is accepted as stated (signature valid, no problem codes, commitment order decided)
                 AND no local block applies (report field "local_blocks"): the key file came from --keys, the
                 signing key is not a test key, every time-stamp token whose time was used was authenticated
-                (--tokens pkix), supplied files match the record, and receipt.key_id agrees with
-                signature.key_id (--key-id-agreement require)
+                (--tokens pkix), supplied files match the record, no key in the key file is rejected, and
+                receipt.key_id agrees with signature.key_id (a profile code under 1.3, a local block under
+                --key-id-agreement require, not required under --key-id-agreement ignore)
              1  verified, but not accepted as stated (problem codes, invalid signature, order undetermined under
                 --accuracy interval) or a local block applies; the profile fields are still the profile's
              2  the input was refused (outside the grammar, unknown schema/canonicalization/suite, ...)
@@ -34,7 +36,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.1.0"
+VERSION = "war_verify 0.2.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature
@@ -50,7 +52,7 @@ CANONICALIZATION = "JCS-RFC8785"
 SUITE = {"digest": "sha-256", "signature": "Ed25519"}
 VOCAB = ("pass", "fail", "not-evaluated", "error")                       # README property 4
 PROBLEM_CODES = frozenset((                                               # README step 8, closed list
-    "SIGNATURE_INVALID", "CHECKER_NOT_SIGNER", "KEY_COLLISION", "INDEPENDENCE_INCONSISTENT", "RESULT_VOCABULARY",
+    "SIGNATURE_INVALID", "KEY_REJECTED", "CHECKER_NOT_SIGNER", "KEY_COLLISION", "INDEPENDENCE_INCONSISTENT", "RESULT_VOCABULARY",
     "VERDICT_MISMATCH", "CRITERIA_HASH_MISMATCH", "CRITERIA_RESULTS_MISMATCH", "CRITERIA_TIMESTAMP_MISMATCH",
     "CRITERIA_TIME_MISMATCH", "CRITERIA_COMMITTED_AFTER_CHECK"))
 WARNING_CODES = frozenset(("SELF_CHECKED", "PRODUCER_UNDECLARED", "CRITERIA_COMMITMENT_UNVERIFIED"))
@@ -71,15 +73,19 @@ HASH_OIDS = {"1.3.14.3.2.26": "sha1", "2.16.840.1.101.3.4.2.4": "sha224", OID_SH
              "2.16.840.1.101.3.4.2.10": "sha3-512"}
 
 DEFAULT_OPTIONS = {
-    # README step 2 "verify the Ed25519 signature with the key identified by `key_id`": `key_id` exists in the
-    # signature object (unsigned) and in the receipt (signed). envelope = signature.key_id; receipt = receipt.key_id.
-    "key_id_source": "envelope",
-    # README step 5 reference time: covering-token = profile 1.2.1 text; earlier = proposal of vector 22.
-    "reference_time": "covering-token",
+    # Defaults = profile 1.3 (maximusrufus/work-acceptance-record@42b4ed0). The 1.2.1 readings stay behind switches.
+    # Step 2 (1.3) "verify the Ed25519 signature with the key named by the signed `receipt.key_id`".
+    # receipt = receipt.key_id (1.3); envelope = signature.key_id (this verifier's 1.2.1 reading).
+    "key_id_source": "receipt",
+    # Step 5 (1.3) "the **earlier** of `issued_utc` and the genTime of the record's own token when a token covering
+    # the record is supplied, else `issued_utc`"; covering-token = the 1.2.1 text.
+    "reference_time": "earlier",
     # README step 5 "a criteria.committed_at that disagrees": truncate = equal at committed_at's own precision.
     "time_agreement": "truncate",
-    # TSTInfo accuracy/ordering (RFC 3161 2.4.2); the profile ignores them. interval = RFC 3161 ordering rule.
-    "accuracy": "ignore",
+    # Step 5 (1.3) "A token's stated `accuracy` widens its time against 'committed before'; a token stating none is
+    # taken at its genTime; `ordering` is ignored" = widen. ignore = 1.2.1 (accuracy not used); interval = RFC 3161
+    # 2.4.2 ordering rule with 'undetermined' when the order is not provable.
+    "accuracy": "widen",
     # structural = imprint and genTime only (profile text); pkix = full RFC 3161/5652/5280 TSA validation.
     "tokens": "structural",
     "tsa_roots": None,
@@ -91,16 +97,30 @@ DEFAULT_OPTIONS = {
     "ed25519": "strict",
     # CRITERIA_RESULTS_MISMATCH: ids-required = same ids, same `required`; strict = also the same titles.
     "correspondence": "ids-required",
-    # R7: step 2 names `key_id`, which exists signed (receipt) and unsigned (signature). require = the two must be
-    # equal for exit 0 (a local block otherwise); ignore = only reported.
-    "key_id_agreement": "require",
+    # Step 2 (1.3) "The envelope's `signature.key_id` must equal it, else `SIGNATURE_INVALID`" = signature-invalid.
+    # require = 1.2.1 reading of this verifier (profile fields unchanged, a local block for exit 0); ignore = noted.
+    "key_id_agreement": "signature-invalid",
+    # Step 2 (1.3) key rule: "the public key must be a canonical encoding (y < p) of a point of prime order; any other
+    # key ... is `KEY_REJECTED` and no signature check is run". signer = applied to the key named by receipt.key_id
+    # (other bad keys in the file: X_UNUSED_KEY_REJECTED, a local block); all-keys = any bad key in the key file is
+    # KEY_REJECTED; refuse = 1.2.1 behaviour of this verifier (the whole input refused, per --ed25519).
+    "key_rule": "signer",
+    # Step 8 (1.3) "a stated `independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`"
+    # = derived; stated-independent = 1.2.1 reading (only a stated `independent` with the same party).
+    "independence_rule": "derived",
 }
 OPTION_VALUES = {
     "key_id_source": ("envelope", "receipt"), "reference_time": ("covering-token", "earlier"),
-    "time_agreement": ("truncate", "exact"), "accuracy": ("ignore", "interval"), "tokens": ("structural", "pkix"),
+    "time_agreement": ("truncate", "exact"), "accuracy": ("widen", "ignore", "interval"),
+    "tokens": ("structural", "pkix"),
     "name_compare": ("exact", "normalized"), "unknown_fields": ("refuse", "report"), "ed25519": ("strict", "rfc8032"),
-    "correspondence": ("ids-required", "strict"), "key_id_agreement": ("require", "ignore"),
+    "correspondence": ("ids-required", "strict"),
+    "key_id_agreement": ("signature-invalid", "require", "ignore"), "key_rule": ("signer", "all-keys", "refuse"),
+    "independence_rule": ("derived", "stated-independent"),
 }
+# The profile 1.2.1 readings of this verifier (version 0.1.0), selectable together with --profile 1.2.1.
+PROFILE_1_2_1 = {"key_id_source": "envelope", "reference_time": "covering-token", "accuracy": "ignore",
+                 "key_id_agreement": "require", "key_rule": "refuse", "independence_rule": "stated-independent"}
 
 
 class Refusal(Exception):
@@ -1242,14 +1262,20 @@ def check_keyfile(ctx, kf):
         if "since" in k:
             _str(k["since"], p + ".since")
         pub = b64_strict(k["public_key_base64"], p + ".public_key_base64")
-        if len(pub) != 32:
-            raise Refusal("%s.public_key_base64 is not 32 bytes" % p)
-        cls = ed_point_class(pub)
-        if cls != "prime-order":
-            if ctx.opts["ed25519"] == "strict" or cls not in ("small-order", "mixed-order"):
-                raise Refusal("%s public key is %s" % (p, cls), kid)
-            ctx.notes.append("X_WEAK_KEY: %s is %s (accepted in --ed25519 rfc8032)" % (kid, cls))
-        table[kid] = {"pub": pub, "status": k["status"]}
+        rejected = None
+        if ctx.opts["key_rule"] == "refuse":            # 1.2.1 behaviour of this verifier
+            if len(pub) != 32:
+                raise Refusal("%s.public_key_base64 is not 32 bytes" % p)
+            cls = ed_point_class(pub)
+            if cls != "prime-order":
+                if ctx.opts["ed25519"] == "strict" or cls not in ("small-order", "mixed-order"):
+                    raise Refusal("%s public key is %s" % (p, cls), kid)
+                ctx.notes.append("X_WEAK_KEY: %s is %s (accepted in --ed25519 rfc8032)" % (kid, cls))
+        else:                                           # 1.3 key rule: a finding about the key list, not a refusal
+            cls = ed_point_class(pub) if len(pub) == 32 else "not 32 bytes"
+            if cls != "prime-order":
+                rejected = cls
+        table[kid] = {"pub": pub, "status": k["status"], "rejected": rejected}
     return table
 
 
@@ -1431,6 +1457,9 @@ def verify(inputs, options=None, keys_override=None):
         ctx.notes.append("X_KEY_ID_SPLIT: signature.key_id %r != receipt.key_id %r (README step 2 names `key_id`)"
                          % (sig["key_id"], r["key_id"]))
     entry = keytable.get(used_kid)
+    rejected_keys = sorted(k for k, v in keytable.items() if v.get("rejected"))
+    if rejected_keys:
+        details["rejected_keys"] = {k: keytable[k]["rejected"] for k in rejected_keys}
     details["key_source"] = ("--keys (supplied by the relying party)" if keys_override is not None
                              else "inputs.keys (travels with the record: not a trust anchor)")
     if keys_override is None:
@@ -1439,17 +1468,33 @@ def verify(inputs, options=None, keys_override=None):
         details["signer_key_status"] = entry["status"]
         if entry["status"] == "test":
             ext.add("X_TEST_KEY")
+    key_rejected = False
+    if opts["key_rule"] == "all-keys" and rejected_keys:
+        problems.add("KEY_REJECTED")
     if entry is None:
         sig_ok, why = False, "key_id %r not in the key file" % used_kid
+    elif entry.get("rejected"):                 # 1.3 step 2: "no signature check is run"
+        sig_ok, why, key_rejected = False, "KEY_REJECTED: key %r is %s" % (used_kid, entry["rejected"]), True
+        problems.add("KEY_REJECTED")
     else:
         try:
             sig_ok, why = ed25519_verify(entry["pub"], canon, sig_bytes, opts["ed25519"])
         except CannotRun as e:
             sig_ok, why = None, str(e)
             cannot.append("signature: %s" % e)
-    if sig_ok is False:
+    if opts["key_rule"] == "signer" and any(k != used_kid for k in rejected_keys):
+        ext.add("X_UNUSED_KEY_REJECTED")
+    if sig_ok is False and not key_rejected:
         problems.add("SIGNATURE_INVALID")
+    if sig_ok is False:
         details["signature_reason"] = why
+    if opts["key_id_agreement"] == "signature-invalid" and sig["key_id"] != r["key_id"]:
+        # 1.3 step 2: "The envelope's `signature.key_id` must equal it, else `SIGNATURE_INVALID`"
+        problems.add("SIGNATURE_INVALID")
+        details["signature_reason"] = ((why + "; ") if sig_ok is False else "") + \
+            "signature.key_id %r differs from the signed receipt.key_id %r" % (sig["key_id"], r["key_id"])
+        if sig_ok is True:
+            sig_ok = False
 
     # ---- step 3: delivered / original files (no problem code in the profile: extension codes only)
     files_out = {}
@@ -1579,8 +1624,30 @@ def verify(inputs, options=None, keys_override=None):
     details["commitment_time"] = fmt_instant(commit_time)
     details["reference_time"] = fmt_instant(ref_time)
     details["reference_source"] = ref_src
-    before = "yes" if commit_time < ref_time else "no"
-    order = _provable_order(commit_tst, covering if ref_src == "record token genTime" else None, commit_time,
+    if opts["accuracy"] == "widen":
+        # 1.3 step 5: "A token's stated `accuracy` widens its time against 'committed before'; a token stating none
+        # is taken at its genTime; `ordering` is ignored". The commitment is taken at its latest (genTime +
+        # accuracy) and the reference at its earliest: issued_utc, or a covering token's genTime - accuracy, whichever
+        # is earlier (with no stated accuracy this is exactly the earlier-of rule above).
+        acc_c = (commit_tst["accuracy"] or Fraction(0)) if commit_tst is not None else Fraction(0)
+        commit_hi = commit_time + acc_c
+        if covering is not None:
+            acc_r = covering["accuracy"] or Fraction(0)
+            lo_tok = covering["gen"]["instant"] - acc_r
+            if opts["reference_time"] == "earlier" and issued["instant"] < lo_tok:
+                ref_lo, ref_src = issued["instant"], "issued_utc (earlier than the covering token's earliest time)"
+            else:
+                ref_lo = lo_tok
+                ref_src = "record token genTime" + (" - accuracy" if acc_r else "")
+        else:
+            ref_lo = issued["instant"]
+        details["reference_source"] = ref_src
+        details["commitment_time_latest"] = fmt_instant(commit_hi)
+        details["reference_time_earliest"] = fmt_instant(ref_lo)
+        before = "yes" if commit_hi < ref_lo else "no"
+    else:
+        before = "yes" if commit_time < ref_time else "no"
+    order = _provable_order(commit_tst, covering if ref_src.startswith("record token") else None, commit_time,
                             ref_time)
     details["ordering_provable_under_accuracy"] = order
     if order != "yes" and before == "yes":
@@ -1619,13 +1686,20 @@ def verify(inputs, options=None, keys_override=None):
     cn = _norm_name(parties["checker"]["name"], opts["name_compare"])
     pn = _norm_name(parties["producer"]["name"], opts["name_compare"])
     same_name = cn is not None and pn is not None and cn == pn
-    if r["independence"] == "independent" and (same_name or collision):
+    pname = parties["producer"]["name"]
+    undeclared = (pname is None or pname.strip() == "") and pk is None
+    derived = "undeclared" if undeclared else ("self-checked" if (same_name or collision) else "independent")
+    details["independence_derived"] = derived
+    if opts["independence_rule"] == "derived":
+        # 1.3 step 8: "a stated `independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`"
+        if r["independence"] != derived:
+            problems.add("INDEPENDENCE_INCONSISTENT")
+    elif r["independence"] == "independent" and (same_name or collision):
         problems.add("INDEPENDENCE_INCONSISTENT")
     if opts["name_compare"] == "exact" and not same_name and cn is not None and pn is not None and \
             _norm_name(cn, "normalized") == _norm_name(pn, "normalized"):
         ext.add("X_NAMES_EQUAL_AFTER_NORMALIZATION")
-    pname = parties["producer"]["name"]
-    if (pname is None or pname.strip() == "") and pk is None:
+    if undeclared:                     # 1.3: "follows the parties block (no producer named), whatever the record states"
         warnings.add("PRODUCER_UNDECLARED")
 
     for n in ctx.notes:                                   # R11: every X_ note is also an extension code
@@ -1633,8 +1707,9 @@ def verify(inputs, options=None, keys_override=None):
             ext.add(n.split(":")[0])
     blocks = {"X_KEY_FROM_INPUT", "X_TEST_KEY", "X_TSA_NOT_VERIFIED", "X_FILE_NOT_IN_RECORD",
               "X_REMEDIATED_FILE_HASH_MISMATCH", "X_ORIGINAL_FILE_HASH_MISMATCH",
-              "X_REMEDIATED_FILE_BYTES_MISMATCH", "X_ORIGINAL_FILE_BYTES_MISMATCH", "X_WEAK_KEY"}
-    if opts["key_id_agreement"] == "require":
+              "X_REMEDIATED_FILE_BYTES_MISMATCH", "X_ORIGINAL_FILE_BYTES_MISMATCH", "X_WEAK_KEY",
+              "X_UNUSED_KEY_REJECTED"}
+    if opts["key_id_agreement"] in ("require", "signature-invalid"):
         blocks |= {"X_KEY_ID_SPLIT", "X_RECEIPT_KEY_ID_NOT_SIGNER"}
     local_blocks = sorted(ext & blocks)
     assert problems <= PROBLEM_CODES and warnings <= WARNING_CODES
@@ -1732,7 +1807,7 @@ def _correspondence(ctx, crit_bytes, results, mode):
 # ================================================================================================= CLI
 VECTOR_META = {"description", "expected", "inputs", "license", "spec", "title", "vector", "warning",
                "contributed_by", "expected_is", "source", "pins", "name", "test_key", "kills",
-               "expected_extensions", "reading"}
+               "expected_extensions", "reading", "difference", "expected_1_2_1"}
 COMPARED = ("criteria_committed_before_check", "criteria_hash", "independence", "problem_codes",
             "receipt_timestamp", "signature_valid", "verdict_recomputed", "verdict_stated", "warning_codes")
 
@@ -1799,19 +1874,26 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  --key-id-source envelope|receipt   (default envelope)
-  --reference-time covering-token|earlier   (default covering-token)
+  defaults follow profile 1.3 (maximusrufus/work-acceptance-record@42b4ed0)
+  --profile 1.2.1              this verifier's profile 1.2.1 readings (key-id-source envelope, reference-time
+                               covering-token, accuracy ignore, key-id-agreement require, key-rule refuse,
+                               independence-rule stated-independent); a switch given explicitly overrides it
+  --key-id-source receipt|envelope   (default receipt)
+  --reference-time earlier|covering-token   (default earlier)
   --time-agreement truncate|exact     (default truncate)
-  --accuracy ignore|interval          (default ignore)
+  --accuracy widen|ignore|interval    (default widen)
   --tokens structural|pkix            (default structural)
   --tsa-roots DIR_OR_FILE             (required with --tokens pkix)
   --name-compare exact|normalized     (default exact)
   --unknown-fields refuse|report      (default refuse)
   --ed25519 strict|rfc8032            (default strict)
   --correspondence ids-required|strict  (default ids-required)
-  --key-id-agreement require|ignore   (default require)
-  exit 0 needs: accepted as stated, --keys, no test key, tokens authenticated (--tokens pkix) when their time is
-  used, supplied files matching, receipt.key_id == signature.key_id; otherwise 1 with "local_blocks" listed
+  --key-id-agreement signature-invalid|require|ignore   (default signature-invalid)
+  --key-rule signer|all-keys|refuse   (default signer)
+  --independence-rule derived|stated-independent   (default derived)
+  exit 0 needs: accepted as stated, --keys, no test key, no rejected key in the key file, tokens authenticated
+  (--tokens pkix) when their time is used, supplied files matching, receipt.key_id == signature.key_id (unless
+  --key-id-agreement ignore); otherwise 1 with "local_blocks" listed
 """
 
 
@@ -1825,11 +1907,18 @@ def main(argv):
                "--time-agreement": "time_agreement", "--accuracy": "accuracy", "--tokens": "tokens",
                "--tsa-roots": "tsa_roots", "--name-compare": "name_compare", "--unknown-fields": "unknown_fields",
                "--ed25519": "ed25519", "--correspondence": "correspondence",
-               "--key-id-agreement": "key_id_agreement"}
+               "--key-id-agreement": "key_id_agreement", "--key-rule": "key_rule",
+               "--independence-rule": "independence_rule"}
+    profile = None
     while args:
         a = args.pop(0)
         if a == "--vector":
             vector_mode = True
+        elif a == "--profile" and args:
+            if profile is not None or args[0] != "1.2.1":
+                sys.stderr.write("--profile takes 1.2.1, once\n")
+                return 64
+            profile = args.pop(0)
         elif a == "--keys" and args:
             if keyfile is not None or args[0] == "":          # R2: never fall back silently
                 sys.stderr.write("--keys given twice or empty\n")
@@ -1855,6 +1944,8 @@ def main(argv):
         if k != "tsa_roots" and v not in OPTION_VALUES[k]:
             sys.stderr.write("bad value %r for %s\n" % (v, k))
             return 64
+    if profile == "1.2.1":
+        opts = dict(PROFILE_1_2_1, **opts)
     if opts.get("tokens") == "pkix" and not opts.get("tsa_roots"):
         sys.stderr.write("--tokens pkix needs --tsa-roots\n")
         return 64

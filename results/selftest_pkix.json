@@ -66,6 +66,7 @@
   "details": {
    "canonical_receipt_sha256": "4c7273afcdb5333586b0a41c4238a968f3dedc23f66f71c5a1928ff3d279ab3d",
    "commitment_time": "2026-10-18T00:52:03Z",
+   "commitment_time_latest": "2026-10-18T00:52:03Z",
    "criteria_token_genTime": "20261018005203Z",
    "criteria_token_tsa": {
     "chain": [
@@ -78,6 +79,7 @@
     "signer_subject": "ST=Bayern,C=DE,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@mailbox.org,CN=www.freetsa.org,2.5.4.13=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services,OU=TSA,O=Free TSA",
     "status": "valid"
    },
+   "independence_derived": "independent",
    "key_source": "inputs.keys (travels with the record: not a trust anchor)",
    "ordering_provable_under_accuracy": "yes",
    "record_token_genTime": "20261018005209Z",
@@ -94,6 +96,7 @@
    },
    "reference_source": "record token genTime",
    "reference_time": "2026-10-18T00:52:09Z",
+   "reference_time_earliest": "2026-10-18T00:52:09Z",
    "signer_key_status": "active",
    "token_authentication": {
     "criteria_token": "valid",
@@ -122,13 +125,15 @@
    "criteria document member criteria[2].requirement not interpreted"
   ],
   "options": {
-   "accuracy": "ignore",
+   "accuracy": "widen",
    "correspondence": "ids-required",
    "ed25519": "strict",
-   "key_id_agreement": "require",
-   "key_id_source": "envelope",
+   "independence_rule": "derived",
+   "key_id_agreement": "signature-invalid",
+   "key_id_source": "receipt",
+   "key_rule": "signer",
    "name_compare": "exact",
-   "reference_time": "covering-token",
+   "reference_time": "earlier",
    "time_agreement": "truncate",
    "tokens": "pkix",
    "unknown_fields": "refuse"
@@ -141,5 +146,5 @@
   "verdict_stated": "pass",
   "warning_codes": []
  },
- "verifier": "war_verify 0.1.0"
+ "verifier": "war_verify 0.2.0"
 }

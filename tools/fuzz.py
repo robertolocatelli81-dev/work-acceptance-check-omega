@@ -207,10 +207,14 @@ def fam_ed25519(base):
     inp["receipt"]["signature"]["key_id"] = "forge"
     inp["receipt"]["signature"]["value"] = base64.b64encode(ident + bytes(32)).decode()
     build.record_token(inp)
-    yield "identity public key + (R=identity, S=0) forgery", {"inputs": inp}, REF
+    # profile 1.3 step 2 key rule: "any other key ... is `KEY_REJECTED` and no signature check is run"
+    yield "identity public key + (R=identity, S=0) forgery", {"inputs": inp}, \
+        {"signature_valid": False, "problem_codes": ["KEY_REJECTED"]}
     inp = copy.deepcopy(base)
     inp["keys"]["keys"][1]["public_key_base64"] = base64.b64encode((1 + P).to_bytes(32, "little")).decode()
-    yield "non-canonical public key (y = 1 + p) in the key file", {"inputs": inp}, REF
+    # 1.3: the key rule applies to the key named by receipt.key_id; an unused bad entry is a local block only
+    yield "non-canonical public key (y = 1 + p) in the key file", {"inputs": inp}, \
+        {"signature_valid": True, "problem_codes": [], "local_blocks_include": "X_UNUSED_KEY_REJECTED"}
     inp = copy.deepcopy(base)
     sig = base64.b64decode(inp["receipt"]["signature"]["value"])
     S = int.from_bytes(sig[32:], "little") + wv._L
@@ -222,7 +226,8 @@ def fam_ed25519(base):
     T8 = wv.ed_decode(y8.to_bytes(32, "little"))
     inp = copy.deepcopy(base)
     inp["keys"]["keys"][1]["public_key_base64"] = base64.b64encode(wv._encode_point(wv._padd(A, T8))).decode()
-    yield "mixed-order public key in the key file", {"inputs": inp}, REF
+    yield "mixed-order public key in the key file", {"inputs": inp}, \
+        {"signature_valid": True, "problem_codes": [], "local_blocks_include": "X_UNUSED_KEY_REJECTED"}
     inp = copy.deepcopy(base)
     inp["receipt"]["signature"]["value"] = base64.b64encode(sig[:63]).decode()
     yield "63-byte signature", {"inputs": inp}, {"signature_valid": False, "problem_codes": ["SIGNATURE_INVALID"]}
@@ -240,12 +245,14 @@ def fam_keyid(base):
         inp["receipt"]["signature"]["key_id"] = sig_kid
         build.refresh(inp, sign_with=signer or sig_kid)
         return {"inputs": inp}
+    # 1.3 step 2: the key is the one the signed receipt.key_id names; "The envelope's `signature.key_id` must equal
+    # it, else `SIGNATURE_INVALID`"; "whether that key is `parties.checker.key_id` is a separate check"
     yield "sig=k2 receipt=k1 checker=k1 (vector 12 shape)", mk("omega-test-2", "omega-test-1", "omega-test-1"), \
-        {"signature_valid": True, "problem_codes": ["CHECKER_NOT_SIGNER"]}
+        {"signature_valid": False, "problem_codes": ["SIGNATURE_INVALID"]}
     yield "sig=k2 receipt=k2 checker=k1", mk("omega-test-2", "omega-test-2", "omega-test-1"), \
         {"signature_valid": True, "problem_codes": ["CHECKER_NOT_SIGNER"]}
     yield "sig=k1 receipt=k2 checker=k1 (receipt names another key)", mk("omega-test-1", "omega-test-2", "omega-test-1"), \
-        {"signature_valid": True, "problem_codes": []}
+        {"signature_valid": False, "problem_codes": ["SIGNATURE_INVALID", "CHECKER_NOT_SIGNER"]}
     yield "checker key_id null", mk("omega-test-1", "omega-test-1", None), \
         {"signature_valid": True, "problem_codes": ["CHECKER_NOT_SIGNER"]}
     yield "signature key_id not in key file", mk("omega-test-9", "omega-test-1", "omega-test-1", signer="omega-test-1"), \
@@ -280,7 +287,9 @@ def fam_time(base):
     no = {"criteria_committed_before_check": "no"}
     yes = {"criteria_committed_before_check": "yes"}
     yield "criteria genTime == record genTime", mk("2026-06-01T12:00:05Z", "2026-06-01T12:00:00Z", "20260601120005Z", "20260601120005Z"), no
-    yield "criteria genTime 1 microsecond before record genTime", mk("2026-06-01T12:00:04.999999Z", "2026-06-01T12:00:00Z", "20260601120004.999999Z", "20260601120005Z"), yes
+    # 1.3 step 5: reference = the earlier of issued_utc and the covering token; issued_utc 12:00:06 keeps the token
+    yield "criteria genTime 1 microsecond before record genTime", mk("2026-06-01T12:00:04.999999Z", "2026-06-01T12:00:06Z", "20260601120004.999999Z", "20260601120005Z"), yes
+    yield "criteria before record genTime, after issued_utc (earlier-of)", mk("2026-06-01T12:00:04.999999Z", "2026-06-01T12:00:00Z", "20260601120004.999999Z", "20260601120005Z"), no
     yield "criteria genTime 0.5 s after a seconds-precision issued_utc", mk("2026-06-01T12:00:00Z", "2026-06-01T12:00:00Z", "20260601120000.5Z"), no
     yield "committed_at == issued_utc, no tokens", mk("2026-06-01T12:00:00Z", "2026-06-01T12:00:00Z"), dict(no, warning_codes=["CRITERIA_COMMITMENT_UNVERIFIED"])
     yield "committed_at 1 microsecond before issued_utc, no tokens", mk("2026-06-01T11:59:59.999999Z", "2026-06-01T12:00:00Z"), dict(yes, warning_codes=["CRITERIA_COMMITMENT_UNVERIFIED"])
@@ -345,6 +354,10 @@ def meets(rep, exp):
     if rep.get("refused") or rep.get("crashed"):
         return False
     for k, v in exp.items():
+        if k == "local_blocks_include":
+            if v not in (rep.get("local_blocks") or []):
+                return False
+            continue
         mine = rep.get(k)
         if isinstance(v, list):
             if not isinstance(mine, list) or set(mine) != set(v):

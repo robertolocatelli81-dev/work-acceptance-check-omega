@@ -9238,33 +9238,44 @@
  },
  {
   "case": "identity public key + (R=identity, S=0) forgery",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [
+    "KEY_REJECTED"
+   ],
+   "signature_valid": false
+  },
   "family": "Ed25519",
   "lax_accepted_as_stated": true,
   "lax_ok": false,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "keys.keys[2] public key is small-order",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "KEY_REJECTED"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "non-canonical public key (y = 1 + p) in the key file",
-  "expected": "refused",
+  "expected": {
+   "local_blocks_include": "X_UNUSED_KEY_REJECTED",
+   "problem_codes": [],
+   "signature_valid": true
+  },
   "family": "Ed25519",
   "lax_accepted_as_stated": true,
   "lax_ok": false,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "keys.keys[1] public key is non-canonical encoding (y >= p)",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
@@ -9293,17 +9304,21 @@
  },
  {
   "case": "mixed-order public key in the key file",
-  "expected": "refused",
+  "expected": {
+   "local_blocks_include": "X_UNUSED_KEY_REJECTED",
+   "problem_codes": [],
+   "signature_valid": true
+  },
   "family": "Ed25519",
   "lax_accepted_as_stated": true,
   "lax_ok": false,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "keys.keys[1] public key is mixed-order",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
@@ -9334,21 +9349,21 @@
   "case": "sig=k2 receipt=k1 checker=k1 (vector 12 shape)",
   "expected": {
    "problem_codes": [
-    "CHECKER_NOT_SIGNER"
+    "SIGNATURE_INVALID"
    ],
-   "signature_valid": true
+   "signature_valid": false
   },
   "family": "key_id confusion",
   "lax_accepted_as_stated": false,
-  "lax_ok": true,
+  "lax_ok": false,
   "ours": {
    "criteria_committed_before_check": "yes",
    "problem_codes": [
-    "CHECKER_NOT_SIGNER"
+    "SIGNATURE_INVALID"
    ],
    "reason": null,
    "refused": null,
-   "signature_valid": true,
+   "signature_valid": false,
    "warning_codes": []
   },
   "ours_ok": true
@@ -9379,18 +9394,24 @@
  {
   "case": "sig=k1 receipt=k2 checker=k1 (receipt names another key)",
   "expected": {
-   "problem_codes": [],
-   "signature_valid": true
+   "problem_codes": [
+    "SIGNATURE_INVALID",
+    "CHECKER_NOT_SIGNER"
+   ],
+   "signature_valid": false
   },
   "family": "key_id confusion",
   "lax_accepted_as_stated": true,
-  "lax_ok": true,
+  "lax_ok": false,
   "ours": {
    "criteria_committed_before_check": "yes",
-   "problem_codes": [],
+   "problem_codes": [
+    "CHECKER_NOT_SIGNER",
+    "SIGNATURE_INVALID"
+   ],
    "reason": null,
    "refused": null,
-   "signature_valid": true,
+   "signature_valid": false,
    "warning_codes": []
   },
   "ours_ok": true
@@ -9429,7 +9450,6 @@
   "ours": {
    "criteria_committed_before_check": "yes",
    "problem_codes": [
-    "CHECKER_NOT_SIGNER",
     "SIGNATURE_INVALID"
    ],
    "reason": null,
@@ -9522,6 +9542,26 @@
   "ours": {
    "criteria_committed_before_check": "yes",
    "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "criteria before record genTime, after issued_utc (earlier-of)",
+  "expected": {
+   "criteria_committed_before_check": "no"
+  },
+  "family": "time ties and grammar",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "no",
+   "problem_codes": [
+    "CRITERIA_COMMITTED_AFTER_CHECK"
+   ],
    "reason": null,
    "refused": null,
    "signature_valid": true,

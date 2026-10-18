@@ -163,8 +163,8 @@
  {
   "agree": true,
   "disagreements": [],
-  "fields": 11,
-  "fields_agree": 11,
+  "fields": 9,
+  "fields_agree": 9,
   "file": "vectors/omega-24-ordering-not-provable-under-accuracy.json"
  },
  {
@@ -184,22 +184,22 @@
  {
   "agree": true,
   "disagreements": [],
-  "fields": 1,
-  "fields_agree": 1,
+  "fields": 9,
+  "fields_agree": 9,
   "file": "vectors/omega-27-identity-key-universal-forgery.json"
  },
  {
   "agree": true,
   "disagreements": [],
-  "fields": 1,
-  "fields_agree": 1,
+  "fields": 11,
+  "fields_agree": 11,
   "file": "vectors/omega-28-mixed-order-key-in-key-file.json"
  },
  {
   "agree": true,
   "disagreements": [],
-  "fields": 1,
-  "fields_agree": 1,
+  "fields": 11,
+  "fields_agree": 11,
   "file": "vectors/omega-29-non-canonical-key-encoding.json"
  },
  {
@@ -299,5 +299,68 @@
   "fields": 1,
   "fields_agree": 1,
   "file": "vectors/omega-43-lone-surrogate-in-finding.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 11,
+  "fields_agree": 11,
+  "file": "vectors/omega-44-envelope-key-id-differs.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-45-signer-key-mixed-order.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-46-accuracy-widens-to-no.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-47-accuracy-apart-enough.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-48-no-accuracy-taken-at-gentime.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-49-ordering-true-ignored.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-50-covering-token-lower-bound-before-issued.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-51-stated-self-checked-derived-independent.json"
+ },
+ {
+  "agree": true,
+  "disagreements": [],
+  "fields": 9,
+  "fields_agree": 9,
+  "file": "vectors/omega-52-stated-self-checked-no-producer.json"
  }
 ]

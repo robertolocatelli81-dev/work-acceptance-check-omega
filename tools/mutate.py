@@ -102,6 +102,8 @@ def suite_docs(name):
         f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_f7d8984/vectors/*.json")))
         f += sorted(glob.glob(os.path.join(ROOT, "fonti/tetsurohhori_4f6cf49/[0-9]*.json")))
         f += sorted(glob.glob(os.path.join(ROOT, "fonti/babyblueviper1_431525f/*.json")))
+    elif name == "vectors13":                       # profile 1.3, maximusrufus/work-acceptance-record@42b4ed0
+        f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_42b4ed0/vectors/*.json")))
     elif name == "selftest":
         f = [os.path.join(ROOT, "fonti/issuer_274159c/selftest-pass.json")]
     elif name == "newvectors":
@@ -113,7 +115,10 @@ def suite_docs(name):
 
 OPTION_SETS = [{"reference_time": "earlier"}, {"key_id_source": "receipt"}, {"time_agreement": "exact"},
                {"accuracy": "interval"}, {"name_compare": "normalized"}, {"correspondence": "strict"},
-               {"ed25519": "rfc8032"}, {"unknown_fields": "report"}, {"key_id_agreement": "ignore"}]
+               {"ed25519": "rfc8032"}, {"unknown_fields": "report"}, {"key_id_agreement": "ignore"},
+               {"key_rule": "all-keys"}, {"key_id_agreement": "require", "key_id_source": "envelope",
+               "reference_time": "covering-token", "accuracy": "ignore", "key_rule": "refuse",
+               "independence_rule": "stated-independent"}]
 
 
 def outcome_options(mod):
@@ -199,6 +204,8 @@ def evaluate(k, suites, baseline):
                 got = outcome_options(mod)
             elif s == "localblocks":
                 got = outcome_unittests(mod, ("test_local_blocks",))
+            elif s == "profile13":
+                got = outcome_unittests(mod, ("test_profile13",))
             elif s == "nemesis":
                 got = outcome_nemesis(mod)
             else:
@@ -224,6 +231,8 @@ def baseline(suites):
             out[s] = outcome_options(mod)
         elif s == "localblocks":
             out[s] = outcome_unittests(mod, ("test_local_blocks",))
+        elif s == "profile13":
+            out[s] = outcome_unittests(mod, ("test_profile13",))
         elif s == "nemesis":
             out[s] = outcome_nemesis(mod)
         else:

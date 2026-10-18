@@ -9,9 +9,7 @@ fonti/upstream_f7d8984/vectors/08-receipt-token-over-another-receipt.json   AGRE
 fonti/upstream_f7d8984/vectors/09-stated-pass-recomputes-incomplete.json    AGREE    9/9
 fonti/upstream_f7d8984/vectors/10-committed-at-contradicts-token.json       AGREE    9/9
 fonti/upstream_f7d8984/vectors/11-required-criterion-fails.json             AGREE    9/9
-fonti/tetsurohhori_4f6cf49/12-signer-is-not-the-checker.json                DISAGREE 7/9
-      problem_codes: expected ["CHECKER_NOT_SIGNER"], ours ["SIGNATURE_INVALID"]
-      signature_valid: expected true, ours false
+fonti/tetsurohhori_4f6cf49/12-signer-is-not-the-checker.json                AGREE    9/9
 fonti/tetsurohhori_4f6cf49/13-independent-but-same-party.json               AGREE    9/9
 fonti/tetsurohhori_4f6cf49/14-results-not-in-criteria.json                  AGREE    9/9
 fonti/tetsurohhori_4f6cf49/15-criteria-token-over-other-bytes.json          AGREE    9/9
@@ -28,4 +26,4 @@ fonti/babyblueviper1_431525f/23-criteria-token-imprint-oid-sha384.json      AGRE
 fonti/tetsurohhori_8ff69f4/12b-signer-is-not-the-checker.json               AGREE    9/9
 fonti/tetsurohhori_8ff69f4/22-criteria-token-sha1-imprint.json              AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL documents 24/26 agree; fields 223/227; options {'key_id_source': 'receipt'}
+TOTAL set 1.2.1: documents 25/26 agree; fields 225/227; options {'key_id_source': 'envelope', 'reference_time': 'covering-token', 'accuracy': 'ignore', 'key_id_agreement': 'require', 'key_rule': 'refuse', 'independence_rule': 'stated-independent'}
