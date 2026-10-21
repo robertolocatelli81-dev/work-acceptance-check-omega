@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.1 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@eb0f30b (profile 1.4; 1.3 at 42b4ed0 and
-1.2.1 at f7d8984 before it), the test vectors listed in README.md ("What was read"), and the RFCs it names. No other
-implementation of this profile was read. The 1.2.1 readings of version 0.1.0 are selectable with --profile 1.2.1.
+Written from the profile README at maximusrufus/work-acceptance-record@06d3b94 (profile 1.4.1; 1.4 at eb0f30b, 1.3 at
+42b4ed0 and 1.2.1 at f7d8984 before it), the test vectors listed in README.md ("What was read"), and the RFCs it
+names. No other implementation of this profile was opened; an issue comment quoting parts of the reference verifier
+was read before 0.4.0 (README.md, "What was read"). The 1.2.1 readings of version 0.1.0 are selectable with
+--profile 1.2.1.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason. Where a standard says what to do with something unknown (RFC 5280 4.2: a non-critical extension that is
@@ -36,7 +38,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.3.0"
+VERSION = "war_verify 0.4.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -954,6 +956,25 @@ def load_roots(path):
     return roots
 
 
+# Profile 1.4.1 step 9: "RSA PKCS#1 v1.5 and ECDSA P-256/P-384 are required". Subject public key algorithms that can
+# carry those keys (RFC 3279 2.3.1 rsaEncryption, RFC 5480 2.1.1 id-ecPublicKey); any other algorithm is `unsupported`.
+KEY_ALGORITHMS = {"1.2.840.113549.1.1.1": "rsaEncryption", "1.2.840.10045.2.1": "id-ecPublicKey"}
+
+
+def _spki_algorithm(cert_der):
+    """Algorithm OID of a certificate's SubjectPublicKeyInfo (RFC 5280 4.1.2.7), read with this verifier's DER
+    parser."""
+    tbs = _expect(_expect(der_parse_one(cert_der, "Certificate"), 0x30, "Certificate").kids()[0], 0x30,
+                  "tbsCertificate").kids()
+    i = 6 if tbs and tbs[0].tag == 0xA0 else 5           # version [0] EXPLICIT is optional (RFC 5280 4.1)
+    if len(tbs) <= i:
+        raise Refusal("tbsCertificate has no subjectPublicKeyInfo")
+    spki = _expect(tbs[i], 0x30, "subjectPublicKeyInfo").kids()
+    if len(spki) != 2:
+        raise Refusal("subjectPublicKeyInfo must hold algorithm and subjectPublicKey")
+    return der_alg_id(spki[0], "subjectPublicKeyInfo.algorithm")[0]
+
+
 def _cert_time_ok(cert, t):
     nb = getattr(cert, "not_valid_before_utc", None) or cert.not_valid_before
     na = getattr(cert, "not_valid_after_utc", None) or cert.not_valid_after
@@ -1125,18 +1146,43 @@ def verify_tsa(token, roots):
             res["ess"] = "ESSCertIDv2" if ess[0] == "v2" else "ESSCertID"
         except (Refusal, IndexError) as e:
             bad("failed", "malformed signing-certificate attribute: %s" % getattr(e, "reason", e))
-    # signature over DER(SET OF signedAttrs) (RFC 5652 5.4)
+    # signature over DER(SET OF signedAttrs) (RFC 5652 5.4). Profile 1.4.1 step 9: "RSA PKCS#1 v1.5 and ECDSA
+    # P-256/P-384 are required, RSASSA-PSS is optional"; `unsupported` "e.g. a curve other than P-256/P-384". Closed
+    # list: only those two key types reach the signature check, anything else is `unsupported`.
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from cryptography.hazmat.primitives.serialization import Encoding
     signed_bytes = b"\x31" + sattrs_node.raw[1:]
+    # Closed list of key algorithms, read from the signer certificate's SubjectPublicKeyInfo by this verifier's own
+    # DER parser: an algorithm outside it (Ed25519 included) is `unsupported` on every cryptography version, before the
+    # engine is asked to load the key (cryptography >= 42 raises UnsupportedAlgorithm there, older versions ValueError).
+    pub = None
     try:
-        ok, why = _verify_sig(signer.public_key(), sig, signed_bytes, salg, dname)
-        if not ok:
-            bad("unsupported" if why.endswith(UNSUPPORTED_SUFFIX) else "failed", why)
-    except InvalidSignature:
-        bad("failed", "TSA signature over signedAttrs does not verify")
-    except UnsupportedAlgorithm as e:
-        bad("unsupported", "TSA signature check: %s %s" % (UNSUPPORTED_SUFFIX, e))
-    except Exception as e:  # malformed signature values, key/algorithm mismatches
-        bad("failed", "TSA signature check failed: %s" % e)
+        kalg = _spki_algorithm(signer.public_bytes(Encoding.DER))
+    except Refusal as e:
+        kalg = None
+        bad("failed", "signer SubjectPublicKeyInfo: %s" % e.reason)
+    if kalg is not None and kalg not in KEY_ALGORITHMS:
+        bad("unsupported", "TSA key algorithm %s: %s" % (kalg, UNSUPPORTED_SUFFIX))
+    elif kalg is not None:
+        try:
+            pub = signer.public_key()
+        except Exception as e:                   # a key under a listed algorithm that the engine cannot load
+            bad("failed", "TSA key does not parse: %s" % e)
+    if pub is None:
+        pass
+    elif isinstance(pub, ec.EllipticCurvePublicKey) and pub.curve.name not in ("secp256r1", "secp384r1"):
+        bad("unsupported", "ECDSA curve %s: %s" % (pub.curve.name, UNSUPPORTED_SUFFIX))
+    else:                                        # rsaEncryption or id-ecPublicKey on P-256/P-384: the listed set
+        try:
+            ok, why = _verify_sig(pub, sig, signed_bytes, salg, dname)
+            if not ok:
+                bad("unsupported" if why.endswith(UNSUPPORTED_SUFFIX) else "failed", why)
+        except InvalidSignature:
+            bad("failed", "TSA signature over signedAttrs does not verify")
+        except UnsupportedAlgorithm as e:
+            bad("unsupported", "TSA signature check: %s %s" % (UNSUPPORTED_SUFFIX, e))
+        except Exception as e:  # malformed signature values, key/algorithm mismatches
+            bad("failed", "TSA signature check failed: %s" % e)
     gen = token["tst"]["gen"]["instant"]
     # leaf: EKU (RFC 3161 2.3)
     try:
@@ -1161,8 +1207,9 @@ def verify_tsa(token, roots):
                 bad("failed", "TSTInfo.tsa does not name the signer's subject (RFC 3161 2.4.2)")
         except (Refusal, IndexError) as e:
             bad("failed", "TSTInfo.tsa: %s" % getattr(e, "reason", "malformed GeneralName"))
-    # path to a supplied root, every certificate valid at genTime (this verifier's choice of validation time,
-    # RFC 5280 6.1.1; RFC 3161 Appendix B item B.4 applies the same rule to the certificate of a time-stamped signer)
+    # path to a supplied root. Profile 1.4.1 step 9: "a chain of CA issuers reaching a supplied anchor, with the signer
+    # and every issuer other than the anchor valid at genTime", and "a chain that reaches the anchor but fails a check
+    # is `failed`"; no path to an anchor is `untrusted`. Issuer defects are collected and classed after the walk.
     root_ders = set()
     from cryptography.hazmat.primitives.serialization import Encoding
     for r in roots:
@@ -1171,13 +1218,15 @@ def verify_tsa(token, roots):
     chain = [signer]
     cur = signer
     anchored = False
+    issuer_defects = []
+    if not _cert_time_ok(signer, gen):           # the signer, even when it is itself a supplied anchor
+        bad("failed", "certificate %s not valid at genTime" % signer.subject.rfc4514_string())
     for _ in range(8):
-        if not _cert_time_ok(cur, gen):
-            bad("failed" if cur is signer else "untrusted",
-                "certificate %s not valid at genTime" % cur.subject.rfc4514_string())
         if cur.public_bytes(Encoding.DER) in root_ders:
             anchored = True
             break
+        if cur is not signer and not _cert_time_ok(cur, gen):
+            issuer_defects.append("certificate %s not valid at genTime" % cur.subject.rfc4514_string())
         parent = None
         for c in pool:
             if c.subject.public_bytes() == cur.issuer.public_bytes() and c is not cur:
@@ -1193,17 +1242,19 @@ def verify_tsa(token, roots):
         try:
             bc = parent.extensions.get_extension_for_oid(ExtensionOID.BASIC_CONSTRAINTS).value
             if not bc.ca:
-                bad("untrusted", "issuer %s is not a CA" % parent.subject.rfc4514_string())
+                issuer_defects.append("issuer %s is not a CA" % parent.subject.rfc4514_string())
         except x509.ExtensionNotFound:
-            bad("untrusted", "issuer %s has no basicConstraints" % parent.subject.rfc4514_string())
+            issuer_defects.append("issuer %s has no basicConstraints" % parent.subject.rfc4514_string())
         try:
             pku = parent.extensions.get_extension_for_oid(ExtensionOID.KEY_USAGE).value
             if not pku.key_cert_sign:
-                bad("untrusted", "issuer %s keyUsage lacks keyCertSign" % parent.subject.rfc4514_string())
+                issuer_defects.append("issuer %s keyUsage lacks keyCertSign" % parent.subject.rfc4514_string())
         except x509.ExtensionNotFound:
             pass
         chain.append(parent)
         cur = parent
+    for msg in issuer_defects:
+        bad("failed" if anchored else "untrusted", msg)
     if not anchored:
         bad("untrusted", "no path from the signer certificate to a supplied root")
     res["chain"] = [c.subject.rfc4514_string() for c in chain]
@@ -1215,9 +1266,11 @@ def verify_tsa(token, roots):
 # ======================================================================================== input grammar
 INPUT_MEMBERS = {"criteria_file_base64", "criteria_tsr_base64", "keys", "receipt", "receipt_tsr_base64",
                  "delivered_file_base64", "original_file_base64", "tsa_roots_base64"}
-# Profile 1.4 step 9: "With anchors it is `verified` ..., `failed`, `untrusted`, `unsupported` (e.g. RSASSA-PSS) or
-# `no_signer`"; without relying-party anchors `not_evaluated`. The text gives no order between the values when one
-# token has several defects; --tsa-precedence picks one (see tsa_outcome).
+# Profile 1.4 step 9: "With anchors it is `verified` ..., `failed`, `untrusted`, `unsupported` ... or `no_signer`";
+# without relying-party anchors (none supplied, or an empty list) `not_evaluated`. Profile 1.4.1 settles several
+# defects: "`failed` if any check that can run fails; otherwise `no_signer`, then `unsupported`, then `untrusted`"
+# (failed-first, the default). evaluability-first is the order reported for 1.4 by another verifier, kept for
+# comparison only.
 TSA_VALUES = ("verified", "failed", "untrusted", "unsupported", "no_signer", "not_evaluated")
 TSA_PRECEDENCE = {"failed-first": ("failed", "no_signer", "unsupported", "untrusted"),
                   "evaluability-first": ("no_signer", "unsupported", "failed", "untrusted")}
@@ -1263,7 +1316,15 @@ TS_NONE = {"reason", "status"}
 RECEIPT_REQUIRED = {"canonicalization", "client_ref", "criteria", "files", "human_review", "independence",
                     "issued_utc", "issuer", "key_id", "notice", "parties", "receipt_id", "results", "revision",
                     "schema", "suite", "tools", "verdict"}
-RECEIPT_OPTIONAL = set()
+RECEIPT_OPTIONAL = {"payment"}
+# Profile 1.4.1 (added at 06d3b94, outcome-neutral): optional body member `payment` = {protocol: "x402",
+# scheme: "exact", network: "eip155:<chain id>", asset, payer, pay_to, amount, nonce} (optionally settlement_tx). The text gives the
+# members, not their types: read here as non-empty strings (vector 47); anything else is refused. `network` is read as a
+# CAIP-2 chain id in the eip155 namespace (x402 v2 networks are CAIP-2): the EIP-155 chain id in decimal, no leading
+# zeros, 1 to 32 digits (CAIP-2 bounds the reference to 32 characters), so one chain has one spelling.
+PAYMENT_REQUIRED = {"protocol", "scheme", "network", "asset", "payer", "pay_to", "amount", "nonce"}
+PAYMENT_OPTIONAL = {"settlement_tx"}
+_EIP155 = re.compile(r"\Aeip155:[1-9][0-9]{0,31}\Z")
 CRITERIA_MEMBERS = {"commitment", "committed_at", "id", "sha256", "version"}
 FILE_REQUIRED = {"bytes", "name", "sha256"}
 FILE_OPTIONAL = {"pages"}
@@ -1411,6 +1472,16 @@ def check_receipt_grammar(ctx, r):
     _str(t["profile"], "receipt.tools.profile")
     _str(t["validator"], "receipt.tools.validator")
     _str(r["verdict"], "receipt.verdict")
+    if "payment" in r:
+        pm = r["payment"]
+        ctx.members(pm, "receipt.payment", PAYMENT_REQUIRED, PAYMENT_OPTIONAL)
+        for m in sorted((PAYMENT_REQUIRED | PAYMENT_OPTIONAL) & set(pm)):
+            _str(pm[m], "receipt.payment." + m, nonempty=True)
+        if pm["protocol"] != "x402" or pm["scheme"] != "exact":
+            raise Refusal("receipt.payment %r/%r is not implemented (only x402/exact)" % (pm["protocol"], pm["scheme"]))
+        if not _EIP155.match(pm["network"]):
+            raise Refusal("receipt.payment.network %r is not eip155:<chain id>" % (pm["network"],))
+        ctx.notes.append("receipt.payment present: grammar checked; not checked against a chain (outcome-neutral)")
 
 
 def check_step1(r):
@@ -1917,7 +1988,7 @@ def _correspondence(ctx, crit_bytes, results, mode):
 # ================================================================================================= CLI
 VECTOR_META = {"description", "expected", "inputs", "license", "spec", "title", "vector", "warning",
                "contributed_by", "expected_is", "source", "pins", "name", "test_key", "kills",
-               "expected_extensions", "reading", "difference", "expected_1_2_1"}
+               "expected_extensions", "reading", "difference", "expected_1_2_1", "tsa_signature_accepted"}
 COMPARED = ("criteria_committed_before_check", "criteria_hash", "independence", "problem_codes",
             "receipt_timestamp", "signature_valid", "verdict_recomputed", "verdict_stated", "warning_codes")
 
@@ -1937,7 +2008,8 @@ def run_vector(doc, options=None, keys_override=None):
         rep = verify(inputs, options, keys_override)
     except Refusal as e:
         rep = {"refused": True, "reason": e.reason, "reason_detail": e.detail}
-    cmp_ = compare(rep, doc.get("expected")) if isinstance(doc.get("expected"), dict) else None
+    accepted = tsa_accepted(doc.get("tsa_signature_accepted")) if isinstance(doc, dict) and "inputs" in doc else {}
+    cmp_ = compare(rep, doc.get("expected"), accepted) if isinstance(doc.get("expected"), dict) else None
     ee = doc.get("expected_extensions")
     if cmp_ is not None and isinstance(ee, dict):     # this verifier's own (non-profile) codes, new vectors only
         have = set(rep.get("extension_codes", []))
@@ -1965,7 +2037,22 @@ def run_vector_bytes(raw, options=None, keys_override=None, module_json=json):
     return run_vector(doc, options, keys_override)
 
 
-def compare(rep, exp):
+def tsa_accepted(v):
+    """Profile 1.4.1 vector member `tsa_signature_accepted` (vector 40): per token, further values that also conform.
+    Absent = none. Closed grammar: an object with keys criteria/receipt, each a non-empty array of distinct values."""
+    if v is None:
+        return {}
+    if not isinstance(v, dict) or not v or set(v) - {"criteria", "receipt"}:
+        raise Refusal("tsa_signature_accepted is not an object with keys criteria and/or receipt")
+    for t, vals in v.items():
+        if not isinstance(vals, list) or not vals or len(set(map(repr, vals))) != len(vals) \
+                or any(not isinstance(x, str) or x not in TSA_VALUES for x in vals):
+            raise Refusal("tsa_signature_accepted.%s is not a non-empty array of distinct step-9 values" % t)
+    return v
+
+
+def compare(rep, exp, accepted=None):
+    accepted = accepted or {}
     rows = []
     for k in sorted(exp):
         mine = rep.get(k, "<absent>")
@@ -1979,7 +2066,8 @@ def compare(rep, exp):
             mine = rep.get("tsa_signature", {}) if not rep.get("refused") else "<absent>"
             ok = isinstance(theirs, dict) and isinstance(mine, dict) and set(theirs) <= {"criteria", "receipt"} \
                 and all(theirs[t] in TSA_VALUES for t in theirs) \
-                and all(mine.get(t, "not_evaluated") == theirs[t] for t in theirs) \
+                and all(mine.get(t, "not_evaluated") == theirs[t] or mine.get(t, "not_evaluated") in accepted.get(t, ())
+                        for t in theirs) \
                 and all(mine[t] == "not_evaluated" for t in set(mine) - set(theirs))
         else:
             ok = mine == theirs and type(mine) == type(theirs)
@@ -1991,7 +2079,7 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  defaults follow profile 1.4 (maximusrufus/work-acceptance-record@eb0f30b; steps 1-8 as in 1.3)
+  defaults follow profile 1.4.1 (maximusrufus/work-acceptance-record@06d3b94; steps 1-8 as in 1.3)
   --profile 1.2.1              this verifier's profile 1.2.1 readings (key-id-source envelope, reference-time
                                covering-token, accuracy ignore, key-id-agreement require, key-rule refuse,
                                independence-rule stated-independent); a switch given explicitly overrides it

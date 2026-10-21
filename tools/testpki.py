@@ -6,7 +6,7 @@ import hashlib
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import ec, padding, rsa
+from cryptography.hazmat.primitives.asymmetric import ec, ed25519, padding, rsa
 from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 
 
@@ -161,7 +161,13 @@ def make_intermediate(root, cn="war-verify TEST intermediate", nb="2020010100000
 def make_tsa(ca, cn="war-verify TEST TSA", nb="20200101000000Z", na="20400101000000Z", eku=("ts",),
              eku_critical=True, ca_flag=False, key_type="ec"):
     ca_key, ca_cert = ca
-    key = rsa.generate_private_key(65537, 2048) if key_type == "rsa" else ec.generate_private_key(ec.SECP256R1())
+    if key_type == "rsa":
+        key = rsa.generate_private_key(65537, 2048)
+    elif key_type == "ed25519":
+        key = ed25519.Ed25519PrivateKey.generate()
+    else:
+        curves = {"ec": ec.SECP256R1(), "ec-p384": ec.SECP384R1(), "ec-p521": ec.SECP521R1()}
+        key = ec.generate_private_key(curves[key_type])
     b = (x509.CertificateBuilder().subject_name(_name(cn)).issuer_name(ca_cert.subject).public_key(key.public_key())
          .serial_number(x509.random_serial_number()).not_valid_before(_dt(nb)).not_valid_after(_dt(na))
          .add_extension(x509.BasicConstraints(ca=ca_flag, path_length=None), critical=True)
@@ -196,6 +202,8 @@ def signed_tsr(tst_der, tsa, ca_cert, ess="v2", md_override=None, flip_sig=False
     k = sign_key or key
     if sig_alg == "ecdsa-sha256":
         sig, salg = k.sign(sattrs, ec.ECDSA(hashes.SHA256())), seq(oid("1.2.840.10045.4.3.2"))
+    elif sig_alg == "ed25519":                  # RFC 8419: id-Ed25519, parameters absent
+        sig, salg = k.sign(sattrs), seq(oid("1.3.101.112"))
     elif sig_alg == "rsa-pkcs1-sha256":
         sig, salg = k.sign(sattrs, padding.PKCS1v15(), hashes.SHA256()), alg("1.2.840.113549.1.1.11")
     elif sig_alg == "rsa-pss-sha256":           # RFC 4055 RSASSA-PSS; parameters: SHA-256, MGF1-SHA-256, salt 32

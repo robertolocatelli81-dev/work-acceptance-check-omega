@@ -146,6 +146,30 @@ class NoUncaughtException(Base):
             with self.assertRaises(wv.CannotRun):
                 wv.load_roots(p)
 
+    def test_signer_with_an_unknown_key_algorithm_is_unsupported(self):
+        # the SubjectPublicKeyInfo algorithm OID is rewritten to one no engine knows: a value, never a traceback
+        # (0.4.0 as first written raised UnsupportedAlgorithm / ValueError here)
+        der = tp.der(self.tsa[1])
+        ecoid = bytes.fromhex("06072a8648ce3d0201")                     # id-ecPublicKey
+        self.assertEqual(der.count(ecoid), 1)
+        bogus = x509.load_der_x509_certificate(der.replace(ecoid, bytes.fromhex("06072a8648ce3d0209")))
+        tok = tp.signed_tsr(self.tst(), (self.tsa[0], bogus), self.root[1])
+        for prec in BOTH:
+            rep = wv.verify(self.doc(tok, [self.R]), {"tsa_precedence": prec})
+            self.assertEqual(rep["tsa_signature"]["criteria"], "unsupported", prec)
+            self.assertTrue(any("key algorithm 1.2.840.10045.2.9" in r
+                                for r in rep["details"]["criteria_token_tsa_signature"]["reasons"]), prec)
+
+    def test_signer_key_that_does_not_parse_is_failed(self):
+        # a listed algorithm (id-ecPublicKey) whose subjectPublicKey is not a point the engine can load
+        der = tp.der(self.tsa[1])
+        head = bytes.fromhex("03420004")                                 # BIT STRING, 65 bytes, uncompressed point
+        self.assertEqual(der.count(head), 1)
+        bogus = x509.load_der_x509_certificate(der.replace(head, bytes.fromhex("03420009")))
+        tok = tp.signed_tsr(self.tst(), (self.tsa[0], bogus), self.root[1])
+        self.assertEqual(self.criteria(tok, [self.R], "failed-first"), "failed")
+        self.assertIn(self.criteria(tok, [self.R], "evaluability-first"), ("failed", "no_signer"))
+
     def test_vector_anchors_keep_their_grammar_when_replaced_by_cli_roots(self):
         d = copy.deepcopy(self.v31["inputs"])
         d["tsa_roots_base64"] = 42
@@ -204,7 +228,8 @@ class ValueClasses(Base):
         finally:
             wv._verify_sig = orig
 
-    def test_issuer_without_keyCertSign_or_basicConstraints_is_untrusted(self):
+    def test_issuer_without_keyCertSign_or_basicConstraints_is_failed_when_anchored(self):
+        # 1.4.1: "a chain that reaches the anchor but fails a check is `failed`"; without the anchor, `untrusted`
         ku = x509.KeyUsage(True, False, False, False, False, False, False, False, False)     # digitalSignature only
         for name, inter in (("no keyCertSign", issuer_cert(self.root, "no keyCertSign", key_usage=ku)),
                             ("no basicConstraints", issuer_cert(self.root, "no basicConstraints",
@@ -212,7 +237,19 @@ class ValueClasses(Base):
             tok = tp.signed_tsr(self.tst(), tp.make_tsa(inter, cn="under " + name), self.root[1],
                                 certs=[inter[1], self.root[1]])
             for prec in BOTH:
-                self.assertEqual(self.criteria(tok, [self.R], prec), "untrusted", (name, prec))
+                self.assertEqual(self.criteria(tok, [self.R], prec), "failed", (name, prec))
+                self.assertEqual(self.criteria(tok, [b64(tp.der(self.other_root[1]))], prec), "untrusted", (name, prec))
+
+
+    def test_expired_signer_is_failed_also_when_no_chain_reaches_an_anchor(self):
+        # 1.4.1: "the signer ... valid at genTime" is a check that can run whatever the anchors: `failed`, not
+        # `untrusted`, when the only anchor is unrelated
+        tsa_expired = tp.make_tsa(self.root, cn="war-verify TEST TSA expired (nemesis 141)", na="20260101000000Z")
+        tok = tp.signed_tsr(self.tst(), tsa_expired, self.root[1])
+        for prec in BOTH:
+            self.assertEqual(self.criteria(tok, [b64(tp.der(self.other_root[1]))], prec), "failed", prec)
+            self.assertEqual(self.criteria(tok, [self.R], prec), "failed", prec)
+        self.assertEqual(self.criteria(tok, None), "not_evaluated")
 
 
 class Shape(Base):

@@ -55,6 +55,11 @@ class Built(unittest.TestCase):
         cls.tsa_under_inter = tp.make_tsa(cls.inter, cn="war-verify TEST TSA under intermediate")
         cls.tsa_under_expired = tp.make_tsa(cls.inter_expired, cn="war-verify TEST TSA under expired intermediate")
         cls.tsa_under_not_ca = tp.make_tsa(cls.inter_not_ca, cn="war-verify TEST TSA under non-CA")
+        cls.tsa_p384 = tp.make_tsa(cls.root, cn="war-verify TEST P-384 TSA", key_type="ec-p384")
+        cls.tsa_p521 = tp.make_tsa(cls.root, cn="war-verify TEST P-521 TSA", key_type="ec-p521")
+        cls.tsa_ed25519 = tp.make_tsa(cls.root, cn="war-verify TEST Ed25519 TSA", key_type="ed25519")
+        cls.root_expired = tp.make_ca("war-verify TEST root expired before genTime", na="20260101000000Z")
+        cls.tsa_under_expired_root = tp.make_tsa(cls.root_expired, cn="war-verify TEST TSA under expired root")
 
     def tst(self):
         return tp.tstinfo(self.digest, gen=GEN)
@@ -81,14 +86,30 @@ class Built(unittest.TestCase):
              "failed", "failed"),
             ("chain through an intermediate", tp.signed_tsr(t(), self.tsa_under_inter, r,
                                                             certs=[self.inter[1], r]), [r], "verified", "verified"),
+            # 1.4.1: "a chain that reaches the anchor but fails a check is `failed`" (vector 38)
             ("intermediate expired before genTime", tp.signed_tsr(t(), self.tsa_under_expired, r,
                                                                   certs=[self.inter_expired[1], r]), [r],
+             "failed", "failed"),
+            ("intermediate expired, chain not reaching the anchor", tp.signed_tsr(
+                t(), self.tsa_under_expired, r, certs=[self.inter_expired[1], r]), [self.other_root[1]],
              "untrusted", "untrusted"),
+            # 1.4.1: "the signer and every issuer other than the anchor valid at genTime"
+            ("anchor expired before genTime", tp.signed_tsr(t(), self.tsa_under_expired_root, self.root_expired[1]),
+             [self.root_expired[1]], "verified", "verified"),
+            ("signer certificate itself the anchor, expired", tp.signed_tsr(t(), self.tsa_expired, r),
+             [self.tsa_expired[1]], "failed", "failed"),
+            # 1.4.1: "RSA PKCS#1 v1.5 and ECDSA P-256/P-384 are required"; other curves `unsupported`
+            ("ECDSA P-384", tp.signed_tsr(t(), self.tsa_p384, r), [r], "verified", "verified"),
+            ("ECDSA P-521", tp.signed_tsr(t(), self.tsa_p521, r), [r], "unsupported", "unsupported"),
+            ("ECDSA P-521 and a wrong message-digest", tp.signed_tsr(t(), self.tsa_p521, r, md_override=bad_md),
+             [r], "failed", "unsupported"),
+            ("Ed25519 TSA key", tp.signed_tsr(t(), self.tsa_ed25519, r, sig_alg="ed25519"), [r],
+             "unsupported", "unsupported"),
             ("intermediate not in the token", tp.signed_tsr(t(), self.tsa_under_inter, r, certs=[r]), [r],
              "untrusted", "untrusted"),
             ("issuer without the CA flag", tp.signed_tsr(t(), self.tsa_under_not_ca, r,
                                                          certs=[self.inter_not_ca[1], r]), [r],
-             "untrusted", "untrusted"),
+             "failed", "failed"),
             ("root carried in the token, another anchor", tp.signed_tsr(t(), self.tsa, r), [self.other_root[1]],
              "untrusted", "untrusted"),
             ("certReq=false shape (no certificates)", tp.signed_tsr(t(), self.tsa, r, include_certs=False), [r],

@@ -1,11 +1,12 @@
-# war-verify: a clean-room verifier for work-acceptance records (profile 1.4)
+# war-verify: a clean-room verifier for work-acceptance records (profile 1.4.1)
 
-`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4 at
-maximusrufus/work-acceptance-record@eb0f30b, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
+`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.1 at
+maximusrufus/work-acceptance-record@06d3b94, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
 1.2.1) the way the profile README describes, and refuses anything it does not understand. The readings this
 verifier gave to profile 1.2.1 (version 0.1.0) are kept: `--profile 1.2.1` selects all of them, and each one has
 its own switch (see "Switches"). It was written from the profile README, the published test vectors and the RFCs it names, without
-reading any other implementation (see "What was read").
+opening any other implementation; an issue comment that quotes parts of the reference verifier was read before
+version 0.4.0 (see "What was read").
 
 Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 `LICENSE-APACHE`). The new vectors in `vectors/` are CC0, like the upstream vectors.
@@ -13,7 +14,7 @@ Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 Third-party inputs are **not included** in this repository. `python3 tools/fetch_sources.py` downloads them from the
 commits and URLs pinned in `SOURCES.json` into `fonti/` and `roots/`, and keeps a file only if its SHA-256 matches;
 the tests need them. Their licences are their authors': the profile README is CC BY 4.0
-(maximusrufus/work-acceptance-record), the upstream vectors (01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
+(maximusrufus/work-acceptance-record), the upstream vectors (01-47 at 06d3b94, 01-46 at 4daf721, 01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
 CC0-1.0, and the babyblueviper1
 vectors and the issuer files (`selftest-pass.json`, its README, `checker-keys-live.json`) state no licence. The
 issuer's key file is fetched from its live URL, so it can change: the script then reports a mismatch and does not
@@ -41,40 +42,62 @@ Profile steps 1-9, with the problem and warning codes of step 8:
 7. verdict recomputed from the results;
 8. independence: checker is the signer, key collision, self-check label, producer declared, and the stated
    `independence` against the one derived from the parties block;
-9. time-stamp authority signature (profile 1.4): with relying-party anchors (`inputs.tsa_roots_base64` in the
+9. time-stamp authority signature (profile 1.4.1): with relying-party anchors (`inputs.tsa_roots_base64` in the
    vectors, or `--tsa-roots`), `tsa_signature` has one key per token present (`criteria`, `receipt`) with the value
    `verified`, `failed`, `untrusted`, `unsupported` or `no_signer`; without anchors `not_evaluated`. It never changes
    another member. `--tokens pkix` in addition stops using the time of a token that is not `verified`
    (`details.token_authentication`, a local choice, see "Switches").
 
-How the values are assigned (the profile lists them without saying which one wins when a token has more than one
-defect):
+How the values are assigned:
 - `no_signer`: no SignerInfo, or no certificate in the token matches the SignerInfo's `sid` (certReq=false);
-- `unsupported`: a signature or digest algorithm this verifier does not implement (RSASSA-PSS included);
+- `unsupported`: a TSA key or signature algorithm outside the closed list this verifier implements, which is the
+  profile's required set: RSA PKCS#1 v1.5 and ECDSA on P-256 or P-384. RSASSA-PSS (optional in 1.4.1), other curves
+  (P-521 included), Ed25519 and other key types are `unsupported`; so is a digest algorithm outside SHA-1/SHA-2. The
+  key algorithm is read from the signer certificate's SubjectPublicKeyInfo by this verifier's own DER parser
+  (`rsaEncryption`, `id-ecPublicKey`), so an unknown one is `unsupported` on every `cryptography` version, before the
+  engine loads the key; a key under a listed algorithm that the engine cannot load is `failed`;
 - `failed`: anything else about the token itself: content-type or message-digest attribute, the signature over the
   signed attributes, the ESS signing-certificate binding, EKU (`id-kp-timeStamping` only, critical, RFC 3161 2.3),
   `TSTInfo.tsa` naming another subject, the signer certificate outside its validity at genTime, more than one
   SignerInfo;
-- `untrusted`: the token holds, but no chain of CA certificates (each signature verified, each valid at genTime,
-  basicConstraints CA, keyUsage keyCertSign when present) reaches a supplied anchor. A root carried in the token
-  is used only if the same certificate is supplied as an anchor.
+- chain: a chain of CA certificates (each signature verified, basicConstraints CA, keyUsage keyCertSign when
+  present, and every issuer other than the anchor valid at genTime) must reach a supplied anchor. An issuer that
+  fails one of these checks gives `failed` when the chain reaches the anchor (1.4.1, vector 38) and `untrusted`
+  when it does not. No path to a supplied anchor is `untrusted`. The anchor's own validity period is not checked;
+  the signer's is, even when the signer certificate is itself supplied as the anchor. A root carried in the token
+  is used only if the same certificate is supplied as an anchor. The anchor is reached by subject name and public
+  key (1.4.1 at d79a737: "matched by subject name and public key, RFC 5280 6.1.1, not by certificate bytes"): the
+  supplied anchors are issuer candidates in the walk and the walk stops at the first of them, so a cross-signed copy
+  of the anchor inside the token reaches it, and a certificate with the anchor's name but another key does not
+  (`tests/test_nemesis_141b.py`).
 - A certificate carried in the token whose DER or extensions do not parse (for example a duplicate extension) is
   not used: `failed`, and when it was the one named by the SignerInfo also `no_signer`. An anchor like that is
   refused in `inputs.tsa_roots_base64` and skipped by `--tsa-roots` (exit 74 when nothing readable is left). A
   `TSTInfo.tsa` that is not a directoryName holding a Name is `failed`.
-- When one token has defects of several classes, `--tsa-precedence failed-first` (default) reports `failed` over
-  `no_signer`, `unsupported` and `untrusted`, then `no_signer`, then `unsupported`; `evaluability-first` reports
-  `no_signer`, then `unsupported`, before `failed`. No published vector separates the two: both give 37/37.
-- An empty `tsa_roots_base64` array is read as "without relying-party anchors": `not_evaluated`, with a note.
+- When one token has defects of several classes, the value is `failed` if any check that can run fails, otherwise
+  `no_signer`, then `unsupported`, then `untrusted` (profile 1.4.1; `--tsa-precedence failed-first`, the default).
+  `evaluability-first` (`no_signer`, then `unsupported`, before `failed`) is the order another verifier reported for
+  1.4; it is kept for comparison and disagrees with vectors 44-46 by construction.
+- An empty `tsa_roots_base64` array is "without relying-party anchors": `not_evaluated`, with a note (1.4.1, 43).
+- Vector member `tsa_signature_accepted` (1.4.1, vector 40): per token, further values that also conform. Closed
+  grammar (keys `criteria`/`receipt`, each a non-empty array of distinct step-9 values), otherwise refusal.
 
 The output has the nine fields of the vectors' `expected` objects, plus `accepted_as_stated`, `extension_codes`
 (this verifier's own observations, prefixed `X_`, never mixed with the profile's codes), `notes` and `details`.
 
 ## What it does not check
 
-- Without anchors it does not verify the time-stamp authority's signature (profile 1.4 step 9: `not_evaluated`).
+- Without anchors it does not verify the time-stamp authority's signature (profile 1.4.1 step 9: `not_evaluated`).
   The tokens of vectors 01-30 are "imprint-and-time fixtures" with no SignerInfo: with anchors they read `no_signer`.
-- Revocation of TSA certificates (no CRL or OCSP is fetched).
+- Revocation of TSA or CA certificates: no CRL or OCSP is fetched (profile 1.4.1: "Revocation is not checked").
+- The optional `receipt.payment` member (1.4.1 at 06d3b94) against a chain: its grammar is checked and it is covered
+  by the signature like the rest of the body, but no settlement is looked up (the profile makes it outcome-neutral).
+  Grammar, this verifier's closed reading of the member list: exactly `protocol`, `scheme`, `network`, `asset`,
+  `payer`, `pay_to`, `amount`, `nonce` and optionally `settlement_tx`, each a non-empty string; `protocol` `x402`,
+  `scheme` `exact`, `network` `eip155:` followed by the EIP-155 chain id in decimal, without leading zeros, 1 to 32
+  digits (a CAIP-2 chain id in the eip155 namespace; x402 v2 networks are CAIP-2, which bounds the reference to 32
+  characters). The profile gives the members, not their types; anything else is refused, and the report carries a
+  note that the member was present.
 - OpenTimestamps proofs. The issuer README says its criteria commitment comes with an OpenTimestamps proof, but
   `selftest-pass.json` contains no OpenTimestamps data, so there was nothing to check.
 - Whether a criterion was judged correctly. A record states a checker's findings; this tool checks the record.
@@ -141,9 +164,9 @@ before this guard with 39.0.2: the chain step failed silently and 31, 32 and 34 
 `cryptography` package is the Ed25519 arithmetic engine and the X.509 parser for the TSA checks.
 Canonicalisation and the DER, CMS and TSTInfo parsers are written here.
 
-## Switches: profile 1.4 by default, the 1.2.1 readings kept
+## Switches: profile 1.4.1 by default, the 1.2.1 readings kept
 
-Defaults follow profile 1.4 (its steps 1-8 are those of 1.3). `--profile 1.2.1` selects every reading this verifier gave to 1.2.1 (the rows marked
+Defaults follow profile 1.4.1 (its steps 1-8 are those of 1.3). `--profile 1.2.1` selects every reading this verifier gave to 1.2.1 (the rows marked
 "1.2.1"); a switch given explicitly overrides it.
 
 | switch | default | alternative | sentence |
@@ -155,8 +178,8 @@ Defaults follow profile 1.4 (its steps 1-8 are those of 1.3). `--profile 1.2.1` 
 | `--accuracy` | `widen` | `ignore` (1.2.1), `interval` (RFC 3161 2.4.2 ordering rule, `undetermined` when not provable) | 1.3 step 5 "A token's stated `accuracy` widens its time against \"committed before\"; a token stating none is taken at its genTime; `ordering` is ignored" |
 | `--independence-rule` | `derived` | `stated-independent` (1.2.1: only a stated `independent` with the same party) | 1.3 step 8 "a stated `independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`" |
 | `--time-agreement` | `truncate`: `committed_at` agrees if it equals genTime cut to its own precision | `exact` | step 5 "a `criteria.committed_at` that disagrees is `CRITERIA_TIME_MISMATCH`" (unchanged in 1.3) |
-| `--tokens` | `structural` (imprint and genTime) | `pkix` (the time of a token that is not `verified` is not used) | 1.4 step 9 "The outcome fields cover imprint and time only"; `tsa_signature` "never changes any other outcome member" (so `pkix` is a local choice) |
-| `--tsa-precedence` | `failed-first` | `evaluability-first` | 1.4 step 9 lists `verified`, `failed`, `untrusted`, `unsupported`, `no_signer` without an order |
+| `--tokens` | `structural` (imprint and genTime) | `pkix` (the time of a token that is not `verified` is not used) | 1.4.1 step 9 "The outcome fields cover imprint and time only"; `tsa_signature` "never changes any other outcome member" (so `pkix` is a local choice) |
+| `--tsa-precedence` | `failed-first` | `evaluability-first` (the order reported for 1.4 by another verifier; not 1.4.1) | 1.4.1 step 9 "When a token has more than one defect, the value is `failed` if any check that can run fails; otherwise `no_signer`, then `unsupported`, then `untrusted`" |
 | `--name-compare` | `exact` | `normalized` (NFKC, casefold, collapsed spaces) | property 3 names parties; no equality rule |
 | `--unknown-fields` | `refuse` | `report` | profile silent |
 | `--ed25519` | `strict` (canonical R, R not of small order, S < L) | `rfc8032` (RFC 8032 5.1.7 only) | the key itself is governed by `--key-rule` |
@@ -209,6 +232,27 @@ Readings of 1.3 that no published vector pins (each has its own vector in `vecto
 Only these files; their URLs and SHA-256 values are in `SOURCES.json`. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- `fonti/upstream_d79a737/`: the profile 1.4.1 README as clarified for the anchor match (subject name and public
+  key) and vectors 48-49 (maximusrufus/work-acceptance-record@d79a737, committed 2026-10-21T16:45:33Z, fetched
+  2026-10-21 about 19:06 CEST). Vectors 01-47 of d79a737 have the blob ids of the 06d3b94 files (47/47, checked
+  through the GitHub contents API, not re-fetched). `verifier/` was not opened; babyblueviper1's step 9 run
+  (issuecomment-6321173684) and the profile author's reply (issuecomment-6321519766) were read;
+- `fonti/upstream_06d3b94/`: profile 1.4.1 README with the optional `payment` member, and vectors 01-47
+  (maximusrufus/work-acceptance-record@06d3b94, committed 2026-10-21T16:34:22Z, fetched 2026-10-21 about 18:45 CEST).
+  Vectors 01-46 are byte-identical to 4daf721. `verifier/check_payment.py` and `verifier/war_verify.py` were not
+  opened; the profile author's comment that announces the member (issuecomment-6321198568) and babyblueviper1's
+  request (issuecomment-6320718286) were read;
+- `fonti/upstream_4daf721/`: profile 1.4.1 README and vectors 01-46 (maximusrufus/work-acceptance-record@4daf721,
+  committed 2026-10-21T14:52:14Z, fetched 2026-10-21 about 17:20 CEST). Vectors 01-36 are byte-identical to eb0f30b.
+  `verifier/war_verify.py` was not opened;
+- the comments on x402-foundation/tsc#4 of 2026-10-21: the profile author's announcement of 1.4.1
+  (issuecomment-6319114209), magentixai (issuecomment-6316838063) and whawk46 (issuecomment-6313776392). The whawk46
+  comment quotes and describes parts of the reference verifier at eb0f30b (its time-stamp imprint and genTime
+  extraction, its number serialization, its independence and verdict checks, and the interface of its
+  authority-signature function: its two arguments, the wrapper it skips, and that it does not bind the imprint it
+  checks). It was read after 0.3.0 and before 0.4.0; the 0.4.0 changes are the step 9 rules of 1.4.1 (chain classes,
+  the closed list of TSA key algorithms) and the `tsa_signature_accepted` member: the comment says nothing about how
+  the reference classes chains or key types, and no quoted part was reproduced here;
 - `fonti/upstream_eb0f30b/`: profile 1.4 README and vectors 01-36 (maximusrufus/work-acceptance-record@eb0f30b,
   committed 2026-10-20T16:00:02Z, fetched 2026-10-21 about 04:15 CEST). Vectors 01-27 are byte-identical to 42b4ed0
   (`tests/test_vectors.py`), and each file matches its git blob id in the commit tree. The commit also changes
@@ -244,16 +288,83 @@ TSA certificates (in `roots/`, fetched from freetsa.org/files on 2026-10-18T06:1
 was fetched: the record contains no DigiCert token.
 
 The issuer README points to its own verifier (`war_check.py`). It was not opened, and no other verifier, builder or
-runner for this profile was opened. For the composition section only, this project's own x402 acceptance-record
+runner for this profile was opened (the parts of the reference verifier quoted in the whawk46 comment above were
+read in that comment only). For the composition section only, this project's own x402 acceptance-record
 checker was read and run. The vectors' own descriptions state their contributors' readings. On the points those
 descriptions decide, this verifier is not independent of them. The reading of each point is in "Switches" and in
 the `reading` field of the new vectors. Vectors 24 and 25 of 1.3 are listed in the profile README as "case from
 robertolocatelli81-dev", and the rulings comment says they "cover @robertolocatelli81-dev's omega-15 and omega-16",
 two vectors of this project: agreement on 24 and 25 is not independent evidence.
 
+## Results, profile 1.4.1 (measured 2026-10-21)
+
+Defaults: the 47 vectors of 06d3b94 and the live record (`tools/score.py`, `results/score_default.txt`): 48/48
+documents, 441/441 fields. Vectors 01-36 are byte-identical to eb0f30b and 01-46 to 4daf721 (`tests/test_vectors.py`).
+Vector 47 (a passing receipt whose signed body carries `payment`) agrees on its 9 fields. Vectors 48 and 49 of
+d79a737 (a signer without `id-kp-timeStamping`; an issuer without the CA flag) agree too, both `failed`, each on the
+rule its name states (`tests/test_nemesis_141b.py`); they are not in the scored set, which stays at 06d3b94. Vectors
+37-46, `tsa_signature` compared key by key:
+
+| vector | expected | ours |
+|---|---|---|
+| 37 test PKI: root, intermediate, TSA (control) | `verified` | `verified` |
+| 38 as 37, intermediate expired before genTime | `failed` | `failed` |
+| 39 signed `contentType` `id-ct-authData` | `failed` | `failed` |
+| 40 RSASSA-PSS | `verified`, `unsupported` accepted | `unsupported` |
+| 41 ECDSA P-256 | `verified` | `verified` |
+| 42 ECDSA P-521 | `unsupported` | `unsupported` |
+| 43 31's tokens, `tsa_roots_base64: []` | `not_evaluated` both | `not_evaluated` both |
+| 44 P-521 and a messageDigest that does not match | `failed` | `failed` |
+| 45 no certificates and a messageDigest that does not match | `failed` | `failed` |
+| 46 P-521 and an ESS hash that does not match | `failed` | `failed` |
+
+Positive controls:
+- version 0.3.0 run unchanged agrees on 43 of the 46 vectors: 38 `untrusted` (expected `failed`), 42 `verified`
+  (expected `unsupported`), and 40 refused for the unknown vector member `tsa_signature_accepted`;
+- our outcome with `tsa_signature` removed agrees on 36 and 43 (`not_evaluated`) and disagrees on the 14 others of
+  31-46;
+- a value accepted by `tsa_signature_accepted` for one token is not accepted for the other, and without the member
+  `unsupported` disagrees with 40;
+- a verifier that always answers "valid, pass, no codes" agrees only with vectors 30 and 47, whose expected outcome
+  is exactly that;
+- a problem code added to every `expected` is caught on all 48 documents;
+- the receipt grammar without `payment` refuses vector 47, and a `payment` edited after signing is
+  `SIGNATURE_INVALID` (`tests/test_payment141.py`).
+
+Each other value of each switch on the 48 documents (`results/score_*.txt`):
+
+| switch | documents agreeing | disagreeing vectors |
+|---|---|---|
+| `--reference-time covering-token` | 47/48 | 22 |
+| `--accuracy ignore` | 47/48 | 29 |
+| `--accuracy interval` | 22/48 | 26 vectors: `undetermined` where the tokens state no `accuracy` |
+| `--key-rule all-keys` | 47/48 | 28 |
+| `--key-rule refuse` | 45/48 | 26, 27, 28 |
+| `--independence-rule stated-independent` | 47/48 | 20 |
+| `--tsa-precedence evaluability-first` | 45/48 | 44, 45, 46 |
+| `--profile 1.2.1` | 42/48 | 20, 22, 26, 27, 28, 29 |
+| the switches not listed | 48/48 each | none |
+
+Cases the published vectors do not reach (`tests/test_tsa_signature14.py`, a throw-away TEST TSA built on vector
+31's record, under both precedences): ECDSA P-256 and P-384 and RSA PKCS#1 v1.5 `verified`; RSASSA-PSS, ECDSA P-521
+and an Ed25519 TSA key `unsupported`; a chain through an intermediate CA `verified`; an anchor expired before genTime
+`verified` (only issuers other than the anchor must be valid then); an intermediate expired at genTime or without
+the CA flag, and an issuer without keyCertSign or without basicConstraints, `failed` when the chain reaches the
+anchor; the expired intermediate and the issuer without keyCertSign or basicConstraints `untrusted` under another
+anchor; intermediate missing from the token `untrusted`; a cross-signed copy of the anchor inside the token, or the
+cross-signed copy supplied as the anchor, `verified`, the anchor's name with another key `untrusted`
+(`tests/test_nemesis_141b.py`); signer certificate expired at genTime (also when it is itself the anchor), EKU serverAuth, ESS
+absent or over another certificate, a message-digest over other bytes `failed`; a token without SignerInfo (the
+shape of 01-30) `no_signer`. For every case, every other outcome member is the same as without anchors. Three cases
+separate the precedences: RSASSA-PSS or P-521 with a wrong message-digest (`failed` / `unsupported`) and no
+certificates with a wrong message-digest (`failed` / `no_signer`).
+
 ## Results, profile 1.4 (measured 2026-10-21)
 
-Defaults: the 36 vectors of eb0f30b and the live record (`tools/score.py`, `results/score_default.txt`): 37/37
+Measured with 0.3.0; `results/` now holds the 1.4.1 runs. Version 0.4.0 still gives 37/37 documents and
+332/332 fields on this set (`--set 1.4`, `results/score_set_1_4.txt`).
+
+The 36 vectors of eb0f30b and the live record: 37/37
 documents, 332/332 fields. 31-36 compared on `tsa_signature` key by key, an absent key read as `not_evaluated`:
 
 | vector | `tsa_signature` (ours = expected) |
@@ -271,7 +382,7 @@ Same result with `--tsa-precedence evaluability-first`. Positive controls: versi
 values of each key of 31-36 written into `expected` is detected (55/55, `tests/test_tsa_signature14.py`). A verifier that always answers "valid,
 pass, no codes" agrees with one document of 37: vector 30, whose expected outcome is exactly that.
 
-Each other value of each switch on the 37 documents (`results/score_*.txt`):
+Each other value of each switch on the 37 documents (0.3.0):
 
 | switch | documents agreeing | disagreeing vectors |
 |---|---|---|
@@ -283,15 +394,6 @@ Each other value of each switch on the 37 documents (`results/score_*.txt`):
 | `--independence-rule stated-independent` | 36/37 | 20 |
 | `--profile 1.2.1` | 31/37 | 20, 22, 26, 27, 28, 29 |
 | `--tsa-precedence evaluability-first` and the switches not listed | 37/37 each | none |
-
-Cases the published vectors do not reach (`tests/test_tsa_signature14.py`, a throw-away TEST TSA built on vector
-31's record, under both precedences): ECDSA P-256 and RSA PKCS#1 v1.5 `verified`; RSASSA-PSS `unsupported`; a chain
-through an intermediate CA `verified`; intermediate expired at genTime, missing from the token or without the CA flag
-`untrusted`; signer certificate expired at genTime, EKU serverAuth, ESS absent or over another certificate, a
-message-digest over other bytes `failed`; a token without SignerInfo (the shape of 01-30) `no_signer`. For every
-case, every other outcome member is the same as without anchors. Two cases separate the precedences: RSASSA-PSS with
-a wrong message-digest (`failed` / `unsupported`) and no certificates with a wrong message-digest (`failed` /
-`no_signer`).
 
 ## Results, profile 1.3 (measured 2026-10-18)
 
@@ -443,17 +545,23 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 103 tests
+python3 -B -m unittest discover -s tests          # 126 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
 
-Measured on 2026-10-21: 103/103 pass on Python 3.9.25, 3.11.2 and 3.13.15 with `cryptography` 50.0.2, and on 3.11.2
-with `cryptography` 40.0.0. With 39.0.2 every test that reaches a TSA check fails by design, 28 of 103, each on the
-check that cannot run (exit 74, `CannotRun`); the other 75 pass. Every test file has its positive control:
-- the scoring bench fails an accept-always verifier (0/28 on 1.3; on 1.4 only vector 30, see above);
-- 21 targeted mutants of the 0.3.0 changes (value classes, precedence, anchors, comparison, the "never changes
-  another member" rule, the chain API guard) are each caught by at least one test (21/21, `tools/mutate14.py`,
-  which exits non-zero on a survivor or on a mutant whose pattern no longer applies); a second run of 24 mutants
+Measured on 2026-10-21 (0.4.0): 126/126 pass on Python 3.9.25, 3.11.2 and 3.13.15 with `cryptography` 50.0.2, and on
+3.11.2 with `cryptography` 40.0.0. With 39.0.2, 39 of 126 fail by design and the other 87 pass: each failing test
+expects a TSA value or check and gets the check that cannot run instead. On the 1.4.1 set with 39.0.2, the 14
+documents with anchors all report `cannot_run` (exit 74 for 31, 38 and 42, measured) and every `tsa_signature`
+value is `not_evaluated`; none is an evaluated value. Every test file has its positive control:
+- the scoring bench fails an accept-always verifier (0/28 on 1.3; on 1.4 only vector 30, on 1.4.1 only 30 and 47,
+  see above);
+- 38 targeted mutants of the 0.3.0 and 0.4.0 changes (value classes, chain classes with and without the anchor,
+  the anchor's exemption from the genTime check, the signer's own check whatever the anchors, the closed list of TSA
+  key algorithms read from the certificate, precedence, anchors, `tsa_signature_accepted`, comparison, the "never
+  changes another member" rule, the chain API guard, the anchor among the issuer candidates, the `payment` grammar)
+  are each caught by at least one test (38/38, `tools/mutate14.py`, which exits non-zero on a survivor or on a mutant whose
+  pattern no longer applies). For 0.3.0, a second run of 24 mutants
   on the same lines by the review of 0.3.0 left 2 equivalent ones (the `anchors is roots` reuse of the pkix result
   and the narrowed `except` behind the chain API guard: 0 differences over 235 runs, a control mutant 7) and
   the tests of `tests/test_nemesis_14.py` for the rest; 4 of its 14 tests fail on the 0.3.0 code as first written
