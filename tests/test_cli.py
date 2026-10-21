@@ -38,7 +38,11 @@ class CLI(unittest.TestCase):
                              os.path.join(live, "selftest-pass.json"))[0], 0)
         self.assertEqual(run("--keys", "", os.path.join(V, "01-valid.json"))[0], 64)
         self.assertEqual(run("--tokens", "structural", "--tokens", "structural", os.path.join(V, "01-valid.json"))[0], 64)
-        self.assertEqual(run("--tsa-roots", "roots", os.path.join(V, "01-valid.json"))[0], 64)
+        # 0.3.0: --tsa-roots alone supplies relying-party anchors for profile 1.4 `tsa_signature`; the vector tokens
+        # carry no SignerInfo, so both read no_signer, and the run is the ordinary exit 1 of 01 (local blocks)
+        rc, out = run("--tsa-roots", "roots", os.path.join(V, "01-valid.json"))
+        self.assertEqual(rc, 1)
+        self.assertEqual(json.loads(out)["report"]["tsa_signature"], {"criteria": "no_signer", "receipt": "no_signer"})
         self.assertEqual(run(os.path.join(V, "02-criteria-committed-after-issue.json"))[0], 1)
         self.assertEqual(run(os.path.join(T, "21-unknown-schema.json"))[0], 2)
         self.assertEqual(run("--vector", os.path.join(V, "01-valid.json"))[0], 0)

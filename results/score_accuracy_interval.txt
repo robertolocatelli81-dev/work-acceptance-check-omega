@@ -1,46 +1,64 @@
-fonti/upstream_42b4ed0/vectors/01-valid.json                                DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/01-valid.json                                DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/02-criteria-committed-after-issue.json       AGREE    9/9
-fonti/upstream_42b4ed0/vectors/03-self-checked.json                         DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/02-criteria-committed-after-issue.json       AGREE    9/9
+fonti/upstream_eb0f30b/vectors/03-self-checked.json                         DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/04-required-not-evaluated.json               DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/04-required-not-evaluated.json               DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/05-checker-key-equals-producer-key.json      DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/05-checker-key-equals-producer-key.json      DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/06-receipt-edited-after-signing.json         DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/06-receipt-edited-after-signing.json         DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/07-criteria-file-swapped.json                DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/07-criteria-file-swapped.json                DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/08-receipt-token-over-another-receipt.json   DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/08-receipt-token-over-another-receipt.json   DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/09-stated-pass-recomputes-incomplete.json    DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/09-stated-pass-recomputes-incomplete.json    DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/10-committed-at-contradicts-token.json       AGREE    9/9
-fonti/upstream_42b4ed0/vectors/11-required-criterion-fails.json             DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/10-committed-at-contradicts-token.json       AGREE    9/9
+fonti/upstream_eb0f30b/vectors/11-required-criterion-fails.json             DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/12-signer-is-not-the-checker.json            DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/12-signer-is-not-the-checker.json            DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/13-independent-but-same-party.json           DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/13-independent-but-same-party.json           DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/14-results-not-in-criteria.json              DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/14-results-not-in-criteria.json              DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/15-criteria-token-over-other-bytes.json      AGREE    9/9
-fonti/upstream_42b4ed0/vectors/16-no-criteria-token.json                    AGREE    9/9
-fonti/upstream_42b4ed0/vectors/17-committed-at-equals-reference.json        AGREE    9/9
-fonti/upstream_42b4ed0/vectors/18-mismatching-record-token-later-time.json  AGREE    9/9
-fonti/upstream_42b4ed0/vectors/19-result-outside-vocabulary.json            DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/15-criteria-token-over-other-bytes.json      AGREE    9/9
+fonti/upstream_eb0f30b/vectors/16-no-criteria-token.json                    AGREE    9/9
+fonti/upstream_eb0f30b/vectors/17-committed-at-equals-reference.json        AGREE    9/9
+fonti/upstream_eb0f30b/vectors/18-mismatching-record-token-later-time.json  AGREE    9/9
+fonti/upstream_eb0f30b/vectors/19-result-outside-vocabulary.json            DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/20-producer-undeclared.json                  DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/20-producer-undeclared.json                  DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
       contributor's expectation (`difference`): DISAGREE; criteria_committed_before_check: expected "yes", ours "undetermined"; problem_codes: expected [], ours ["INDEPENDENCE_INCONSISTENT"]
-fonti/upstream_42b4ed0/vectors/21-unknown-schema.json                       AGREE    2/2
-fonti/upstream_42b4ed0/vectors/22-matching-record-token-later-than-issued.json AGREE    9/9
-fonti/upstream_42b4ed0/vectors/23-criteria-token-imprint-oid-sha384.json    AGREE    9/9
-fonti/upstream_42b4ed0/vectors/24-criteria-token-imprint-oid-sha3-256.json  AGREE    9/9
-fonti/upstream_42b4ed0/vectors/25-criteria-token-imprint-oid-sha512-256.json AGREE    9/9
-fonti/upstream_42b4ed0/vectors/26-key-small-order.json                      DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/21-unknown-schema.json                       AGREE    2/2
+fonti/upstream_eb0f30b/vectors/22-matching-record-token-later-than-issued.json AGREE    9/9
+fonti/upstream_eb0f30b/vectors/23-criteria-token-imprint-oid-sha384.json    AGREE    9/9
+fonti/upstream_eb0f30b/vectors/24-criteria-token-imprint-oid-sha3-256.json  AGREE    9/9
+fonti/upstream_eb0f30b/vectors/25-criteria-token-imprint-oid-sha512-256.json AGREE    9/9
+fonti/upstream_eb0f30b/vectors/26-key-small-order.json                      DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
-fonti/upstream_42b4ed0/vectors/27-key-non-canonical-encoding.json           DISAGREE 8/9
+fonti/upstream_eb0f30b/vectors/27-key-non-canonical-encoding.json           DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_eb0f30b/vectors/28-key-file-with-unrelated-bad-entry.json    DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_eb0f30b/vectors/29-criteria-token-accuracy-flips-commitment.json DISAGREE 7/9
+      criteria_committed_before_check: expected "no", ours "undetermined"
+      problem_codes: expected ["CRITERIA_COMMITTED_AFTER_CHECK"], ours []
+fonti/upstream_eb0f30b/vectors/30-criteria-token-accuracy-millis-still-before.json AGREE    9/9
+fonti/upstream_eb0f30b/vectors/31-tsa-freetsa-verified.json                 DISAGREE 9/10
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_eb0f30b/vectors/32-tsa-digicert-verified.json                DISAGREE 9/10
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_eb0f30b/vectors/33-tsa-unrelated-root-untrusted.json         DISAGREE 9/10
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_eb0f30b/vectors/34-tsa-tampered-signature-failed.json        DISAGREE 9/10
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_eb0f30b/vectors/35-tsa-token-without-signer-certificate.json DISAGREE 9/10
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_eb0f30b/vectors/36-tsa-no-anchors-not-evaluated.json         DISAGREE 9/10
       criteria_committed_before_check: expected "yes", ours "undetermined"
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 1.3: documents 12/28 agree; fields 229/245; options {'accuracy': 'interval'}
+TOTAL set 1.4: documents 13/37 agree; fields 307/332; options {'accuracy': 'interval'}

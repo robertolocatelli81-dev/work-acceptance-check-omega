@@ -3,7 +3,7 @@
 set -e
 PY="${PY:-python3}"
 mkdir -p results
-# defaults = profile 1.3 (27 vectors of 42b4ed0 + live record); each switch's other value; this verifier's 1.2.1 readings
+# defaults = profile 1.4 (36 vectors of eb0f30b + live record); each switch's other value; this verifier's 1.2.1 readings
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_default.json > results/score_default.txt
 for o in key_id_source=envelope reference_time=covering-token accuracy=ignore accuracy=interval \
          key_id_agreement=require key_id_agreement=ignore key_rule=all-keys key_rule=refuse \
@@ -12,6 +12,9 @@ for o in key_id_source=envelope reference_time=covering-token accuracy=ignore ac
   env -u PYTHONPATH $PY -B tools/score.py --json "results/score_${o%%=*}_${o#*=}.json" "$o" > "results/score_${o%%=*}_${o#*=}.txt"
 done
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_2_1.json --profile 1.2.1 > results/score_profile_1_2_1.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_1_3.json --set 1.3 > results/score_set_1_3.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_tsa_precedence_evaluability-first.json \
+  tsa_precedence=evaluability-first > results/score_tsa_precedence_evaluability-first.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_1_2_1_profile_1_2_1.json --set 1.2.1 --profile 1.2.1 \
   > results/score_set_1_2_1_profile_1_2_1.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_1_2_1_defaults.json --set 1.2.1 \

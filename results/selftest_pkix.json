@@ -73,6 +73,7 @@
      "ST=Bayern,C=DE,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@mailbox.org,CN=www.freetsa.org,2.5.4.13=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services,OU=TSA,O=Free TSA",
      "C=DE,ST=Bayern,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@gmail.com,CN=www.freetsa.org,OU=Root CA,O=Free TSA"
     ],
+    "classes": [],
     "ess": "ESSCertID",
     "reasons": [],
     "revocation": "not checked",
@@ -88,6 +89,7 @@
      "ST=Bayern,C=DE,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@mailbox.org,CN=www.freetsa.org,2.5.4.13=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services,OU=TSA,O=Free TSA",
      "C=DE,ST=Bayern,L=Wuerzburg,1.2.840.113549.1.9.1=busilezas@gmail.com,CN=www.freetsa.org,OU=Root CA,O=Free TSA"
     ],
+    "classes": [],
     "ess": "ESSCertID",
     "reasons": [],
     "revocation": "not checked",
@@ -136,15 +138,20 @@
    "reference_time": "earlier",
    "time_agreement": "truncate",
    "tokens": "pkix",
+   "tsa_precedence": "failed-first",
    "unknown_fields": "refuse"
   },
   "problem_codes": [],
   "receipt_timestamp": "imprint_match",
   "results_presented": true,
   "signature_valid": true,
+  "tsa_signature": {
+   "criteria": "verified",
+   "receipt": "verified"
+  },
   "verdict_recomputed": "pass",
   "verdict_stated": "pass",
   "warning_codes": []
  },
- "verifier": "war_verify 0.2.0"
+ "verifier": "war_verify 0.3.0"
 }

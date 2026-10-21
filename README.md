@@ -1,7 +1,7 @@
-# war-verify: a clean-room verifier for work-acceptance records (profile 1.3)
+# war-verify: a clean-room verifier for work-acceptance records (profile 1.4)
 
-`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.3 at
-maximusrufus/work-acceptance-record@42b4ed0, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
+`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4 at
+maximusrufus/work-acceptance-record@eb0f30b, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
 1.2.1) the way the profile README describes, and refuses anything it does not understand. The readings this
 verifier gave to profile 1.2.1 (version 0.1.0) are kept: `--profile 1.2.1` selects all of them, and each one has
 its own switch (see "Switches"). It was written from the profile README, the published test vectors and the RFCs it names, without
@@ -13,7 +13,7 @@ Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 Third-party inputs are **not included** in this repository. `python3 tools/fetch_sources.py` downloads them from the
 commits and URLs pinned in `SOURCES.json` into `fonti/` and `roots/`, and keeps a file only if its SHA-256 matches;
 the tests need them. Their licences are their authors': the profile README is CC BY 4.0
-(maximusrufus/work-acceptance-record), the upstream vectors (01-27 at 42b4ed0) and the Tetsurohhori vectors carry
+(maximusrufus/work-acceptance-record), the upstream vectors (01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
 CC0-1.0, and the babyblueviper1
 vectors and the issuer files (`selftest-pass.json`, its README, `checker-keys-live.json`) state no licence. The
 issuer's key file is fetched from its live URL, so it can change: the script then reports a mismatch and does not
@@ -41,18 +41,39 @@ Profile steps 1-9, with the problem and warning codes of step 8:
 7. verdict recomputed from the results;
 8. independence: checker is the signer, key collision, self-check label, producer declared, and the stated
    `independence` against the one derived from the parties block;
-9. time-stamp authority signature: not part of the profile fields; `--tokens pkix` checks it and reports it
-   separately (`details.token_authentication`).
+9. time-stamp authority signature (profile 1.4): with relying-party anchors (`inputs.tsa_roots_base64` in the
+   vectors, or `--tsa-roots`), `tsa_signature` has one key per token present (`criteria`, `receipt`) with the value
+   `verified`, `failed`, `untrusted`, `unsupported` or `no_signer`; without anchors `not_evaluated`. It never changes
+   another member. `--tokens pkix` in addition stops using the time of a token that is not `verified`
+   (`details.token_authentication`, a local choice, see "Switches").
+
+How the values are assigned (the profile lists them without saying which one wins when a token has more than one
+defect):
+- `no_signer`: no SignerInfo, or no certificate in the token matches the SignerInfo's `sid` (certReq=false);
+- `unsupported`: a signature or digest algorithm this verifier does not implement (RSASSA-PSS included);
+- `failed`: anything else about the token itself: content-type or message-digest attribute, the signature over the
+  signed attributes, the ESS signing-certificate binding, EKU (`id-kp-timeStamping` only, critical, RFC 3161 2.3),
+  `TSTInfo.tsa` naming another subject, the signer certificate outside its validity at genTime, more than one
+  SignerInfo;
+- `untrusted`: the token holds, but no chain of CA certificates (each signature verified, each valid at genTime,
+  basicConstraints CA, keyUsage keyCertSign when present) reaches a supplied anchor. A root carried in the token
+  is used only if the same certificate is supplied as an anchor.
+- A certificate carried in the token whose DER or extensions do not parse (for example a duplicate extension) is
+  not used: `failed`, and when it was the one named by the SignerInfo also `no_signer`. An anchor like that is
+  refused in `inputs.tsa_roots_base64` and skipped by `--tsa-roots` (exit 74 when nothing readable is left). A
+  `TSTInfo.tsa` that is not a directoryName holding a Name is `failed`.
+- When one token has defects of several classes, `--tsa-precedence failed-first` (default) reports `failed` over
+  `no_signer`, `unsupported` and `untrusted`, then `no_signer`, then `unsupported`; `evaluability-first` reports
+  `no_signer`, then `unsupported`, before `failed`. No published vector separates the two: both give 37/37.
+- An empty `tsa_roots_base64` array is read as "without relying-party anchors": `not_evaluated`, with a note.
 
 The output has the nine fields of the vectors' `expected` objects, plus `accepted_as_stated`, `extension_codes`
 (this verifier's own observations, prefixed `X_`, never mixed with the profile's codes), `notes` and `details`.
 
 ## What it does not check
 
-- With the default `--tokens structural` it does not verify the time-stamp authority's signature. Profile 1.3 step 9:
-  "The outcome fields cover imprint and time only"; the vectors' tokens are "imprint-and-time fixtures" with no
-  SignerInfo. `--tokens pkix --tsa-roots ROOTS` adds the
-  RFC 3161 checks (below).
+- Without anchors it does not verify the time-stamp authority's signature (profile 1.4 step 9: `not_evaluated`).
+  The tokens of vectors 01-30 are "imprint-and-time fixtures" with no SignerInfo: with anchors they read `no_signer`.
 - Revocation of TSA certificates (no CRL or OCSP is fetched).
 - OpenTimestamps proofs. The issuer README says its criteria commitment comes with an OpenTimestamps proof, but
   `selftest-pass.json` contains no OpenTimestamps data, so there was nothing to check.
@@ -105,19 +126,24 @@ the live key file and `--tokens pkix`.
 
 The report also says where the key came from (`details.key_source`), the signer key's status
 (`details.signer_key_status`), and whether each token was authenticated (`details.token_authentication`).
-`--keys ""`, repeated options, and `--tsa-roots` without `--tokens pkix` are usage errors (exit 64).
+`--keys ""`, repeated options, and `--tokens pkix` without `--tsa-roots` are usage errors (exit 64). `--tsa-roots`
+alone (version 0.3.0) supplies the anchors for `tsa_signature`; it then replaces the vector's
+`inputs.tsa_roots_base64`, with a note.
 
 Exit 64 is a usage error. Exit 74 means a check could not run, for example `cryptography` is not importable or
 `--tsa-roots` holds no certificate. Every check that can run still runs. The report lists the others in
 `cannot_run`, sets `signature_valid` to `null` when the signature could not be checked, and never sets
 `accepted_as_stated` to true. Measured with `cryptography` made unimportable (`tests/test_cli.py`): vector 02 gives
 exit 74, `signature_valid` `null`, `accepted_as_stated` false. Dependencies: Python 3.9 or newer and
-`cryptography`. The `cryptography` package is the Ed25519 arithmetic engine and the X.509 parser for `--tokens pkix`.
+`cryptography`; the TSA checks need `cryptography` 40.0 or newer (`Certificate.verify_directly_issued_by`). With an
+older version they are a check that cannot run (exit 74, `tsa_signature` `not_evaluated`), not a result. Measured
+before this guard with 39.0.2: the chain step failed silently and 31, 32 and 34 read `untrusted` (34/37). The
+`cryptography` package is the Ed25519 arithmetic engine and the X.509 parser for the TSA checks.
 Canonicalisation and the DER, CMS and TSTInfo parsers are written here.
 
-## Switches: profile 1.3 by default, the 1.2.1 readings kept
+## Switches: profile 1.4 by default, the 1.2.1 readings kept
 
-Defaults follow profile 1.3. `--profile 1.2.1` selects every reading this verifier gave to 1.2.1 (the rows marked
+Defaults follow profile 1.4 (its steps 1-8 are those of 1.3). `--profile 1.2.1` selects every reading this verifier gave to 1.2.1 (the rows marked
 "1.2.1"); a switch given explicitly overrides it.
 
 | switch | default | alternative | sentence |
@@ -129,7 +155,8 @@ Defaults follow profile 1.3. `--profile 1.2.1` selects every reading this verifi
 | `--accuracy` | `widen` | `ignore` (1.2.1), `interval` (RFC 3161 2.4.2 ordering rule, `undetermined` when not provable) | 1.3 step 5 "A token's stated `accuracy` widens its time against \"committed before\"; a token stating none is taken at its genTime; `ordering` is ignored" |
 | `--independence-rule` | `derived` | `stated-independent` (1.2.1: only a stated `independent` with the same party) | 1.3 step 8 "a stated `independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`" |
 | `--time-agreement` | `truncate`: `committed_at` agrees if it equals genTime cut to its own precision | `exact` | step 5 "a `criteria.committed_at` that disagrees is `CRITERIA_TIME_MISMATCH`" (unchanged in 1.3) |
-| `--tokens` | `structural` (imprint and genTime) | `pkix` (RFC 3161/5652/5280 validation) | 1.3 step 9 "The outcome fields cover imprint and time only" |
+| `--tokens` | `structural` (imprint and genTime) | `pkix` (the time of a token that is not `verified` is not used) | 1.4 step 9 "The outcome fields cover imprint and time only"; `tsa_signature` "never changes any other outcome member" (so `pkix` is a local choice) |
+| `--tsa-precedence` | `failed-first` | `evaluability-first` | 1.4 step 9 lists `verified`, `failed`, `untrusted`, `unsupported`, `no_signer` without an order |
 | `--name-compare` | `exact` | `normalized` (NFKC, casefold, collapsed spaces) | property 3 names parties; no equality rule |
 | `--unknown-fields` | `refuse` | `report` | profile silent |
 | `--ed25519` | `strict` (canonical R, R not of small order, S < L) | `rfc8032` (RFC 8032 5.1.7 only) | the key itself is governed by `--key-rule` |
@@ -182,6 +209,15 @@ Readings of 1.3 that no published vector pins (each has its own vector in `vecto
 Only these files; their URLs and SHA-256 values are in `SOURCES.json`. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- `fonti/upstream_eb0f30b/`: profile 1.4 README and vectors 01-36 (maximusrufus/work-acceptance-record@eb0f30b,
+  committed 2026-10-20T16:00:02Z, fetched 2026-10-21 about 04:15 CEST). Vectors 01-27 are byte-identical to 42b4ed0
+  (`tests/test_vectors.py`), and each file matches its git blob id in the commit tree. The commit also changes
+  `verifier/war_verify.py`, the profile author's reference verifier: it was not opened;
+- the profile author's comments on x402-foundation/tsc#4 that announce 1.4 (issuecomment-6294582057 and
+  issuecomment-6295390438, 2026-10-20) and Tetsurohhori's report of a third phase-9 implementation
+  (issuecomment-6303226273, 2026-10-20T22:30:33Z). That report was read before 0.3.0 was written and lists the order
+  in which its checks run (no_signer, unsupported, failed, untrusted); on the order between values, this verifier
+  is therefore not independent of it. Its code and addendum were not opened;
 - `fonti/upstream_42b4ed0/`: profile 1.3 README and vectors 01-27 (maximusrufus/work-acceptance-record@42b4ed0,
   committed 2026-10-18T14:43:42Z). Vectors 01-11 are byte-identical to f7d8984. Vectors 12-23 have the same
   `inputs` as the copies listed below (12 is 12b); only metadata changed, and vector 20's `expected` (now with
@@ -215,9 +251,51 @@ the `reading` field of the new vectors. Vectors 24 and 25 of 1.3 are listed in t
 robertolocatelli81-dev", and the rulings comment says they "cover @robertolocatelli81-dev's omega-15 and omega-16",
 two vectors of this project: agreement on 24 and 25 is not independent evidence.
 
-## Results (measured 2026-10-18; numbers per the commit that adds this README)
+## Results, profile 1.4 (measured 2026-10-21)
 
-Defaults (profile 1.3): the 27 vectors of 42b4ed0 and the live record, compared field by field, with code lists
+Defaults: the 36 vectors of eb0f30b and the live record (`tools/score.py`, `results/score_default.txt`): 37/37
+documents, 332/332 fields. 31-36 compared on `tsa_signature` key by key, an absent key read as `not_evaluated`:
+
+| vector | `tsa_signature` (ours = expected) |
+|---|---|
+| 31 FreeTSA, FreeTSA root | criteria `verified`, receipt `verified` |
+| 32 DigiCert, DigiCert Trusted Root G4 | `verified`, `verified` |
+| 33 FreeTSA tokens, DigiCert root | `untrusted`, `untrusted` |
+| 34 one bit in the criteria token's signature | `failed`, `verified` |
+| 35 criteria token with certReq=false | criteria `no_signer` |
+| 36 no anchors | `not_evaluated`, `not_evaluated` |
+
+Same result with `--tsa-precedence evaluability-first`. Positive controls: version 0.2.0 run unchanged agrees on 30/36 vectors (31-35 refused for the unknown member
+`inputs.tsa_roots_base64`; 36 disagrees because 0.2.0's comparison did not read an absent `tsa_signature` as
+`not_evaluated`). Our outcome with `tsa_signature` removed agrees on 36 and disagrees on 31-35. Each of the 55 other
+values of each key of 31-36 written into `expected` is detected (55/55, `tests/test_tsa_signature14.py`). A verifier that always answers "valid,
+pass, no codes" agrees with one document of 37: vector 30, whose expected outcome is exactly that.
+
+Each other value of each switch on the 37 documents (`results/score_*.txt`):
+
+| switch | documents agreeing | disagreeing vectors |
+|---|---|---|
+| `--reference-time covering-token` | 36/37 | 22 |
+| `--accuracy ignore` | 36/37 | 29 |
+| `--accuracy interval` | 13/37 | 24 vectors: `undetermined` where the tokens state no `accuracy` |
+| `--key-rule all-keys` | 36/37 | 28 |
+| `--key-rule refuse` | 34/37 | 26, 27, 28 |
+| `--independence-rule stated-independent` | 36/37 | 20 |
+| `--profile 1.2.1` | 31/37 | 20, 22, 26, 27, 28, 29 |
+| `--tsa-precedence evaluability-first` and the switches not listed | 37/37 each | none |
+
+Cases the published vectors do not reach (`tests/test_tsa_signature14.py`, a throw-away TEST TSA built on vector
+31's record, under both precedences): ECDSA P-256 and RSA PKCS#1 v1.5 `verified`; RSASSA-PSS `unsupported`; a chain
+through an intermediate CA `verified`; intermediate expired at genTime, missing from the token or without the CA flag
+`untrusted`; signer certificate expired at genTime, EKU serverAuth, ESS absent or over another certificate, a
+message-digest over other bytes `failed`; a token without SignerInfo (the shape of 01-30) `no_signer`. For every
+case, every other outcome member is the same as without anchors. Two cases separate the precedences: RSASSA-PSS with
+a wrong message-digest (`failed` / `unsupported`) and no certificates with a wrong message-digest (`failed` /
+`no_signer`).
+
+## Results, profile 1.3 (measured 2026-10-18)
+
+Profile 1.3 set (`--set 1.3`, `results/score_set_1_3.txt`): the 27 vectors of 42b4ed0 and the live record, compared field by field, with code lists
 compared as sets (`tools/score.py`, `results/score_default.txt`):
 
 | document | fields | outcome |
@@ -236,7 +314,8 @@ the derived one is also `INDEPENDENCE_INCONSISTENT`" (stated `independent`, deri
 `--independence-rule stated-independent` the two results swap: the contributor's expectation agrees, the file's
 does not.
 
-Each other value of each switch, on the same 28 documents (`results/score_*.txt`):
+Each other value of each switch, on the same 28 documents (measured 2026-10-18; `results/` now holds the 1.4 runs,
+listed under "Results, profile 1.4"):
 
 | switch | documents agreeing | what changes |
 |---|---|---|
@@ -364,13 +443,21 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 76 tests
+python3 -B -m unittest discover -s tests          # 103 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
 
-Measured on 2026-10-18: 76/76 pass on Python 3.9.25 and 3.13.15 with `cryptography` 50.0.2, and on 3.11.2 with
-`cryptography` 50.0.1. Every test file has its positive control:
-- the scoring bench fails an accept-always verifier (0/28);
+Measured on 2026-10-21: 103/103 pass on Python 3.9.25, 3.11.2 and 3.13.15 with `cryptography` 50.0.2, and on 3.11.2
+with `cryptography` 40.0.0. With 39.0.2 every test that reaches a TSA check fails by design, 28 of 103, each on the
+check that cannot run (exit 74, `CannotRun`); the other 75 pass. Every test file has its positive control:
+- the scoring bench fails an accept-always verifier (0/28 on 1.3; on 1.4 only vector 30, see above);
+- 21 targeted mutants of the 0.3.0 changes (value classes, precedence, anchors, comparison, the "never changes
+  another member" rule, the chain API guard) are each caught by at least one test (21/21, `tools/mutate14.py`,
+  which exits non-zero on a survivor or on a mutant whose pattern no longer applies); a second run of 24 mutants
+  on the same lines by the review of 0.3.0 left 2 equivalent ones (the `anchors is roots` reuse of the pkix result
+  and the narrowed `except` behind the chain API guard: 0 differences over 235 runs, a control mutant 7) and
+  the tests of `tests/test_nemesis_14.py` for the rest; 4 of its 14 tests fail on the 0.3.0 code as first written
+  (three tracebacks on malformed tokens or anchors, one on the type of a replaced `inputs.tsa_roots_base64`);
 - each 1.3 rule in `tests/test_profile13.py` has a control case (its 1.2.1 reading, another switch value or an
   input on the other side of the rule), and each of the 14 own vectors with an `expected_1_2_1` disagrees under
   the other reading;
@@ -383,7 +470,8 @@ Measured on 2026-10-18: 76/76 pass on Python 3.9.25 and 3.13.15 with `cryptograp
 and `tests/test_nemesis_r2.py` (7 tests) from the second; each of its tests kills a mutant that survived the battery
 below (unimplemented TSA signature algorithm, certificate validity bounds, TSTInfo.tsa name, empty signerInfos,
 ordering tie, producer key in the key file, y = p).
-They are kept unchanged except the subprocess flags (`-I` replaced by `-B` with `PYTHONPATH` removed, because `-I`
+They are kept unchanged except the subprocess flags and, for 0.3.0, check F3 (`--tsa-roots` without `--tokens pkix`
+is now valid; the check now asserts exit 74 for unreadable roots) (`-I` replaced by `-B` with `PYTHONPATH` removed, because `-I`
 hides a user-site `cryptography`), and are run by `tests/test_nemesis_wrapper.py`. The round-1 checks were written
 for 1.2.1: the wrapper runs them with the 1.2.1 readings as defaults (all pass) and with the 1.3 defaults, where
 exactly six fail, each for a 1.3 sentence: old vector 12 (12b replaces it), old vector 20 (amended), M41 (the

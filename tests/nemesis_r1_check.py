@@ -99,7 +99,8 @@ junk = tlv(0x31, seq(integer(1), seq(), seq(oid("2.16.840.1.101.3.4.2.1")), seq(
 i, r = base(); x = mk(r, i); x["criteria_tsr_base64"] = b64(tsr(tst(bytes.fromhex(r["criteria"]["sha256"]), "20260301000000Z"), junk))
 check("F1 self-made token -> X_TSA_NOT_VERIFIED", "X_TSA_NOT_VERIFIED" in run(x)["extension_codes"])
 check("F2 --keys '' -> 64", cli(["--keys", "", "@"], mk())[0] == 64)
-check("F3 --tsa-roots without pkix -> 64", cli(["--tsa-roots", FONTI, "@"], mk())[0] == 64)
+# adapted by the author for 0.3.0: --tsa-roots without pkix is now valid (profile 1.4 anchors); an unreadable one is 74
+check("F3 --tsa-roots without readable roots -> 74", cli(["--tsa-roots", "/nonexistent", "@"], mk())[0] == 74)
 check("F3 repeated option -> 64", cli(["--tokens", "structural", "--tokens", "structural", "@"], mk())[0] == 64)
 rep = run(mk()); check("F4 key from input reported", "X_KEY_FROM_INPUT" in rep["extension_codes"])
 rep = run(json.load(open(V01))["inputs"]); check("F4 test key reported", "X_TEST_KEY" in rep["extension_codes"])

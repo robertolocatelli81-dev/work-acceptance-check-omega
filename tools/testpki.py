@@ -6,7 +6,7 @@ import hashlib
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import ec, padding, rsa
 from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 
 
@@ -145,10 +145,23 @@ def make_ca(cn="war-verify TEST root", nb="20200101000000Z", na="20400101000000Z
     return key, cert
 
 
-def make_tsa(ca, cn="war-verify TEST TSA", nb="20200101000000Z", na="20400101000000Z", eku=("ts",),
-             eku_critical=True, ca_flag=False):
-    ca_key, ca_cert = ca
+def make_intermediate(root, cn="war-verify TEST intermediate", nb="20200101000000Z", na="20400101000000Z",
+                      ca_flag=True):
+    root_key, root_cert = root
     key = ec.generate_private_key(ec.SECP256R1())
+    cert = (x509.CertificateBuilder().subject_name(_name(cn)).issuer_name(root_cert.subject)
+            .public_key(key.public_key())
+            .serial_number(x509.random_serial_number()).not_valid_before(_dt(nb)).not_valid_after(_dt(na))
+            .add_extension(x509.BasicConstraints(ca=ca_flag, path_length=None), critical=True)
+            .add_extension(x509.KeyUsage(True, False, False, False, False, True, True, False, False), critical=True)
+            .sign(root_key, hashes.SHA256()))
+    return key, cert
+
+
+def make_tsa(ca, cn="war-verify TEST TSA", nb="20200101000000Z", na="20400101000000Z", eku=("ts",),
+             eku_critical=True, ca_flag=False, key_type="ec"):
+    ca_key, ca_cert = ca
+    key = rsa.generate_private_key(65537, 2048) if key_type == "rsa" else ec.generate_private_key(ec.SECP256R1())
     b = (x509.CertificateBuilder().subject_name(_name(cn)).issuer_name(ca_cert.subject).public_key(key.public_key())
          .serial_number(x509.random_serial_number()).not_valid_before(_dt(nb)).not_valid_after(_dt(na))
          .add_extension(x509.BasicConstraints(ca=ca_flag, path_length=None), critical=True)
@@ -166,7 +179,8 @@ def der(cert):
 
 
 def signed_tsr(tst_der, tsa, ca_cert, ess="v2", md_override=None, flip_sig=False, extra_signer=False,
-               include_certs=True, ess_hash_override=None, status=0, sign_key=None, content_type_oid=None):
+               include_certs=True, ess_hash_override=None, status=0, sign_key=None, content_type_oid=None,
+               sig_alg="ecdsa-sha256", certs=None):
     key, cert = tsa
     md = md_override if md_override is not None else hashlib.sha256(tst_der).digest()
     attrs = [seq(oid("1.2.840.113549.1.9.3"), set_of(oid(content_type_oid or "1.2.840.113549.1.9.16.1.4"))),
@@ -179,17 +193,28 @@ def signed_tsr(tst_der, tsa, ca_cert, ess="v2", md_override=None, flip_sig=False
         h = ess_hash_override if ess_hash_override is not None else hashlib.sha1(cd).digest()
         attrs.append(seq(oid("1.2.840.113549.1.9.16.2.12"), set_of(seq(seq(seq(octets(h)))))))
     sattrs = set_of(*attrs)
-    sig = (sign_key or key).sign(sattrs, ec.ECDSA(hashes.SHA256()))
+    k = sign_key or key
+    if sig_alg == "ecdsa-sha256":
+        sig, salg = k.sign(sattrs, ec.ECDSA(hashes.SHA256())), seq(oid("1.2.840.10045.4.3.2"))
+    elif sig_alg == "rsa-pkcs1-sha256":
+        sig, salg = k.sign(sattrs, padding.PKCS1v15(), hashes.SHA256()), alg("1.2.840.113549.1.1.11")
+    elif sig_alg == "rsa-pss-sha256":           # RFC 4055 RSASSA-PSS; parameters: SHA-256, MGF1-SHA-256, salt 32
+        sig = k.sign(sattrs, padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=32), hashes.SHA256())
+        h = alg(SHA["sha256"])
+        salg = seq(oid("1.2.840.113549.1.1.10"), seq(explicit(0, h), explicit(1, seq(oid("1.2.840.113549.1.1.8"), h)),
+                                                    explicit(2, integer(32))))
+    else:
+        raise ValueError(sig_alg)
     if flip_sig:
         sig = sig[:-1] + bytes([sig[-1] ^ 1])
     sid = seq(cert.issuer.public_bytes(), integer(cert.serial_number))
-    si = seq(integer(1), sid, alg(SHA["sha256"]), b"\xa0" + sattrs[1:], seq(oid("1.2.840.10045.4.3.2")),
-             octets(sig))
+    si = seq(integer(1), sid, alg(SHA["sha256"]), b"\xa0" + sattrs[1:], salg, octets(sig))
     sis = [si, si] if extra_signer else [si]
     eci = seq(oid("1.2.840.113549.1.9.16.1.4"), explicit(0, octets(tst_der)))
     body = integer(3) + set_of(alg(SHA["sha256"])) + eci
     if include_certs:
-        body += tlv(0xA0, b"".join(sorted([cd, der(ca_cert)], key=lambda e: e.ljust(4096, b"\x00"))))
+        inc = [cd] + [der(c) for c in (certs if certs is not None else [ca_cert])]
+        body += tlv(0xA0, b"".join(sorted(inc, key=lambda e: e.ljust(4096, b"\x00"))))
     body += set_of(*sis) if not extra_signer else tlv(0x31, b"".join(sis))
     ci = seq(oid("1.2.840.113549.1.7.2"), explicit(0, tlv(0x30, body)))
     return seq(seq(integer(status)), ci)

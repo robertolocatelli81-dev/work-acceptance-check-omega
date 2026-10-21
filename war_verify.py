@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.3 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@42b4ed0 (profile 1.3; 1.2.1 at f7d8984
-before it), the test vectors listed in README.md ("What was read"), and the RFCs it names. No other implementation
-of this profile was read. The 1.2.1 readings of version 0.1.0 are selectable with --profile 1.2.1.
+Written from the profile README at maximusrufus/work-acceptance-record@eb0f30b (profile 1.4; 1.3 at 42b4ed0 and
+1.2.1 at f7d8984 before it), the test vectors listed in README.md ("What was read"), and the RFCs it names. No other
+implementation of this profile was read. The 1.2.1 readings of version 0.1.0 are selectable with --profile 1.2.1.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason. Where a standard says what to do with something unknown (RFC 5280 4.2: a non-critical extension that is
@@ -36,14 +36,14 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.2.0"
+VERSION = "war_verify 0.3.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
-    from cryptography.exceptions import InvalidSignature
+    from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
     _CRYPTO_ERROR = None
 except Exception as _e:  # pragma: no cover - exercised by tests in a venv without cryptography
-    InvalidSignature = Ed25519PublicKey = None
+    InvalidSignature = UnsupportedAlgorithm = Ed25519PublicKey = None
     _CRYPTO_ERROR = "%s: %s" % (type(_e).__name__, _e)
 
 # ----------------------------------------------------------------------------------------------- profile constants
@@ -67,6 +67,7 @@ OID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4"
 OID_SIGNING_CERT = "1.2.840.113549.1.9.16.2.12"
 OID_SIGNING_CERT_V2 = "1.2.840.113549.1.9.16.2.47"
 OID_KP_TIMESTAMPING = "1.3.6.1.5.5.7.3.8"
+UNSUPPORTED_SUFFIX = "not implemented by this verifier"
 HASH_OIDS = {"1.3.14.3.2.26": "sha1", "2.16.840.1.101.3.4.2.4": "sha224", OID_SHA256: "sha256",
              "2.16.840.1.101.3.4.2.2": "sha384", "2.16.840.1.101.3.4.2.3": "sha512",
              "2.16.840.1.101.3.4.2.8": "sha3-256", "2.16.840.1.101.3.4.2.9": "sha3-384",
@@ -108,6 +109,9 @@ DEFAULT_OPTIONS = {
     # Step 8 (1.3) "a stated `independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`"
     # = derived; stated-independent = 1.2.1 reading (only a stated `independent` with the same party).
     "independence_rule": "derived",
+    # Profile 1.4 step 9 lists the `tsa_signature` values without an order; failed-first = a check that ran and failed
+    # decides; evaluability-first = no_signer, then unsupported, before failed.
+    "tsa_precedence": "failed-first",
 }
 OPTION_VALUES = {
     "key_id_source": ("envelope", "receipt"), "reference_time": ("covering-token", "earlier"),
@@ -117,6 +121,7 @@ OPTION_VALUES = {
     "correspondence": ("ids-required", "strict"),
     "key_id_agreement": ("signature-invalid", "require", "ignore"), "key_rule": ("signer", "all-keys", "refuse"),
     "independence_rule": ("derived", "stated-independent"),
+    "tsa_precedence": ("failed-first", "evaluability-first"),
 }
 # The profile 1.2.1 readings of this verifier (version 0.1.0), selectable together with --profile 1.2.1.
 PROFILE_1_2_1 = {"key_id_source": "envelope", "reference_time": "covering-token", "accuracy": "ignore",
@@ -894,9 +899,35 @@ def imprint_status(tst, expected_digest):
 
 
 # ------------------------------------------------------------------------------- RFC 3161 TSA validation (pkix)
-def load_roots(path):
+def _require_pkix():
+    """TSA checks need `cryptography` with Certificate.verify_directly_issued_by (added in 40.0). Without it a chain
+    could not be built and every token would read untrusted, so it is a check that cannot run (exit 74)."""
     if _CRYPTO_ERROR:
         raise CannotRun("cryptography is not importable: TSA certificates cannot be checked")
+    from cryptography import x509
+    if not hasattr(x509.Certificate, "verify_directly_issued_by"):
+        import cryptography
+        raise CannotRun("cryptography %s lacks Certificate.verify_directly_issued_by (40.0 or newer is needed for "
+                        "TSA chains)" % cryptography.__version__)
+
+
+def _load_cert(der):
+    """DER X.509 certificate whose extensions parse. `cryptography` parses extensions on first access and raises
+    ValueError, DuplicateExtension or UnsupportedGeneralNameType there; checked here once, so a certificate that is
+    accepted never raises later (signer EKU and keyUsage, issuer basicConstraints, subjectKeyIdentifier lookups)."""
+    from cryptography import x509
+    errors = tuple(e for e in (ValueError, getattr(x509, "DuplicateExtension", None),
+                               getattr(x509, "UnsupportedGeneralNameType", None)) if e is not None)
+    try:
+        cert = x509.load_der_x509_certificate(der)
+        list(cert.extensions)
+    except errors as e:
+        raise ValueError(str(e) or type(e).__name__)
+    return cert
+
+
+def load_roots(path):
+    _require_pkix()
     from cryptography import x509
     files = []
     if path and os.path.isdir(path):
@@ -912,9 +943,10 @@ def load_roots(path):
             raise CannotRun("cannot read TSA root %s: %s" % (f, e))
         try:
             if b"-----BEGIN CERTIFICATE-----" in data:
-                roots.extend(x509.load_pem_x509_certificates(data))
+                from cryptography.hazmat.primitives.serialization import Encoding
+                roots.extend(_load_cert(c.public_bytes(Encoding.DER)) for c in x509.load_pem_x509_certificates(data))
             else:
-                roots.append(x509.load_der_x509_certificate(data))
+                roots.append(_load_cert(data))
         except ValueError:
             continue
     if not roots:
@@ -941,8 +973,10 @@ def _verify_sig(pub, sig, data, sig_alg_oid, digest_name):
                "1.2.840.10045.4.3.1": "sha224", "1.2.840.10045.4.1": "sha1"}
     if sig_alg_oid in rsa_oids:
         h = rsa_oids[sig_alg_oid] or digest_name
-        if h not in H or not isinstance(pub, rsa.RSAPublicKey):
-            return False, "RSA signature with unsupported digest or non-RSA key"
+        if not isinstance(pub, rsa.RSAPublicKey) or h not in H:
+            if not isinstance(pub, rsa.RSAPublicKey):
+                return False, "RSA signature with a non-RSA key"
+            return False, "RSA signature digest %s: %s" % (h, UNSUPPORTED_SUFFIX)
         pub.verify(sig, data, padding.PKCS1v15(), H[h]())
         return True, None
     if sig_alg_oid in ec_oids:
@@ -956,7 +990,7 @@ def _verify_sig(pub, sig, data, sig_alg_oid, digest_name):
             return False, "Ed25519 signature with a non-Ed25519 key"
         pub.verify(sig, data)
         return True, None
-    return False, "signature algorithm %s not implemented" % sig_alg_oid
+    return False, "signature algorithm %s: %s" % (sig_alg_oid, UNSUPPORTED_SUFFIX)
 
 
 def verify_tsa(token, roots):
@@ -964,14 +998,18 @@ def verify_tsa(token, roots):
     Returns {"status": "valid"|"invalid"|"unsigned", "reasons": [...], ...}. Revocation is NOT checked."""
     from cryptography import x509
     from cryptography.x509.oid import ExtensionOID
-    res = {"status": "invalid", "reasons": [], "revocation": "not checked"}
+    res = {"status": "invalid", "reasons": [], "classes": [], "revocation": "not checked"}
+
+    def bad(cls, msg):
+        res["reasons"].append(msg)
+        res["classes"].append(cls)
     sis = token["signer_infos"]
     if not sis:
         res["status"] = "unsigned"
-        res["reasons"].append("no SignerInfo")
+        bad("no_signer", "no SignerInfo")
         return res
     if len(sis) != 1:
-        res["reasons"].append("%d SignerInfos; RFC 3161 2.4.2 allows only the TSA's signature" % len(sis))
+        bad("failed", "%d SignerInfos; RFC 3161 2.4.2 allows only the TSA's signature" % len(sis))
         return res
     try:
         si = sis[0].kids()
@@ -980,14 +1018,14 @@ def verify_tsa(token, roots):
         dalg, _ = der_alg_id(si[2], "SignerInfo.digestAlgorithm")
         idx = 3
         if idx >= len(si) or si[idx].tag != 0xA0:
-            res["reasons"].append("no signedAttrs (RFC 3161 needs the ESS signing-certificate attribute)")
+            bad("failed", "no signedAttrs (RFC 3161 needs the ESS signing-certificate attribute)")
             return res
         sattrs_node = si[idx]
         idx += 1
         salg, _ = der_alg_id(si[idx], "SignerInfo.signatureAlgorithm")
         sig = der_octets(si[idx + 1], "SignerInfo.signature")
         if len(si) > idx + 3 or (len(si) == idx + 3 and si[idx + 2].tag != 0xA1):
-            res["reasons"].append("SignerInfo has unexpected members")
+            bad("failed", "SignerInfo has unexpected members")
             return res
         attrs = {}
         for a in der_set_ordered(sattrs_node, "signedAttrs"):
@@ -996,35 +1034,35 @@ def verify_tsa(token, roots):
                 raise Refusal("malformed Attribute")
             aoid = der_oid(ak[0], "attrType")
             if aoid in attrs:
-                res["reasons"].append("attribute %s appears twice (RFC 5652 11)" % aoid)
+                bad("failed", "attribute %s appears twice (RFC 5652 11)" % aoid)
                 return res
             attrs[aoid] = _expect(ak[1], 0x31, "attrValues").kids()
     except Refusal as e:
-        res["reasons"].append("SignerInfo: %s" % e.reason)
+        bad("failed", "SignerInfo: %s" % e.reason)
         return res
     dname = HASH_OIDS.get(dalg)
     if dname not in ("sha1", "sha224", "sha256", "sha384", "sha512"):
-        res["reasons"].append("digestAlgorithm %s not supported" % dalg)
+        bad("unsupported", "digestAlgorithm %s not supported" % dalg)
         return res
     if dalg not in [d[0] for d in token["digest_algs"]]:
-        res["reasons"].append("SignerInfo.digestAlgorithm not listed in SignedData.digestAlgorithms")
+        bad("failed", "SignerInfo.digestAlgorithm not listed in SignedData.digestAlgorithms")
     ct = attrs.get(OID_CONTENT_TYPE)
     if not ct or len(ct) != 1 or der_oid(ct[0], "content-type attr") != OID_TSTINFO:
-        res["reasons"].append("content-type attribute missing or not id-ct-TSTInfo (RFC 5652 11.1)")
+        bad("failed", "content-type attribute missing or not id-ct-TSTInfo (RFC 5652 11.1)")
     md = attrs.get(OID_MESSAGE_DIGEST)
     if not md or len(md) != 1:
-        res["reasons"].append("message-digest attribute missing or multi-valued (RFC 5652 11.2)")
+        bad("failed", "message-digest attribute missing or multi-valued (RFC 5652 11.2)")
     elif der_octets(md[0], "message-digest") != hashlib.new(dname, token["econtent"]).digest():
-        res["reasons"].append("message-digest attribute does not match the TSTInfo (RFC 5652 5.4)")
+        bad("failed", "message-digest attribute does not match the TSTInfo (RFC 5652 5.4)")
     certs = []
     for c in token["certs"]:
         if c.tag != 0x30:
             res["notes"] = res.get("notes", []) + ["non-X.509 certificate choice ignored"]
             continue
         try:
-            certs.append(x509.load_der_x509_certificate(c.raw))
-        except ValueError:
-            res["reasons"].append("an embedded certificate does not parse")
+            certs.append(_load_cert(c.raw))
+        except ValueError as e:
+            bad("failed", "an embedded certificate does not parse: %s" % e)
     # signer identification (RFC 5652 5.3)
     signer = None
     try:
@@ -1043,11 +1081,11 @@ def verify_tsa(token, roots):
                 except x509.ExtensionNotFound:
                     pass
         else:
-            res["reasons"].append("SignerInfo.version %d" % sv)
+            bad("failed", "SignerInfo.version %d" % sv)
     except Refusal as e:
-        res["reasons"].append("sid: %s" % e.reason)
+        bad("failed", "sid: %s" % e.reason)
     if signer is None:
-        res["reasons"].append("signer certificate not found in the token")
+        bad("no_signer", "signer certificate not found in the token")
         return res
     res["signer_subject"] = signer.subject.rfc4514_string()
     # ESS signing certificate (RFC 3161 2.4.2, RFC 2634 5.4, RFC 5035 / RFC 5816)
@@ -1057,7 +1095,7 @@ def verify_tsa(token, roots):
     elif OID_SIGNING_CERT in attrs:
         ess = ("v1", attrs[OID_SIGNING_CERT])
     if ess is None:
-        res["reasons"].append("no ESS signing-certificate attribute (RFC 3161 2.4.2)")
+        bad("failed", "no ESS signing-certificate attribute (RFC 3161 2.4.2)")
     else:
         try:
             if len(ess[1]) != 1:
@@ -1076,51 +1114,53 @@ def verify_tsa(token, roots):
             from cryptography.hazmat.primitives.serialization import Encoding
             sder = signer.public_bytes(Encoding.DER)
             if halg is None or hashlib.new(halg, sder).digest() != chash:
-                res["reasons"].append("ESSCertID%s certHash does not bind the signer certificate"
+                bad("failed", "ESSCertID%s certHash does not bind the signer certificate"
                                       % ("v2" if ess[0] == "v2" else ""))
             if len(first) > j + 1:
                 iser = first[j + 1].kids()
                 gnames = iser[0].kids()
                 ok_issuer = any(g.tag == 0xA4 and g.kids()[0].raw == signer.issuer.public_bytes() for g in gnames)
                 if not ok_issuer or der_int(iser[1], "issuerSerial.serial") != signer.serial_number:
-                    res["reasons"].append("ESSCertID issuerSerial does not match the signer certificate")
+                    bad("failed", "ESSCertID issuerSerial does not match the signer certificate")
             res["ess"] = "ESSCertIDv2" if ess[0] == "v2" else "ESSCertID"
         except (Refusal, IndexError) as e:
-            res["reasons"].append("malformed signing-certificate attribute: %s" % getattr(e, "reason", e))
+            bad("failed", "malformed signing-certificate attribute: %s" % getattr(e, "reason", e))
     # signature over DER(SET OF signedAttrs) (RFC 5652 5.4)
     signed_bytes = b"\x31" + sattrs_node.raw[1:]
     try:
         ok, why = _verify_sig(signer.public_key(), sig, signed_bytes, salg, dname)
         if not ok:
-            res["reasons"].append(why)
+            bad("unsupported" if why.endswith(UNSUPPORTED_SUFFIX) else "failed", why)
     except InvalidSignature:
-        res["reasons"].append("TSA signature over signedAttrs does not verify")
-    except Exception as e:  # unsupported key types etc.
-        res["reasons"].append("TSA signature check failed: %s" % e)
+        bad("failed", "TSA signature over signedAttrs does not verify")
+    except UnsupportedAlgorithm as e:
+        bad("unsupported", "TSA signature check: %s %s" % (UNSUPPORTED_SUFFIX, e))
+    except Exception as e:  # malformed signature values, key/algorithm mismatches
+        bad("failed", "TSA signature check failed: %s" % e)
     gen = token["tst"]["gen"]["instant"]
     # leaf: EKU (RFC 3161 2.3)
     try:
         eku = signer.extensions.get_extension_for_oid(ExtensionOID.EXTENDED_KEY_USAGE)
         ekus = [o.dotted_string for o in eku.value]
         if ekus != [OID_KP_TIMESTAMPING]:
-            res["reasons"].append("EKU is %s, RFC 3161 2.3 requires only id-kp-timeStamping" % ekus)
+            bad("failed", "EKU is %s, RFC 3161 2.3 requires only id-kp-timeStamping" % ekus)
         if not eku.critical:
-            res["reasons"].append("EKU extension not critical (RFC 3161 2.3)")
+            bad("failed", "EKU extension not critical (RFC 3161 2.3)")
     except x509.ExtensionNotFound:
-        res["reasons"].append("no EKU extension (RFC 3161 2.3)")
+        bad("failed", "no EKU extension (RFC 3161 2.3)")
     try:
         ku = signer.extensions.get_extension_for_oid(ExtensionOID.KEY_USAGE).value
         if not (ku.digital_signature or ku.content_commitment):
-            res["reasons"].append("keyUsage allows neither digitalSignature nor nonRepudiation")
+            bad("failed", "keyUsage allows neither digitalSignature nor nonRepudiation")
     except x509.ExtensionNotFound:
         pass
     if token["tst"]["tsa_name"] is not None:
         try:
             gn = der_parse_one(token["tst"]["tsa_name"], "tsa").kids()[0]
             if gn.tag != 0xA4 or gn.kids()[0].raw != signer.subject.public_bytes():
-                res["reasons"].append("TSTInfo.tsa does not name the signer's subject (RFC 3161 2.4.2)")
-        except Refusal as e:
-            res["reasons"].append("TSTInfo.tsa: %s" % e.reason)
+                bad("failed", "TSTInfo.tsa does not name the signer's subject (RFC 3161 2.4.2)")
+        except (Refusal, IndexError) as e:
+            bad("failed", "TSTInfo.tsa: %s" % getattr(e, "reason", "malformed GeneralName"))
     # path to a supplied root, every certificate valid at genTime (this verifier's choice of validation time,
     # RFC 5280 6.1.1; RFC 3161 Appendix B item B.4 applies the same rule to the certificate of a time-stamped signer)
     root_ders = set()
@@ -1133,7 +1173,8 @@ def verify_tsa(token, roots):
     anchored = False
     for _ in range(8):
         if not _cert_time_ok(cur, gen):
-            res["reasons"].append("certificate %s not valid at genTime" % cur.subject.rfc4514_string())
+            bad("failed" if cur is signer else "untrusted",
+                "certificate %s not valid at genTime" % cur.subject.rfc4514_string())
         if cur.public_bytes(Encoding.DER) in root_ders:
             anchored = True
             break
@@ -1145,26 +1186,26 @@ def verify_tsa(token, roots):
                     parent = c
                     if c.public_bytes(Encoding.DER) in root_ders:
                         break
-                except Exception:
-                    continue
+                except (InvalidSignature, ValueError, TypeError, UnsupportedAlgorithm):
+                    continue                     # not this issuer; anything else (a missing API) is not swallowed
         if parent is None:
             break
         try:
             bc = parent.extensions.get_extension_for_oid(ExtensionOID.BASIC_CONSTRAINTS).value
             if not bc.ca:
-                res["reasons"].append("issuer %s is not a CA" % parent.subject.rfc4514_string())
+                bad("untrusted", "issuer %s is not a CA" % parent.subject.rfc4514_string())
         except x509.ExtensionNotFound:
-            res["reasons"].append("issuer %s has no basicConstraints" % parent.subject.rfc4514_string())
+            bad("untrusted", "issuer %s has no basicConstraints" % parent.subject.rfc4514_string())
         try:
             pku = parent.extensions.get_extension_for_oid(ExtensionOID.KEY_USAGE).value
             if not pku.key_cert_sign:
-                res["reasons"].append("issuer %s keyUsage lacks keyCertSign" % parent.subject.rfc4514_string())
+                bad("untrusted", "issuer %s keyUsage lacks keyCertSign" % parent.subject.rfc4514_string())
         except x509.ExtensionNotFound:
             pass
         chain.append(parent)
         cur = parent
     if not anchored:
-        res["reasons"].append("no path from the signer certificate to a supplied root")
+        bad("untrusted", "no path from the signer certificate to a supplied root")
     res["chain"] = [c.subject.rfc4514_string() for c in chain]
     if not res["reasons"]:
         res["status"] = "valid"
@@ -1173,7 +1214,45 @@ def verify_tsa(token, roots):
 
 # ======================================================================================== input grammar
 INPUT_MEMBERS = {"criteria_file_base64", "criteria_tsr_base64", "keys", "receipt", "receipt_tsr_base64",
-                 "delivered_file_base64", "original_file_base64"}
+                 "delivered_file_base64", "original_file_base64", "tsa_roots_base64"}
+# Profile 1.4 step 9: "With anchors it is `verified` ..., `failed`, `untrusted`, `unsupported` (e.g. RSASSA-PSS) or
+# `no_signer`"; without relying-party anchors `not_evaluated`. The text gives no order between the values when one
+# token has several defects; --tsa-precedence picks one (see tsa_outcome).
+TSA_VALUES = ("verified", "failed", "untrusted", "unsupported", "no_signer", "not_evaluated")
+TSA_PRECEDENCE = {"failed-first": ("failed", "no_signer", "unsupported", "untrusted"),
+                  "evaluability-first": ("no_signer", "unsupported", "failed", "untrusted")}
+
+
+def tsa_outcome(v, precedence):
+    """verify_tsa() result -> one profile 1.4 `tsa_signature` value. failed-first (default): a check that could be
+    run and failed decides, whatever could not be evaluated; untrusted only when everything else holds."""
+    if v["status"] == "valid":
+        return "verified"
+    have = set(v["classes"])
+    for c in TSA_PRECEDENCE[precedence]:
+        if c in have:
+            return c
+    raise AssertionError("TSA result without a class: %r" % (v,))
+
+
+def load_roots_b64(items):
+    """inputs.tsa_roots_base64: a JSON array of base64 DER certificates (profile 1.4 vectors 31-36)."""
+    if not isinstance(items, list):
+        raise Refusal("inputs.tsa_roots_base64 is not an array")
+    if not items:
+        return []
+    _require_pkix()
+    out = []
+    for i, it in enumerate(items):
+        if not isinstance(it, str):
+            raise Refusal("inputs.tsa_roots_base64[%d] is not a string" % i)
+        der = b64_strict(it, "inputs.tsa_roots_base64[%d]" % i)
+        try:
+            cert = _load_cert(der)
+        except ValueError:
+            raise Refusal("inputs.tsa_roots_base64[%d] is not a DER X.509 certificate" % i)
+        out.append(cert)
+    return out
 KEYFILE_MEMBERS = {"issuer", "keys", "version", "purpose", "also_published"}
 KEY_MEMBERS = {"alg", "key_id", "public_key_base64", "status", "since"}
 KEY_STATUSES = ("active", "test")
@@ -1430,11 +1509,26 @@ def verify(inputs, options=None, keys_override=None):
     original = opt_b64("original_file_base64")
     roots = None
     cannot = []
-    if opts["tokens"] == "pkix":
+    if opts["tokens"] == "pkix" or opts["tsa_roots"]:
         try:
             roots = load_roots(opts["tsa_roots"])
         except CannotRun as e:
             cannot.append("TSA validation: %s" % e)
+    # Relying-party anchors for profile 1.4 `tsa_signature`: --tsa-roots when given, else inputs.tsa_roots_base64.
+    anchors = None
+    if opts["tsa_roots"]:
+        anchors = roots
+        if "tsa_roots_base64" in inputs:
+            if roots is not None:
+                load_roots_b64(inputs["tsa_roots_base64"])       # grammar still closed; the value is not used
+            ctx.notes.append("inputs.tsa_roots_base64 not used: anchors were supplied with --tsa-roots")
+    elif "tsa_roots_base64" in inputs:
+        try:
+            anchors = load_roots_b64(inputs["tsa_roots_base64"]) or None
+        except CannotRun as e:
+            cannot.append("TSA validation: %s" % e)
+        if inputs["tsa_roots_base64"] == []:
+            ctx.notes.append("inputs.tsa_roots_base64 is empty: read as no relying-party anchors (not_evaluated)")
     crit_parsed = parse_tsr(crit_tsr, opts) if crit_tsr is not None else None
     rec_parsed = parse_tsr(rec_tsr, opts) if rec_tsr is not None else None
     for nm, prs in (("criteria token", crit_parsed), ("record token", rec_parsed)):
@@ -1548,6 +1642,20 @@ def verify(inputs, options=None, keys_override=None):
 
     crit_tok = token_usable(crit_parsed, "criteria_token")
     rec_tok = token_usable(rec_parsed, "record_token")
+
+    # ---- profile 1.4 step 9: authority signature, one key per token present; never changes another member
+    tsa_sig = {}
+    for key, label, prs in (("criteria", "criteria_token", crit_parsed), ("receipt", "record_token", rec_parsed)):
+        if prs is None or prs["token"] is None:
+            continue
+        if anchors is None:
+            tsa_sig[key] = "not_evaluated"
+            continue
+        v = details.get(label + "_tsa") if anchors is roots else None
+        if v is None:
+            v = verify_tsa(prs["token"], anchors)
+            details[label + "_tsa_signature"] = v
+        tsa_sig[key] = tsa_outcome(v, opts["tsa_precedence"])
     if crit_parsed is not None and crit_parsed["token"] is None:
         ext.add("X_CRITERIA_TOKEN_NOT_GRANTED")
     if rec_parsed is not None and rec_parsed["token"] is None:
@@ -1734,6 +1842,8 @@ def verify(inputs, options=None, keys_override=None):
         "details": details,
         "options": {k: v for k, v in opts.items() if k != "tsa_roots"},
     }
+    if tsa_sig:
+        report["tsa_signature"] = tsa_sig
     return report
 
 
@@ -1864,6 +1974,13 @@ def compare(rep, exp):
             ok = set(mine) == set(theirs) and len(set(theirs)) == len(theirs)
         elif k == "reason" and rep.get("refused"):
             ok = mine == theirs
+        elif k == "tsa_signature":
+            # 1.4: "an absent field reads the same" as not_evaluated, key by key
+            mine = rep.get("tsa_signature", {}) if not rep.get("refused") else "<absent>"
+            ok = isinstance(theirs, dict) and isinstance(mine, dict) and set(theirs) <= {"criteria", "receipt"} \
+                and all(theirs[t] in TSA_VALUES for t in theirs) \
+                and all(mine.get(t, "not_evaluated") == theirs[t] for t in theirs) \
+                and all(mine[t] == "not_evaluated" for t in set(mine) - set(theirs))
         else:
             ok = mine == theirs and type(mine) == type(theirs)
         rows.append({"field": k, "expected": theirs, "ours": mine, "agree": ok})
@@ -1874,7 +1991,7 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  defaults follow profile 1.3 (maximusrufus/work-acceptance-record@42b4ed0)
+  defaults follow profile 1.4 (maximusrufus/work-acceptance-record@eb0f30b; steps 1-8 as in 1.3)
   --profile 1.2.1              this verifier's profile 1.2.1 readings (key-id-source envelope, reference-time
                                covering-token, accuracy ignore, key-id-agreement require, key-rule refuse,
                                independence-rule stated-independent); a switch given explicitly overrides it
@@ -1883,7 +2000,9 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --time-agreement truncate|exact     (default truncate)
   --accuracy widen|ignore|interval    (default widen)
   --tokens structural|pkix            (default structural)
-  --tsa-roots DIR_OR_FILE             (required with --tokens pkix)
+  --tsa-roots DIR_OR_FILE             relying-party anchors for `tsa_signature` (1.4 step 9), replacing a vector's
+                                      inputs.tsa_roots_base64; required with --tokens pkix
+  --tsa-precedence failed-first|evaluability-first   (default failed-first)
   --name-compare exact|normalized     (default exact)
   --unknown-fields refuse|report      (default refuse)
   --ed25519 strict|rfc8032            (default strict)
@@ -1908,7 +2027,7 @@ def main(argv):
                "--tsa-roots": "tsa_roots", "--name-compare": "name_compare", "--unknown-fields": "unknown_fields",
                "--ed25519": "ed25519", "--correspondence": "correspondence",
                "--key-id-agreement": "key_id_agreement", "--key-rule": "key_rule",
-               "--independence-rule": "independence_rule"}
+               "--independence-rule": "independence_rule", "--tsa-precedence": "tsa_precedence"}
     profile = None
     while args:
         a = args.pop(0)
@@ -1948,9 +2067,6 @@ def main(argv):
         opts = dict(PROFILE_1_2_1, **opts)
     if opts.get("tokens") == "pkix" and not opts.get("tsa_roots"):
         sys.stderr.write("--tokens pkix needs --tsa-roots\n")
-        return 64
-    if opts.get("tsa_roots") and opts.get("tokens") != "pkix":
-        sys.stderr.write("--tsa-roots is used only with --tokens pkix\n")
         return 64
 
     def emit(obj):
