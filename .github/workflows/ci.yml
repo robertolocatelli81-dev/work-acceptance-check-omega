@@ -1,0 +1,79 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  tests:
+    # 3.9 has no setup-python build for ubuntu-26.04, which `ubuntu-latest` is becoming between 2026-10-19 and 2026-11-19
+    # (actions/runner-images#14748): the floor runs on ubuntu-24.04, the other two on the current label
+    runs-on: ${{ matrix.python-version == '3.9' && 'ubuntu-24.04' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]   # the README declares Python 3.9 or newer: the floor is tested too
+    steps:
+      - uses: actions/checkout@v7       # Node 24: Node 20 actions are no longer run (GitHub changelog, 2026-09-23)
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Dependency (cryptography, current release)
+        run: python -m pip install cryptography
+      - name: Third-party inputs, fetched from SOURCES.json and kept only if their sha256 matches
+        run: python tools/fetch_sources.py
+      - name: "openssl is on the PATH the tests use (shutil.which), so tests/test_tsa_pkix.py compares every TSA case with `openssl ts -verify` instead of returning None"
+        run: |
+          openssl version
+          python -c "import shutil, sys; p = shutil.which('openssl'); print(p); sys.exit(0 if p else 1)"
+      - name: The whole suite (137 tests, as the README states, none skipped)
+        run: |
+          set -e
+          out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
+          echo "$out" | tail -3
+          echo "$out" | grep -qx "Ran 137 tests in [0-9.]*s" || { echo "::error::discovery did not run 137 tests"; exit 1; }
+          [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
+  cryptography-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Third-party inputs
+        run: python tools/fetch_sources.py
+      - name: "cryptography 40.0.0: 137/137 pass (README)"
+        run: |
+          set -e
+          python -m pip install "cryptography==40.0.0"
+          out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
+          echo "$out" | grep -qx "Ran 137 tests in [0-9.]*s" || { echo "::error::did not run 137 tests"; exit 1; }
+          [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
+      - name: "cryptography 39.0.2: 39 of 137 fail by design, 98 pass (README); any other count, or a skip, is red"
+        run: |
+          set -e
+          python -m pip install "cryptography==39.0.2"
+          set +e; out=$(python -B -m unittest discover -s tests 2>&1); rc=$?; set -e
+          echo "$out" | tail -3
+          n=$(echo "$out" | sed -n 's/^Ran \([0-9]*\) test.*/\1/p')
+          fl=$(echo "$out" | sed -n 's/^FAILED (.*failures=\([0-9]*\).*/\1/p'); er=$(echo "$out" | sed -n 's/^FAILED (.*errors=\([0-9]*\).*/\1/p')
+          bad=$(( ${fl:-0} + ${er:-0} ))   # unittest splits the 39 into failures and errors
+          echo "ran $n, exit $rc, failures ${fl:-0} + errors ${er:-0} = $bad"
+          case "$(echo "$out" | tail -1)" in *skipped=*) echo "::error::a test was skipped"; exit 1;; esac
+          [ "$n" = 137 ] && [ "$rc" = 1 ] && [ "$bad" = 39 ] || { echo "::error::expected 137 run and 39 not passing"; exit 1; }
+  mutants:
+    # the 46 targeted mutants of the README (tools/mutate14.py): about 7 minutes, so a job of its own
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Dependency and third-party inputs
+        run: |
+          python -m pip install cryptography
+          python tools/fetch_sources.py
+      - name: "46 targeted mutants, each caught by at least one test (README; the script exits non-zero on a survivor or an unapplied pattern)"
+        run: |
+          set -e
+          out=$(python -B tools/mutate14.py "$(python -c 'import sys; print(sys.executable)')" 2>&1) || { echo "$out" | tail -40; exit 1; }
+          echo "$out" | tail -5
+          echo "$out" | grep -qx "killed 46/46" || { echo "::error::expected the line 'killed 46/46'"; exit 1; }
