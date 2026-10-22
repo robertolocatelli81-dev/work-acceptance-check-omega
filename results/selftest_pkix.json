@@ -153,5 +153,5 @@
   "verdict_stated": "pass",
   "warning_codes": []
  },
- "verifier": "war_verify 0.4.0"
+ "verifier": "war_verify 0.4.1"
 }

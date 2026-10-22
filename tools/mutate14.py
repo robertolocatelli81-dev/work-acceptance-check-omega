@@ -1,4 +1,4 @@
-"""Targeted mutants of the 0.3.0 and 0.4.0 changes (profile 1.4 / 1.4.1 `tsa_signature`): each one must make at
+"""Targeted mutants of the 0.3.0, 0.4.0 and 0.4.1 changes (profile 1.4 / 1.4.1 `tsa_signature`; PKIStatusInfo grammar): each one must make at
 least one test fail.
 usage: python3 -B tools/mutate14.py PYTHON   (an interpreter with cryptography >= 40)"""
 import os, shutil, subprocess, sys, tempfile
@@ -44,10 +44,18 @@ M = [
  ("payment network open", 'if not _EIP155.match(pm["network"]):', 'if not pm["network"].startswith("eip155:"):'),
  ("payment chain id longer than CAIP-2 allows", r'_EIP155 = re.compile(r"\Aeip155:[1-9][0-9]{0,31}\Z")', r'_EIP155 = re.compile(r"\Aeip155:[1-9][0-9]*\Z")'),
  ("anchors not among the issuer candidates (bytes-only match)", '    pool = certs + [r for r in roots]', '    pool = certs'),
+ ("empty PKIFreeText accepted", "        if not texts:\n            raise Refusal(\"PKIStatusInfo.statusString is an empty PKIFreeText\")", "        if False:\n            raise Refusal(\"PKIStatusInfo.statusString is an empty PKIFreeText\")"),
+ ("PKIFreeText member tag not checked", '            _expect(t, 0x0C, "PKIFreeText UTF8String")', '            pass'),
+ ("PKIFreeText UTF-8 not checked", '                t.content.decode("utf-8")', '                pass'),
+ ("failInfo unused-bit count 8 accepted", "c[0] > 7", "c[0] > 8"),
+ ("failInfo one octet with unused bits accepted", "(len(c) == 1 and c[0])", "False"),
+ ("failInfo nonzero unused bits accepted", "(len(c) > 1 and c[-1] & ((1 << c[0]) - 1))", "False"),
+ ("failInfo empty accepted", "if not c or c[0] > 7", "if c and c[0] > 7"),
+ ("failInfo trailing zero bits accepted (named bit list)", "if len(c) > 1 and not (c[-1] >> c[0]) & 1:", "if False:"),
 ]
 TESTS = ["tests/test_payment141.py", "tests/test_tsa_signature14.py", "tests/test_nemesis_14.py", "tests/test_nemesis_141b.py",
          "tests/test_vectors.py", "tests/test_cli.py",
-         "tests/test_tsa_pkix.py"]
+         "tests/test_tsa_pkix.py", "tests/test_status_info.py"]
 killed = 0
 not_applicable = 0
 for name, o, n in M:

@@ -4,7 +4,7 @@
 Written from the profile README at maximusrufus/work-acceptance-record@06d3b94 (profile 1.4.1; 1.4 at eb0f30b, 1.3 at
 42b4ed0 and 1.2.1 at f7d8984 before it), the test vectors listed in README.md ("What was read"), and the RFCs it
 names. No other implementation of this profile was opened; an issue comment quoting parts of the reference verifier
-was read before 0.4.0 (README.md, "What was read"). The 1.2.1 readings of version 0.1.0 are selectable with
+was read before 0.4.0, and a probe description before 0.4.1 (README.md, "What was read"). The 1.2.1 readings of version 0.1.0 are selectable with
 --profile 1.2.1.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
@@ -38,7 +38,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.4.0"
+VERSION = "war_verify 0.4.1"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -723,9 +723,25 @@ def parse_tsr(raw, opts):
         raise Refusal("PKIStatus %d not understood (RFC 3161 2.4.2: clients MUST generate an error)" % status)
     rest = si[1:]
     if rest and rest[0].tag == 0x30:
-        rest = rest[1:]                       # statusString (PKIFreeText); not interpreted
+        # statusString: PKIFreeText ::= SEQUENCE SIZE (1..MAX) OF UTF8String (RFC 3161 2.4.2, RFC 4210 5.1.1);
+        # grammar checked, text not interpreted
+        texts = rest[0].kids()
+        if not texts:
+            raise Refusal("PKIStatusInfo.statusString is an empty PKIFreeText")
+        for t in texts:
+            _expect(t, 0x0C, "PKIFreeText UTF8String")
+            try:
+                t.content.decode("utf-8")
+            except UnicodeDecodeError:
+                raise Refusal("PKIStatusInfo.statusString holds a UTF8String that is not UTF-8")
+        rest = rest[1:]
         notes.append("PKIStatusInfo.statusString present (not interpreted)")
     if rest and rest[0].tag == 0x03:
+        c = rest[0].content                   # failInfo: PKIFailureInfo ::= BIT STRING { badAlg (0), ... }
+        if not c or c[0] > 7 or (len(c) == 1 and c[0]) or (len(c) > 1 and c[-1] & ((1 << c[0]) - 1)):
+            raise Refusal("DER: malformed BIT STRING (PKIStatusInfo.failInfo)")
+        if len(c) > 1 and not (c[-1] >> c[0]) & 1:   # named bit list: trailing zero bits removed (X.690 11.2.2)
+            raise Refusal("DER: BIT STRING with trailing zero bits (PKIStatusInfo.failInfo is a named bit list)")
         rest = rest[1:]
         notes.append("PKIStatusInfo.failInfo present")
     if rest:

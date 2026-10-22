@@ -6,7 +6,7 @@ maximusrufus/work-acceptance-record@06d3b94, schema identifier `trilatic.accepta
 verifier gave to profile 1.2.1 (version 0.1.0) are kept: `--profile 1.2.1` selects all of them, and each one has
 its own switch (see "Switches"). It was written from the profile README, the published test vectors and the RFCs it names, without
 opening any other implementation; an issue comment that quotes parts of the reference verifier was read before
-version 0.4.0 (see "What was read").
+version 0.4.0, and the description of a probe vector before 0.4.1 (see "What was read").
 
 Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 `LICENSE-APACHE`). The new vectors in `vectors/` are CC0, like the upstream vectors.
@@ -115,7 +115,15 @@ version 0.1.0.
 
 Where a standard says what to do with an unknown element, that rule is followed and listed in `notes`: a
 non-critical TSTInfo extension is ignored (RFC 5280 4.2), a critical one is refused, and an unknown PKIStatus is an
-error (RFC 3161 2.4.2).
+error (RFC 3161 2.4.2). The `PKIStatusInfo` of a time-stamp response is read to its grammar but not interpreted: a
+`statusString` must be a non-empty sequence of UTF-8 `UTF8String`s (`PKIFreeText`, RFC 4210 5.1.1) and a `failInfo` a
+DER `BIT STRING` (unused bits zero and, as `PKIFailureInfo` is a named bit list, no trailing zero bits, X.690 11.2), and
+anything else is refused like any other DER defect of the response (since 0.4.1; before, any
+sequence was accepted there; `tests/test_status_info.py`). The imprint and `genTime` are read from the signed
+`TSTInfo` only: with an imprint copied into the unsigned `statusString` of a genuine token (in the probe's layout, one
+`UTF8String` whose bytes are not UTF-8, and with the values as direct members), 0.4.0 gave
+`CRITERIA_TIMESTAMP_MISMATCH` for the criteria token and `imprint_mismatch` for the record token (measured
+2026-10-22); 0.4.1 refuses both responses in both layouts.
 
 The profile does not define the envelope, key-file or criteria-document formats. The member sets accepted for
 them are those found in the published inputs (the 26 documents of the 1.2.1 round and the 27 vectors of 1.3). For the criteria document, only `criteria[].id`, `required` and
@@ -232,6 +240,12 @@ Readings of 1.3 that no published vector pins (each has its own vector in `vecto
 Only these files; their URLs and SHA-256 values are in `SOURCES.json`. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- for 0.4.1, Tetsurohhori's comment on x402-foundation/tsc#4 (issuecomment-6327691458, 2026-10-21T22:12:28Z) and, at
+  aos-standard/catalog@8c210d1, `docs/runs/work-acceptance-record-cold/probe-status-imprint/README.md` (SHA-256
+  6cb5120c0a9abf8a…) and the vector `probe-status-string-imprint.json` (66f9aeb761aae596…), fetched 2026-10-22 about
+  02:10 CEST and run outside this repository. The probe's builder and that catalog's verifier were not opened; the
+  construction in `tests/test_status_info.py` was written here from the README's description and then matched byte
+  for byte to the vector's criteria response (one `UTF8String` holding the three values, `NULL` algorithm parameters);
 - `fonti/upstream_d79a737/`: the profile 1.4.1 README as clarified for the anchor match (subject name and public
   key) and vectors 48-49 (maximusrufus/work-acceptance-record@d79a737, committed 2026-10-21T16:45:33Z, fetched
   2026-10-21 about 19:06 CEST). Vectors 01-47 of d79a737 have the blob ids of the 06d3b94 files (47/47, checked
@@ -280,7 +294,8 @@ Only these files; their URLs and SHA-256 values are in `SOURCES.json`. The 1.2.1
 The following standards were fetched from rfc-editor.org on 2026-10-18 (the first 16 hex digits of each SHA-256 are
 given): RFC 8785 (63d52294eb0e3f00), RFC 8032 (ed63657ff3893012), RFC 3161 (39fd17644ff2d654), RFC 5652
 (dbd209ae7844031f), RFC 5280 (a2f2628c0a83b873), RFC 5816 (9a3eba6ecf14afc7), RFC 7493 (a44ccf1451a7bf4f),
-RFC 3339 (9ab2b8864a85dca7) and RFC 5754 (13d095299ffec21b). X.690 (DER) and the ESS attribute definitions
+RFC 3339 (9ab2b8864a85dca7) and RFC 5754 (13d095299ffec21b); RFC 4210 (64210d97dd49cf49, for `PKIFreeText`) on
+2026-10-22. X.690 (DER) and the ESS attribute definitions
 (RFC 2634, RFC 5035) were applied from their known rules and not re-read.
 
 TSA certificates (in `roots/`, fetched from freetsa.org/files on 2026-10-18T06:16Z): `freetsa_cacert.pem`
@@ -300,7 +315,7 @@ two vectors of this project: agreement on 24 and 25 is not independent evidence.
 
 Defaults: the 47 vectors of 06d3b94 and the live record (`tools/score.py`, `results/score_default.txt`): 48/48
 documents, 441/441 fields. Vectors 01-36 are byte-identical to eb0f30b and 01-46 to 4daf721 (`tests/test_vectors.py`).
-Vector 47 (a passing receipt whose signed body carries `payment`) agrees on its 9 fields. Vectors 48 and 49 of
+Version 0.4.1 gives the same 48/48 documents and 441/441 fields (measured 2026-10-22). Vector 47 (a passing receipt whose signed body carries `payment`) agrees on its 9 fields. Vectors 48 and 49 of
 d79a737 (a signer without `id-kp-timeStamping`; an issuer without the CA flag) agree too, both `failed`, each on the
 rule its name states (`tests/test_nemesis_141b.py`); they are not in the scored set, which stays at 06d3b94. Vectors
 37-46, `tsa_signature` compared key by key:
@@ -545,22 +560,22 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 126 tests
+python3 -B -m unittest discover -s tests          # 137 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
 
-Measured on 2026-10-21 (0.4.0): 126/126 pass on Python 3.9.25, 3.11.2 and 3.13.15 with `cryptography` 50.0.2, and on
-3.11.2 with `cryptography` 40.0.0. With 39.0.2, 39 of 126 fail by design and the other 87 pass: each failing test
+Measured on 2026-10-22 (0.4.1): 137/137 pass on Python 3.9.25, 3.11.2 and 3.13.15 with `cryptography` 50.0.2, and on
+3.11.2 with `cryptography` 40.0.0. With 39.0.2, 39 of 137 fail by design and the other 98 pass: each failing test
 expects a TSA value or check and gets the check that cannot run instead. On the 1.4.1 set with 39.0.2, the 14
 documents with anchors all report `cannot_run` (exit 74 for 31, 38 and 42, measured) and every `tsa_signature`
 value is `not_evaluated`; none is an evaluated value. Every test file has its positive control:
 - the scoring bench fails an accept-always verifier (0/28 on 1.3; on 1.4 only vector 30, on 1.4.1 only 30 and 47,
   see above);
-- 38 targeted mutants of the 0.3.0 and 0.4.0 changes (value classes, chain classes with and without the anchor,
+- 46 targeted mutants of the 0.3.0, 0.4.0 and 0.4.1 changes (value classes, chain classes with and without the anchor,
   the anchor's exemption from the genTime check, the signer's own check whatever the anchors, the closed list of TSA
   key algorithms read from the certificate, precedence, anchors, `tsa_signature_accepted`, comparison, the "never
-  changes another member" rule, the chain API guard, the anchor among the issuer candidates, the `payment` grammar)
-  are each caught by at least one test (38/38, `tools/mutate14.py`, which exits non-zero on a survivor or on a mutant whose
+  changes another member" rule, the chain API guard, the anchor among the issuer candidates, the `payment` grammar,
+  the `PKIStatusInfo` grammar) are each caught by at least one test (46/46, `tools/mutate14.py`, which exits non-zero on a survivor or on a mutant whose
   pattern no longer applies). For 0.3.0, a second run of 24 mutants
   on the same lines by the review of 0.3.0 left 2 equivalent ones (the `anchors is roots` reuse of the pkix result
   and the narrowed `except` behind the chain API guard: 0 differences over 235 runs, a control mutant 7) and
