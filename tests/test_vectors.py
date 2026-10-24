@@ -51,10 +51,10 @@ class Vectors13(unittest.TestCase):
                   if not r["file"].endswith("/30-criteria-token-accuracy-millis-still-before.json")]
         self.assertEqual(short(score.score(verify_fn=always, which="1.4")), others)
         # 1.4.1 at 06d3b94: vector 47 (a passing receipt carrying `payment`) has that constant outcome too
-        others = [r["file"].split("/")[-1][:2] for r in score.score()
+        others = [r["file"].split("/")[-1][:2] for r in score.score(which="1.4.1")
                   if not r["file"].endswith(("/30-criteria-token-accuracy-millis-still-before.json",
                                              "/47-receipt-payment-x402-exact.json"))]
-        self.assertEqual(short(score.score(verify_fn=always)), others)
+        self.assertEqual(short(score.score(verify_fn=always, which="1.4.1")), others)
 
     def test_positive_control_corrupted_expectation_is_caught(self):
         def corrupt(doc):
@@ -96,13 +96,13 @@ class Vectors14(unittest.TestCase):
 
 class Vectors141(unittest.TestCase):
     def test_defaults_48_of_48(self):
-        rows = score.score()
+        rows = score.score(which="1.4.1")
         self.assertEqual(len(rows), 48)              # 47 vectors of 06d3b94 + live record
         self.assertEqual(short(rows), [])
         self.assertEqual(sum(r["fields"] for r in rows), 441)
 
     def test_01_to_46_are_the_4daf721_files(self):
-        for f in score.vector_files()[:46]:
+        for f in score.vector_files("1.4.1")[:46]:
             g = f.replace("upstream_06d3b94", "upstream_4daf721")
             with open(f, "rb") as a, open(g, "rb") as b:
                 self.assertEqual(a.read(), b.read(), f)
@@ -121,11 +121,15 @@ class Vectors141(unittest.TestCase):
             rep, _ = wv.run_vector(d)
             rep.pop("tsa_signature", None)
             return rep, wv.compare(rep, d["expected"], wv.tsa_accepted(d.get("tsa_signature_accepted")))
-        self.assertEqual(short(score.score(verify_fn=stripped)),
+        self.assertEqual(short(score.score(verify_fn=stripped, which="1.4.1")),
                          ["31", "32", "33", "34", "35", "37", "38", "39", "40", "41", "42", "44", "45", "46"])
+        # bc5a138 adds the evaluated tokens of 48-51, 53 and 54; 52 and 55-57 carry no anchors
+        self.assertEqual(short(score.score(verify_fn=stripped)),
+                         ["31", "32", "33", "34", "35", "37", "38", "39", "40", "41", "42", "44", "45", "46",
+                          "48", "49", "50", "51", "53", "54"])
 
     def test_vector_40_accepts_unsupported_and_nothing_else(self):
-        with open(score.vector_files()[39], "rb") as fh:
+        with open(score.vector_files("1.4.1")[39], "rb") as fh:
             doc = wv.strict_json_loads(fh.read())
         self.assertTrue(doc["vector"].startswith("40-"))
         acc = wv.tsa_accepted(doc["tsa_signature_accepted"])
@@ -153,7 +157,49 @@ class Vectors141(unittest.TestCase):
         self.assertEqual(wv.tsa_accepted(None), {})
 
     def test_evaluability_first_disagrees_only_on_44_to_46(self):
-        self.assertEqual(short(score.score({"tsa_precedence": "evaluability-first"})), ["44", "45", "46"])
+        self.assertEqual(short(score.score({"tsa_precedence": "evaluability-first"}, which="1.4.1")), ["44", "45", "46"])
+
+
+class VectorsBc5a138(unittest.TestCase):
+    """Profile 1.4.1 as published at bc5a138 (57 vectors) and open PR #1 at 48ab8c9 (59), each with the live record."""
+
+    def test_bc5a138_58_of_58(self):
+        rows = score.score()
+        self.assertEqual(len(rows), 58)
+        self.assertEqual(short(rows), [])
+
+    def test_pr1_48ab8c9_60_of_60(self):
+        rows = score.score(which="48ab8c9")
+        self.assertEqual(len(rows), 60)
+        self.assertEqual(short(rows), [])
+
+    def test_01_to_47_inputs_and_expected_as_06d3b94(self):
+        # 8e00300 and 48ab8c9 rewrote descriptions only; inputs and expected objects of 01-47 are those of 06d3b94
+        for which in ("bc5a138", "48ab8c9"):
+            for f in score.vector_files("1.4.1")[:47]:
+                g = f.replace("upstream_06d3b94", "upstream_" + which)
+                with open(f, "rb") as a, open(g, "rb") as b:
+                    x, y = json.load(a), json.load(b)
+                self.assertEqual((x["inputs"], x["expected"]), (y["inputs"], y["expected"]), (which, f))
+
+    def test_positive_control_accept_always_agrees_only_with_constant_outcomes(self):
+        # README: "a verifier that always answers valid, pass, no codes agrees only with 30, 47, 52, 55 and 57"
+        def always(doc):
+            rep = {"signature_valid": True, "problem_codes": [], "warning_codes": [], "receipt_timestamp": "none",
+                   "criteria_committed_before_check": "yes", "criteria_hash": "match", "independence": "independent",
+                   "verdict_recomputed": "pass", "verdict_stated": "pass"}
+            return rep, wv.compare(rep, doc["expected"], wv.tsa_accepted(doc.get("tsa_signature_accepted")))
+        for which in ("bc5a138", "48ab8c9"):
+            self.assertEqual([r["file"].split("/")[-1][:2] for r in score.score(verify_fn=always, which=which)
+                              if r["agree"]], ["30", "47", "52", "55", "57"], which)
+
+    def test_positive_control_corrupted_expectation_is_caught(self):
+        def corrupt(doc):
+            d = copy.deepcopy(doc)
+            d["expected"]["problem_codes"] = list(d["expected"].get("problem_codes", [])) + ["KEY_COLLISION"]
+            return wv.run_vector(d)
+        for which in ("bc5a138", "48ab8c9"):
+            self.assertEqual(sum(r["agree"] for r in score.score(verify_fn=corrupt, which=which)), 0)
 
 
 class Vectors121(unittest.TestCase):

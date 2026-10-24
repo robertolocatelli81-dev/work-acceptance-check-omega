@@ -1,7 +1,7 @@
 {
- "agree": 48,
- "fields": 441,
- "fields_agree": 441,
+ "agree": 58,
+ "fields": 537,
+ "fields_agree": 537,
  "options": {
   "key_id_source": "envelope"
  },
@@ -11,133 +11,133 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/01-valid.json"
+   "file": "fonti/upstream_bc5a138/vectors/01-valid.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/02-criteria-committed-after-issue.json"
+   "file": "fonti/upstream_bc5a138/vectors/02-criteria-committed-after-issue.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/03-self-checked.json"
+   "file": "fonti/upstream_bc5a138/vectors/03-self-checked.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/04-required-not-evaluated.json"
+   "file": "fonti/upstream_bc5a138/vectors/04-required-not-evaluated.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/05-checker-key-equals-producer-key.json"
+   "file": "fonti/upstream_bc5a138/vectors/05-checker-key-equals-producer-key.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/06-receipt-edited-after-signing.json"
+   "file": "fonti/upstream_bc5a138/vectors/06-receipt-edited-after-signing.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/07-criteria-file-swapped.json"
+   "file": "fonti/upstream_bc5a138/vectors/07-criteria-file-swapped.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/08-receipt-token-over-another-receipt.json"
+   "file": "fonti/upstream_bc5a138/vectors/08-receipt-token-over-another-receipt.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/09-stated-pass-recomputes-incomplete.json"
+   "file": "fonti/upstream_bc5a138/vectors/09-stated-pass-recomputes-incomplete.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/10-committed-at-contradicts-token.json"
+   "file": "fonti/upstream_bc5a138/vectors/10-committed-at-contradicts-token.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/11-required-criterion-fails.json"
+   "file": "fonti/upstream_bc5a138/vectors/11-required-criterion-fails.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/12-signer-is-not-the-checker.json"
+   "file": "fonti/upstream_bc5a138/vectors/12-signer-is-not-the-checker.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/13-independent-but-same-party.json"
+   "file": "fonti/upstream_bc5a138/vectors/13-independent-but-same-party.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/14-results-not-in-criteria.json"
+   "file": "fonti/upstream_bc5a138/vectors/14-results-not-in-criteria.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/15-criteria-token-over-other-bytes.json"
+   "file": "fonti/upstream_bc5a138/vectors/15-criteria-token-over-other-bytes.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/16-no-criteria-token.json"
+   "file": "fonti/upstream_bc5a138/vectors/16-no-criteria-token.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/17-committed-at-equals-reference.json"
+   "file": "fonti/upstream_bc5a138/vectors/17-committed-at-equals-reference.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/18-mismatching-record-token-later-time.json"
+   "file": "fonti/upstream_bc5a138/vectors/18-mismatching-record-token-later-time.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/19-result-outside-vocabulary.json"
+   "file": "fonti/upstream_bc5a138/vectors/19-result-outside-vocabulary.json"
   },
   {
    "agree": true,
@@ -157,196 +157,266 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/20-producer-undeclared.json"
+   "file": "fonti/upstream_bc5a138/vectors/20-producer-undeclared.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 2,
    "fields_agree": 2,
-   "file": "fonti/upstream_06d3b94/vectors/21-unknown-schema.json"
+   "file": "fonti/upstream_bc5a138/vectors/21-unknown-schema.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/22-matching-record-token-later-than-issued.json"
+   "file": "fonti/upstream_bc5a138/vectors/22-matching-record-token-later-than-issued.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/23-criteria-token-imprint-oid-sha384.json"
+   "file": "fonti/upstream_bc5a138/vectors/23-criteria-token-imprint-oid-sha384.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/24-criteria-token-imprint-oid-sha3-256.json"
+   "file": "fonti/upstream_bc5a138/vectors/24-criteria-token-imprint-oid-sha3-256.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/25-criteria-token-imprint-oid-sha512-256.json"
+   "file": "fonti/upstream_bc5a138/vectors/25-criteria-token-imprint-oid-sha512-256.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/26-key-small-order.json"
+   "file": "fonti/upstream_bc5a138/vectors/26-key-small-order.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/27-key-non-canonical-encoding.json"
+   "file": "fonti/upstream_bc5a138/vectors/27-key-non-canonical-encoding.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/28-key-file-with-unrelated-bad-entry.json"
+   "file": "fonti/upstream_bc5a138/vectors/28-key-file-with-unrelated-bad-entry.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/29-criteria-token-accuracy-flips-commitment.json"
+   "file": "fonti/upstream_bc5a138/vectors/29-criteria-token-accuracy-flips-commitment.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/30-criteria-token-accuracy-millis-still-before.json"
+   "file": "fonti/upstream_bc5a138/vectors/30-criteria-token-accuracy-millis-still-before.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/31-tsa-freetsa-verified.json"
+   "file": "fonti/upstream_bc5a138/vectors/31-tsa-freetsa-verified.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/32-tsa-digicert-verified.json"
+   "file": "fonti/upstream_bc5a138/vectors/32-tsa-digicert-verified.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/33-tsa-unrelated-root-untrusted.json"
+   "file": "fonti/upstream_bc5a138/vectors/33-tsa-unrelated-root-untrusted.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/34-tsa-tampered-signature-failed.json"
+   "file": "fonti/upstream_bc5a138/vectors/34-tsa-tampered-signature-failed.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/35-tsa-token-without-signer-certificate.json"
+   "file": "fonti/upstream_bc5a138/vectors/35-tsa-token-without-signer-certificate.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/36-tsa-no-anchors-not-evaluated.json"
+   "file": "fonti/upstream_bc5a138/vectors/36-tsa-no-anchors-not-evaluated.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/37-tsa-synthetic-control-verified.json"
+   "file": "fonti/upstream_bc5a138/vectors/37-tsa-synthetic-control-verified.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/38-tsa-intermediate-expired-failed.json"
+   "file": "fonti/upstream_bc5a138/vectors/38-tsa-intermediate-expired-failed.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/39-tsa-content-type-mismatch-failed.json"
+   "file": "fonti/upstream_bc5a138/vectors/39-tsa-content-type-mismatch-failed.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/40-tsa-rsassa-pss-verified.json"
+   "file": "fonti/upstream_bc5a138/vectors/40-tsa-rsassa-pss-verified.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/41-tsa-ecdsa-p256-verified.json"
+   "file": "fonti/upstream_bc5a138/vectors/41-tsa-ecdsa-p256-verified.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/42-tsa-ecdsa-p521-unsupported.json"
+   "file": "fonti/upstream_bc5a138/vectors/42-tsa-ecdsa-p521-unsupported.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/43-tsa-empty-anchor-list-not-evaluated.json"
+   "file": "fonti/upstream_bc5a138/vectors/43-tsa-empty-anchor-list-not-evaluated.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json"
+   "file": "fonti/upstream_bc5a138/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/45-tsa-no-certificates-and-bad-digest-failed.json"
+   "file": "fonti/upstream_bc5a138/vectors/45-tsa-no-certificates-and-bad-digest-failed.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 10,
    "fields_agree": 10,
-   "file": "fonti/upstream_06d3b94/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json"
+   "file": "fonti/upstream_bc5a138/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json"
   },
   {
    "agree": true,
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
-   "file": "fonti/upstream_06d3b94/vectors/47-receipt-payment-x402-exact.json"
+   "file": "fonti/upstream_bc5a138/vectors/47-receipt-payment-x402-exact.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_bc5a138/vectors/48-tsa-signer-without-timestamping-eku-failed.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_bc5a138/vectors/49-tsa-issuer-not-a-ca-failed.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_bc5a138/vectors/50-criteria-token-imprint-only-in-status-string.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_bc5a138/vectors/51-record-token-imprint-only-in-status-string.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_bc5a138/vectors/52-receipt-non-integer-numbers.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_bc5a138/vectors/53-tsa-anchor-same-name-other-key-untrusted.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_bc5a138/vectors/54-tsa-expired-intermediate-no-anchor-failed.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_bc5a138/vectors/55-receipt-payment-outside-the-form.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_bc5a138/vectors/56-third-party-checker-live-receipt.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_bc5a138/vectors/57-receipt-integer-valued-doubles.json"
   },
   {
    "agree": true,
@@ -356,6 +426,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "1.4.1",
- "total": 48
+ "set": "bc5a138",
+ "total": 58
 }

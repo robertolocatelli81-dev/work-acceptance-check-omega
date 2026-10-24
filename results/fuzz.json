@@ -6801,97 +6801,127 @@
  },
  {
   "case": "type str -> int at /receipt/timestamp/digest_sha256",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "receipt_timestamp": "imprint_match",
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "envelope.timestamp.digest_sha256 is not 64 lowercase hexadecimal digits",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> bool at /receipt/timestamp/digest_sha256",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "receipt_timestamp": "imprint_match",
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "envelope.timestamp.digest_sha256 is not 64 lowercase hexadecimal digits",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> NoneType at /receipt/timestamp/digest_sha256",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "receipt_timestamp": "imprint_match",
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "envelope.timestamp.digest_sha256 is not 64 lowercase hexadecimal digits",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> list at /receipt/timestamp/digest_sha256",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "receipt_timestamp": "imprint_match",
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "envelope.timestamp.digest_sha256 is not 64 lowercase hexadecimal digits",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> dict at /receipt/timestamp/digest_sha256",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "receipt_timestamp": "imprint_match",
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "envelope.timestamp.digest_sha256 is not 64 lowercase hexadecimal digits",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> float at /receipt/timestamp/digest_sha256",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "receipt_timestamp": "imprint_match",
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "envelope.timestamp.digest_sha256 is not 64 lowercase hexadecimal digits",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },

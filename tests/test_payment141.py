@@ -1,7 +1,8 @@
-"""Profile 1.4.1 at 06d3b94: the optional receipt member `payment` (x402 exact), outcome-neutral. Oracle: vector 47
-and the profile sentence; the grammar is this verifier's closed reading of the member list (values as non-empty
-strings, protocol x402, scheme exact, network eip155:<chain id> with the chain id in decimal, no leading zeros, 1-32
-digits as CAIP-2 bounds the reference)."""
+"""Profile 1.4.1: the optional receipt member `payment` (x402 exact), outcome-neutral. Oracle: vectors 47 (06d3b94)
+and 55 (bc5a138) and the stated form (bc5a138 README and verifier/check_payment.py _in_form: exactly the required members
+plus optional settlement_tx, all strings; network eip155: and a decimal chain id without leading zeros; amount a decimal
+string; addresses 20 bytes, nonce and settlement_tx 32 bytes, 0x-prefixed hex). "A member outside it changes no
+outcome": from 0.5.0 a payment outside the form is listed in notes as unsupported, never refused (0.4.1 refused it)."""
 import os
 import unittest
 
@@ -29,8 +30,8 @@ class Payment(unittest.TestCase):
     def test_vector_47_agrees(self):
         rep, cmp_ = self.run_doc(load())
         self.assertTrue(cmp_["agree"], cmp_)
-        self.assertIn("receipt.payment present: grammar checked; not checked against a chain (outcome-neutral)",
-                      rep["notes"])
+        self.assertIn("receipt.payment present: inside the stated form; not checked against a chain "
+                      "(outcome-neutral)", rep["notes"])
 
     def test_payment_edited_after_signing_is_signature_invalid(self):
         pm = dict(load()["inputs"]["receipt"]["receipt"]["payment"], amount="1001")
@@ -39,7 +40,7 @@ class Payment(unittest.TestCase):
         self.assertIs(rep["signature_valid"], False)
         self.assertIn("SIGNATURE_INVALID", rep["problem_codes"])
 
-    def test_grammar_is_closed(self):
+    def test_outside_the_form_is_noted_never_refused(self):
         base = load()["inputs"]["receipt"]["receipt"]["payment"]
         bad = []
         for m in sorted(base):
@@ -55,13 +56,27 @@ class Payment(unittest.TestCase):
                   "eip155:" + "9" * 33,                                              # CAIP-2 reference: 1-32 chars
                   "eip155:\u0668\u0664\u0665\u0663", "eip155:\uff18\uff14\uff15\uff13"):  # digits outside 0-9
             bad.append(dict(base, network=n))
+        for a in ("01", "1.0", "-1", "1e3", " 1", "1\n", "\u0661", "0x10"):                # amount: decimal string
+            bad.append(dict(base, amount=a))
+        for m, n in (("asset", 20), ("payer", 20), ("pay_to", 20), ("nonce", 32), ("settlement_tx", 32)):
+            for v in ("0x" + "a" * (2 * n - 1), "0x" + "a" * (2 * n + 1), "0X" + "a" * (2 * n), "a" * (2 * n + 2),
+                      "0x" + "g" * (2 * n), "0x" + "a" * (2 * n) + "\n"):
+                bad.append(dict(base, **{m: v}))
         for x in ([], "x402", 7, None):
             bad.append(x)
         for pm in bad:
             with self.subTest(pm=pm):
                 rep, _ = self.run_doc(self.with_payment(pm))
-                self.assertTrue(rep.get("refused"), (pm, rep.get("problem_codes")))
-        self.assertGreater(len(bad), 80)
+                self.assertFalse(rep.get("refused"), (pm, rep.get("reason")))
+                self.assertTrue(any(n.startswith("receipt.payment outside the stated form") for n in rep["notes"]),
+                                (pm, rep["notes"]))
+        self.assertGreater(len(bad), 120)
+
+    def test_inside_the_form_upper_case_hex_and_settlement_tx(self):
+        base = load()["inputs"]["receipt"]["receipt"]["payment"]
+        for pm in (dict(base, payer="0x" + "A" * 40), dict(base, settlement_tx="0x" + "Ab" * 32), dict(base, amount="0")):
+            rep, _ = self.run_doc(self.with_payment(pm))
+            self.assertFalse(any(n.startswith("receipt.payment outside") for n in rep["notes"]), pm)
 
     def test_chain_ids_of_1_and_32_digits_pass_the_grammar(self):
         for n in ("eip155:1", "eip155:" + "9" * 32):
@@ -76,11 +91,13 @@ class Payment(unittest.TestCase):
         # grammar passes; the bytes are not the signed ones
         self.assertIn("SIGNATURE_INVALID", rep["problem_codes"])
 
-    def test_unknown_member_reported_under_unknown_fields_report(self):
+    def test_unknown_member_is_outside_the_form_under_both_unknown_fields_modes(self):
         pm = dict(load()["inputs"]["receipt"]["receipt"]["payment"], extra="x")
-        rep, _ = self.run_doc(self.with_payment(pm), {"unknown_fields": "report"})
-        self.assertFalse(rep.get("refused"), rep)
-        self.assertTrue(any(n.startswith("X_UNKNOWN_MEMBER: receipt.payment.extra") for n in rep["notes"]))
+        for mode in ("refuse", "report"):
+            rep, _ = self.run_doc(self.with_payment(pm), {"unknown_fields": mode})
+            self.assertFalse(rep.get("refused"), rep)
+            self.assertTrue(any(n.startswith("receipt.payment outside the stated form") and "extra" in n
+                                for n in rep["notes"]), rep["notes"])
 
     def test_positive_control_old_grammar_refuses_47(self):
         old = wv.RECEIPT_OPTIONAL

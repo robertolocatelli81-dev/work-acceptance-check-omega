@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Score war_verify field by field (code lists as sets) on a published vector set + the live issuer record.
-  --set 1.4.1  (default) the 47 vectors of profile 1.4.1 (maximusrufus/work-acceptance-record@06d3b94; 01-46 are the
+  --set bc5a138 (default) the 57 vectors of profile 1.4.1 at maximusrufus/work-acceptance-record@bc5a138 + live record
+  --set 48ab8c9 the 59 vectors of open PR #1 of that repository (head 48ab8c9: 58-59 added) + live record
+  --set 1.4.1  the 47 vectors of profile 1.4.1 (maximusrufus/work-acceptance-record@06d3b94; 01-46 are the
                files of 4daf721, 47 adds the optional receipt.payment) + live record
   --set 1.4    the 36 vectors of profile 1.4 (maximusrufus/work-acceptance-record@eb0f30b) + live record
   --set 1.3    the 27 vectors of profile 1.3 (maximusrufus/work-acceptance-record@42b4ed0) + live record
   --set 1.2.1  the 23 vectors + 12b + 22-sha1 of the 1.2.1 round + live record (26 documents)
 Vector 20 (1.3, 1.4 and 1.4.1, byte-identical) states a contributor's differing expectation in its `difference` member; it is also scored
 against that expectation (CONTRIBUTOR_EXPECTATIONS), reported separately, never folded into the total.
-usage: python3 -B tools/score.py [--json OUT] [--set 1.4.1|1.4|1.3|1.2.1] [--profile 1.2.1] [war_verify options as key=value ...]"""
+usage: python3 -B tools/score.py [--json OUT] [--set bc5a138|48ab8c9|1.4.1|1.4|1.3|1.2.1] [--profile 1.2.1] [war_verify options as key=value ...]"""
 import glob, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -19,11 +21,15 @@ LIVE = "fonti/issuer_274159c/selftest-pass.json"
 CONTRIBUTOR_EXPECTATIONS = {"fonti/upstream_42b4ed0/vectors/20-producer-undeclared.json": {"problem_codes": []},
                             "fonti/upstream_eb0f30b/vectors/20-producer-undeclared.json": {"problem_codes": []},
                             "fonti/upstream_4daf721/vectors/20-producer-undeclared.json": {"problem_codes": []},
-                            "fonti/upstream_06d3b94/vectors/20-producer-undeclared.json": {"problem_codes": []}}
+                            "fonti/upstream_06d3b94/vectors/20-producer-undeclared.json": {"problem_codes": []},
+                            "fonti/upstream_bc5a138/vectors/20-producer-undeclared.json": {"problem_codes": []},
+                            "fonti/upstream_48ab8c9/vectors/20-producer-undeclared.json": {"problem_codes": []}}
 
 
-def vector_files(which="1.4.1"):
-    if which == "1.4.1":
+def vector_files(which="bc5a138"):
+    if which in ("bc5a138", "48ab8c9"):
+        f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_%s/vectors/*.json" % which)))
+    elif which == "1.4.1":
         f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_06d3b94/vectors/*.json")))
     elif which == "1.4":
         f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_eb0f30b/vectors/*.json")))
@@ -39,7 +45,7 @@ def vector_files(which="1.4.1"):
     return f + [os.path.join(ROOT, LIVE)]
 
 
-def score(options=None, files=None, verify_fn=None, which="1.4.1"):
+def score(options=None, files=None, verify_fn=None, which="bc5a138"):
     rows = []
     for f in files or vector_files(which):
         with open(f, "rb") as fh:
@@ -64,7 +70,7 @@ def score(options=None, files=None, verify_fn=None, which="1.4.1"):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    out, which, opts = None, "1.4.1", {}
+    out, which, opts = None, "bc5a138", {}
     while args and args[0] in ("--json", "--set", "--profile"):
         flag, val = args[0], args[1]
         args = args[2:]

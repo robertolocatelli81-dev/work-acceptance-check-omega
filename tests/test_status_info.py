@@ -1,11 +1,16 @@
 """PKIStatusInfo grammar (RFC 3161 2.4.2): statusString is PKIFreeText ::= SEQUENCE SIZE (1..MAX) OF UTF8String
-(RFC 4210 5.1.1) and failInfo is a BIT STRING. The text is not interpreted, but anything outside that grammar is
-refused like any other DER defect of the TimeStampResp. Until 0.4.0 any SEQUENCE was accepted there.
+(RFC 4210 5.1.1) and failInfo is a BIT STRING. Profile 1.4.1 step 5 (bc5a138): imprint, genTime and accuracy come
+from the signed TSTInfo, "never other bytes of the response, such as PKIStatusInfo.statusString". Vectors 50 and 51 fix
+one case outside the grammar: a UTF8String whose bytes are not UTF-8. From 0.5.0 that case is listed in notes and not
+refused (0.4.1 refused it); anything else outside the grammar is still refused (the profile does not fix it; until
+0.4.0 any SEQUENCE was accepted silently). failInfo keeps the DER rules of X.690 (no vector says otherwise).
 
 The end-to-end case is the construction described on x402-foundation/tsc#4 on 2026-10-21 (an imprint pattern in the
 unsigned PKIStatusInfo of a genuine token), rebuilt here from vector 31 for both tokens: before the grammar check the
 imprint was already read from the signed TSTInfo only (criteria: CRITERIA_TIMESTAMP_MISMATCH; record:
-imprint_mismatch); with it, the response is refused."""
+imprint_mismatch); 0.4.1 refused the response; 0.5.0 reads the probe's layout (one UTF8String that is not UTF-8, as in
+vectors 50 and 51) and the outcome is again the mismatch, and still refuses the layout with the values as direct
+members (not UTF8Strings), which no vector fixes."""
 import base64
 import json
 import os
@@ -41,24 +46,34 @@ class StatusString(unittest.TestCase):
     def ok(self, raw):
         return wv.parse_tsr(raw, None)
 
-    def refused(self, raw):
-        with self.assertRaises(wv.Refusal):
-            wv.parse_tsr(raw, None)
+    OUTSIDE = ("PKIStatusInfo.statusString holds a UTF8String that is not UTF-8 (RFC 4210 5.1.1): not read, not a reason "
+               "to refuse (profile 1.4.1 vectors 50, 51)")
 
     def test_free_text_accepted_and_noted(self):
         out = self.ok(resp(tlv(0x30, utf8(b"rejected") + utf8("café".encode()))))
-        self.assertIn("PKIStatusInfo.statusString present (not interpreted)", out["notes"])
+        self.assertIn("PKIStatusInfo.statusString present (not read)", out["notes"])
+        self.assertNotIn(self.OUTSIDE, out["notes"])
 
     def test_empty_free_text_refused(self):
-        self.refused(resp(tlv(0x30, b"")))
+        # not fixed by the profile (vectors 50 and 51 hold one UTF8String): closed by construction
+        with self.assertRaises(wv.Refusal) as cm:
+            self.ok(resp(tlv(0x30, b"")))
+        self.assertIn("empty PKIFreeText", cm.exception.args[0])
 
     def test_member_not_utf8string_refused(self):
-        for member in (tlv(0x13, b"text"), tlv(0x04, b"\x00" * 32), tlv(0x30, tlv(0x06, b"\x2a"))):
-            self.refused(resp(tlv(0x30, utf8(b"ok") + member)))
+        for member in (tlv(0x13, b"text"), tlv(0x04, b"\x00" * 32), tlv(0x30, tlv(0x06, b"\x2a")), tlv(0x2C, utf8(b"a"))):
+            with self.assertRaises(wv.Refusal, msg=member.hex()) as cm:
+                self.ok(resp(tlv(0x30, utf8(b"ok") + member)))
+            self.assertIn("PKIFreeText UTF8String", cm.exception.args[0])
 
-    def test_invalid_utf8_refused(self):
+    def test_invalid_utf8_noted_not_refused(self):
         for bad in (b"\xff", b"\xc3", b"\xed\xa0\x80"):
-            self.refused(resp(tlv(0x30, utf8(bad))))
+            self.assertIn(self.OUTSIDE, self.ok(resp(tlv(0x30, utf8(bad))))["notes"])
+
+    def test_statusString_outside_DER_still_refused(self):
+        # the response itself must still be DER: a statusString whose length runs past the end is a TLV defect
+        with self.assertRaises(wv.Refusal):
+            wv.parse_tsr(resp(b"\x30\x05" + utf8(b"ab")), None)
 
 
 class FailInfo(unittest.TestCase):
@@ -134,21 +149,27 @@ class ImprintInUnsignedBytes(unittest.TestCase):
 
     def test_construction_puts_the_imprint_in_unsigned_bytes_only(self):
         crit_digest = bytes.fromhex(self.v["inputs"]["receipt"]["receipt"]["criteria"]["sha256"])
-        probe = with_status_string(self.rec, crit_digest, self.gen(self.cri))
+        probe = with_status_string(self.rec, crit_digest, self.gen(self.cri), as_probe=True)
         self.assertIn(crit_digest, probe)
         self.assertNotEqual(self.tst(self.rec)["tst"]["hashed"], crit_digest)
-        with self.assertRaises(wv.Refusal) as cm:
-            wv.parse_tsr(probe, None)
-        self.assertIn("UTF8String", cm.exception.args[0])
+        self.assertEqual(self.tst(probe)["tst"]["hashed"], self.tst(self.rec)["tst"]["hashed"])   # signed TSTInfo only
 
-    def test_record_token_variant_refused(self):
+    def test_record_token_variant_reads_the_signed_imprint(self):
         rec_digest = self.tst(self.rec)["tst"]["hashed"]
-        probe = with_status_string(self.cri, rec_digest, self.gen(self.rec))
+        probe = with_status_string(self.cri, rec_digest, self.gen(self.rec), as_probe=True)
         self.assertIn(rec_digest, probe)
-        with self.assertRaises(wv.Refusal):
-            wv.parse_tsr(probe, None)
+        self.assertEqual(self.tst(probe)["tst"]["hashed"], self.tst(self.cri)["tst"]["hashed"])
 
-    def test_probe_layout_refused_as_not_utf8(self):
+    def test_direct_members_layout_refused(self):
+        # the values as direct members of the statusString (not UTF8Strings): no vector fixes it, so it is refused
+        crit_digest = bytes.fromhex(self.v["inputs"]["receipt"]["receipt"]["criteria"]["sha256"])
+        rec_digest = self.tst(self.rec)["tst"]["hashed"]
+        for base, digest, gen in ((self.rec, crit_digest, self.gen(self.cri)), (self.cri, rec_digest, self.gen(self.rec))):
+            with self.assertRaises(wv.Refusal) as cm:
+                wv.parse_tsr(with_status_string(base, digest, gen), None)
+            self.assertIn("PKIFreeText UTF8String", cm.exception.args[0])
+
+    def test_probe_layout_noted_and_signed_imprint_read(self):
         """The published probe's layout for both tokens: a PKIFreeText of one UTF8String whose bytes are not UTF-8."""
         crit_digest = bytes.fromhex(self.v["inputs"]["receipt"]["receipt"]["criteria"]["sha256"])
         rec_digest = self.tst(self.rec)["tst"]["hashed"]
@@ -156,9 +177,9 @@ class ImprintInUnsignedBytes(unittest.TestCase):
             probe = with_status_string(base, digest, gen, as_probe=True)
             self.assertIn(digest, probe)
             self.assertEqual(wv.der_parse_one(probe, "r").kids()[0].kids()[1].kids()[0].tag, 0x0C)
-            with self.assertRaises(wv.Refusal) as cm:
-                wv.parse_tsr(probe, None)
-            self.assertIn("not UTF-8", cm.exception.args[0])
+            out = wv.parse_tsr(probe, None)
+            self.assertIn(StatusString.OUTSIDE, out["notes"])
+            self.assertEqual(out["token"]["tst"]["hashed"], self.tst(base)["tst"]["hashed"])
 
 
 if __name__ == "__main__":

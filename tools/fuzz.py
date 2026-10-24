@@ -22,6 +22,15 @@ import war_verify as wv  # noqa: E402
 
 REF = "refused"
 OK_EXPECT = {"problem_codes": [], "warning_codes": [], "signature_valid": True}
+# war_verify 0.5.0: "the unsigned timestamp.digest_sha256 field is informative and never decides the outcome" (README
+# step 6); the record token does. The other members of the envelope timestamp keep the issuer's form.
+ENVELOPE_TS_EXPECT = dict(OK_EXPECT, receipt_timestamp="imprint_match")
+
+
+def _exp_for(path):
+    if tuple(path) == ("receipt", "timestamp", "digest_sha256"):
+        return ENVELOPE_TS_EXPECT
+    return REF
 
 
 # ---------------------------------------------------------------------------------------------- text helpers
@@ -93,6 +102,7 @@ def fam_unknown_member(base):
         if isinstance(v, dict):
             inp = copy.deepcopy(base)
             get(inp, path)["x_unknown_member"] = "1"
+            # vectors 52 and 57 add one named member to receipt.tools; any other member stays unknown (refused)
             yield "unknown member at /%s" % "/".join(map(str, path)), {"inputs": finish(inp, path)}, REF
 
 
@@ -118,7 +128,7 @@ def fam_wrong_type(base):
             inp = copy.deepcopy(base)
             put(inp, path, a)
             yield "type %s -> %s at /%s" % (type(v).__name__, type(a).__name__, "/".join(map(str, path))), \
-                {"inputs": finish(inp, path)}, REF
+                {"inputs": finish(inp, path)}, _exp_for(path)
 
 
 def fam_surrogate(base):

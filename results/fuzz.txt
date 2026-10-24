@@ -1,7 +1,7 @@
 family                    cases  ours ok   lax caught    lax wrongly accepts
 unknown member               21       21           21                     21
 duplicate member             21       21           21                     21
-wrong type                  418      418          412                    328
+wrong type                  418      418          406                    322
 lone surrogate               40       40           39                      0
 numbers                      24       24           18                      9
 DER / TSTInfo                41       41           36                     30
@@ -9,4 +9,4 @@ Ed25519                       5        5            3                      3
 key_id confusion              7        7            4                      2
 time ties and grammar        10       10            5                      1
 criteria bytes               10       10            1                      1
-TOTAL cases 597, ours meets expectation 597, lax caught 560, lax wrongly accepted-as-stated 416
+TOTAL cases 597, ours meets expectation 597, lax caught 554, lax wrongly accepted-as-stated 410

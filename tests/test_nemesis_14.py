@@ -228,8 +228,9 @@ class ValueClasses(Base):
         finally:
             wv._verify_sig = orig
 
-    def test_issuer_without_keyCertSign_or_basicConstraints_is_failed_when_anchored(self):
-        # 1.4.1: "a chain that reaches the anchor but fails a check is `failed`"; without the anchor, `untrusted`
+    def test_issuer_without_keyCertSign_or_basicConstraints_is_failed_anchored_or_not(self):
+        # 1.4.1: "a chain that reaches the anchor but fails a check is `failed`"; bc5a138 step 9: "An issuer in the token
+        # that fails a check is `failed` whether or not the chain reaches a supplied anchor" (untrusted until 0.4.1)
         ku = x509.KeyUsage(True, False, False, False, False, False, False, False, False)     # digitalSignature only
         for name, inter in (("no keyCertSign", issuer_cert(self.root, "no keyCertSign", key_usage=ku)),
                             ("no basicConstraints", issuer_cert(self.root, "no basicConstraints",
@@ -238,7 +239,7 @@ class ValueClasses(Base):
                                 certs=[inter[1], self.root[1]])
             for prec in BOTH:
                 self.assertEqual(self.criteria(tok, [self.R], prec), "failed", (name, prec))
-                self.assertEqual(self.criteria(tok, [b64(tp.der(self.other_root[1]))], prec), "untrusted", (name, prec))
+                self.assertEqual(self.criteria(tok, [b64(tp.der(self.other_root[1]))], prec), "failed", (name, prec))
 
 
     def test_expired_signer_is_failed_also_when_no_chain_reaches_an_anchor(self):

@@ -973,5 +973,595 @@
   "path": "fonti/upstream_d79a737/vectors/49-tsa-issuer-not-a-ca-failed.json",
   "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/d79a737a97bce0bba3e3af28c6ee76c88229092d/vectors/49-tsa-issuer-not-a-ca-failed.json",
   "sha256": "4cd5d3fa0945ba6342382806cfe829247db619ce1bf429929b43c7ed1a15359b"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/README.md",
+  "sha256": "0103bf787368a9f3e61b47a0a51d136870d6d21c5a461922e27d55cb7c563c85"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/01-valid.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/01-valid.json",
+  "sha256": "43b398742e51118875250d2d9497665a0ea43d040217ff27956857fd09693420"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/02-criteria-committed-after-issue.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/02-criteria-committed-after-issue.json",
+  "sha256": "9e88e743968388df93ffa86354da413af09f4c3f099c47f8809ea60836bf1cca"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/03-self-checked.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/03-self-checked.json",
+  "sha256": "66ad94db1ca9790c5c6c050478776c5063aa356915ab887f6b038f259ca08166"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/04-required-not-evaluated.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/04-required-not-evaluated.json",
+  "sha256": "9d6b9182632daba50169f801c352c27d063534094a8ff34237320a9701b35da7"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/05-checker-key-equals-producer-key.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/05-checker-key-equals-producer-key.json",
+  "sha256": "fb28666bfb0cbd09d748602a64317f6836a156a6c71aa92ee3f40c4a05c7e830"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/06-receipt-edited-after-signing.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/06-receipt-edited-after-signing.json",
+  "sha256": "50b9c63e3ed8676cfaa80d7d2e805b55ee8acb59ca4669e4164e447696930e32"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/07-criteria-file-swapped.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/07-criteria-file-swapped.json",
+  "sha256": "ea99e9ff520162596f67e354162c80db3caad319646fceeb0cc74ea634e54fcc"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/08-receipt-token-over-another-receipt.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/08-receipt-token-over-another-receipt.json",
+  "sha256": "31fbe8f60b9d2841d484e74365fd5b9a4fc008b5cc3cd8c2f5b5c378cb104e2e"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/09-stated-pass-recomputes-incomplete.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/09-stated-pass-recomputes-incomplete.json",
+  "sha256": "6cd7e23f84aa688e27be13845e103f45cf8f6d15c1b6ed827877739f1ebe1973"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/10-committed-at-contradicts-token.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/10-committed-at-contradicts-token.json",
+  "sha256": "0feecb3f4ad81d1acfa8f43773982478f4e56ec17f889d5dcc16ec0e0f08ec98"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/11-required-criterion-fails.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/11-required-criterion-fails.json",
+  "sha256": "50b549b7c1c22c002ff9d8b499a0f7770ecf93a1959e07c156e9e2c3514e0947"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/12-signer-is-not-the-checker.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/12-signer-is-not-the-checker.json",
+  "sha256": "e982ab29ad2e653c5b5a52cd42106131f6abce766b0c31328f4a1c29a104bc6b"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/13-independent-but-same-party.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/13-independent-but-same-party.json",
+  "sha256": "973ef5174894fe6c7095b5a1b7b977f58b0e38c441a4c16e6389a4bb27e2fb2d"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/14-results-not-in-criteria.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/14-results-not-in-criteria.json",
+  "sha256": "2a5237d143cbe2b830f54c6061289833881eeb413d98e243e4a2c841b0d6288f"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/15-criteria-token-over-other-bytes.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/15-criteria-token-over-other-bytes.json",
+  "sha256": "e9fc025c22b413a00cdb5c624f6127c16442e750ffe96e32f34dcac966fe10f8"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/16-no-criteria-token.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/16-no-criteria-token.json",
+  "sha256": "e70f9253cb5d8d74aa81de2a1caf68738bcbadd5ed98dc9ec3e744814e638852"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/17-committed-at-equals-reference.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/17-committed-at-equals-reference.json",
+  "sha256": "ff38c1b6848828b98459c9ea16c9fcdf9f231586f719ff17d63833d96f08ccb5"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/18-mismatching-record-token-later-time.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/18-mismatching-record-token-later-time.json",
+  "sha256": "c2a597a2ffe6269f725ec63f27e4aa1eb65ae0eacbab7a4199e30237bdc33806"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/19-result-outside-vocabulary.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/19-result-outside-vocabulary.json",
+  "sha256": "605975f2cc7ce4b0981fec7c51361e0f337dc6941563293182cd920c9f4a0274"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/20-producer-undeclared.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/20-producer-undeclared.json",
+  "sha256": "ade5cbb9887cf13b70e5ddb3eed278103983f0cf4fdcf6ff3af543095af2cc17"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/21-unknown-schema.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/21-unknown-schema.json",
+  "sha256": "8f36612549bb60c6ce5af4e9b31db6a8fce8dfc6b7f27bc3dc2441ed32678285"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/22-matching-record-token-later-than-issued.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/22-matching-record-token-later-than-issued.json",
+  "sha256": "342a3c5ba4cbc567f35a47f28e3d2a2c22f4645637529d73439830cc7d2ff927"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/23-criteria-token-imprint-oid-sha384.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/23-criteria-token-imprint-oid-sha384.json",
+  "sha256": "129075663f7b0f3f36657585e3cde9e77a96e3f1d6c66a3b25966611b2b18299"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/24-criteria-token-imprint-oid-sha3-256.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/24-criteria-token-imprint-oid-sha3-256.json",
+  "sha256": "892d85c340eeeda866666f6e47d38771dbd108dbbe8b01f50c7c443c562a0f61"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/25-criteria-token-imprint-oid-sha512-256.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/25-criteria-token-imprint-oid-sha512-256.json",
+  "sha256": "5db523b86d17bfe6f2d0616194f5fafe7b83230cd0bc7843ca3d051564e44100"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/26-key-small-order.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/26-key-small-order.json",
+  "sha256": "44321e402f31115ed1a78f3af88f0bcfd86b10f513596c9f1a5564722842ebab"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/27-key-non-canonical-encoding.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/27-key-non-canonical-encoding.json",
+  "sha256": "6100401cda47a283a0f31adedaea7bdcd7546dde976fed4f1499f4fc67a2c74e"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/28-key-file-with-unrelated-bad-entry.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/28-key-file-with-unrelated-bad-entry.json",
+  "sha256": "f637d2e15c84889c046b8e72764b169ac09456b3a1446526956e4c03c09bf495"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/29-criteria-token-accuracy-flips-commitment.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/29-criteria-token-accuracy-flips-commitment.json",
+  "sha256": "1597789d2292f37ccc1bf41c8d0cc4d30197e1c9355823bdbbe6c2fef1af5ce1"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/30-criteria-token-accuracy-millis-still-before.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/30-criteria-token-accuracy-millis-still-before.json",
+  "sha256": "206f53b37189836ae9f17d4aeb6b167a730555a18ec8b0c11de481d69a92a7ec"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/31-tsa-freetsa-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/31-tsa-freetsa-verified.json",
+  "sha256": "3bdbd6cc0f401fe8a834fba962d3b139830bf3e1807434f6d8d3607cc3ca2862"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/32-tsa-digicert-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/32-tsa-digicert-verified.json",
+  "sha256": "83a81b8a02ab780f6e1bd4653ca5c0218cddef55b460d81fd479e9c7409b1859"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/33-tsa-unrelated-root-untrusted.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/33-tsa-unrelated-root-untrusted.json",
+  "sha256": "b7ec321a9fa02c4eca55ebdb8dd9730e42af94e6ce40cf2c1ae6c693bc98b023"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/34-tsa-tampered-signature-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/34-tsa-tampered-signature-failed.json",
+  "sha256": "f188939d997f0722088072732336c9cabacd41d34d6204f24d1348f5c6ae9552"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/35-tsa-token-without-signer-certificate.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/35-tsa-token-without-signer-certificate.json",
+  "sha256": "a1c83e3affe56215da79fb452268a1f3853ad332638b6264ac390c4baee4fbe8"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/36-tsa-no-anchors-not-evaluated.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/36-tsa-no-anchors-not-evaluated.json",
+  "sha256": "11086ffe57a80825341002c022eaeecbd69ae07397a9a09d2f12df3d7131d051"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/37-tsa-synthetic-control-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/37-tsa-synthetic-control-verified.json",
+  "sha256": "7e5a1c01c003123fc0886d6c621bdd3f8e4985df3fa1550e6da8ad31fb6ff67f"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/38-tsa-intermediate-expired-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/38-tsa-intermediate-expired-failed.json",
+  "sha256": "66d339c7564e4d2cf4869448386a0d7a645813cf855e921526465a8a75179b17"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/39-tsa-content-type-mismatch-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/39-tsa-content-type-mismatch-failed.json",
+  "sha256": "66eaa9141f48e270a3d792c9d37020981ca0189d43a1032647bef413e0f3f75d"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/40-tsa-rsassa-pss-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/40-tsa-rsassa-pss-verified.json",
+  "sha256": "aeee0f3d8c9bea91d17d3b3b85db951a37701664e293acfbebc084f972b4d939"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/41-tsa-ecdsa-p256-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/41-tsa-ecdsa-p256-verified.json",
+  "sha256": "02b919c896e40020e55c63e705cee6bd3a9a60c830ae6996c75155037d99db1b"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/42-tsa-ecdsa-p521-unsupported.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/42-tsa-ecdsa-p521-unsupported.json",
+  "sha256": "477779f9c046f302aefe56972432ebb2a4e88d75ee5b65277a0c051172dfe11a"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/43-tsa-empty-anchor-list-not-evaluated.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/43-tsa-empty-anchor-list-not-evaluated.json",
+  "sha256": "6b9ae2c81b0bc1f5a7ae0e7b5bf8696ec59068da05cb0cb9d41e3ae986572db6"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json",
+  "sha256": "6f4844bfc30fd12540a4c59e4bbc299461287ddbec6cacdb15218448fb8b1bef"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/45-tsa-no-certificates-and-bad-digest-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/45-tsa-no-certificates-and-bad-digest-failed.json",
+  "sha256": "301f0d9fa09812debda9f84bad6f370e4226a20506942c6436454382c68db1e8"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json",
+  "sha256": "33bb0d7b832db41e648df51c2286e19be2e2530354e938ec9966f608b36e8682"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/47-receipt-payment-x402-exact.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/47-receipt-payment-x402-exact.json",
+  "sha256": "809977db97624c016a7eca2597bea079c1f355b6436c97cd05ea13cd7d48f87d"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/48-tsa-signer-without-timestamping-eku-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/48-tsa-signer-without-timestamping-eku-failed.json",
+  "sha256": "b0ffb7abea08755c953a37ecb9e8668bf7780f085c7217e7663e433432f5f53b"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/49-tsa-issuer-not-a-ca-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/49-tsa-issuer-not-a-ca-failed.json",
+  "sha256": "4cd5d3fa0945ba6342382806cfe829247db619ce1bf429929b43c7ed1a15359b"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/50-criteria-token-imprint-only-in-status-string.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/50-criteria-token-imprint-only-in-status-string.json",
+  "sha256": "aa94a0e49022e7d79c70babfcad3485856a11cfc1bff38a711509941635776fd"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/51-record-token-imprint-only-in-status-string.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/51-record-token-imprint-only-in-status-string.json",
+  "sha256": "0fcf8cfbf3bd465749197f18e73673d3a8ffb9e9eadbbaba7267d5df3de84a1f"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/52-receipt-non-integer-numbers.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/52-receipt-non-integer-numbers.json",
+  "sha256": "205edd3ebb75133b520f6b23ebdce25e2aa5761a9d563434fd799c54a2474d42"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/53-tsa-anchor-same-name-other-key-untrusted.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/53-tsa-anchor-same-name-other-key-untrusted.json",
+  "sha256": "f3f91cc30aae609ea01bbef4596b145ab8e6b22f3fbbd01d36f4815fbeb41879"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/54-tsa-expired-intermediate-no-anchor-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/54-tsa-expired-intermediate-no-anchor-failed.json",
+  "sha256": "a54637a8d24e94782cfc64b3343628192c3bc757f7f97d2d70188fc63b64f1f2"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/55-receipt-payment-outside-the-form.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/55-receipt-payment-outside-the-form.json",
+  "sha256": "12adf89c27fef72fc52f7b80c7bc4ef27db5d4330b8bb52da9d68a51cb2c7147"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/56-third-party-checker-live-receipt.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/56-third-party-checker-live-receipt.json",
+  "sha256": "61dc8906a49c489694c96b93661076500b2d7051d6efa7cdf7bff4d943e9aa91"
+ },
+ {
+  "path": "fonti/upstream_bc5a138/vectors/57-receipt-integer-valued-doubles.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/bc5a1385a9347701ff4557126d73b50b3575fe93/vectors/57-receipt-integer-valued-doubles.json",
+  "sha256": "61007ce1b2f09cd24a0ab7d8eb628ca5e4df9d7372ecb05a152054deca503f26"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/README.md",
+  "sha256": "d6582362395413b6443b2ff41c066777a040fac21620f19bca167e8714161f3b"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/01-valid.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/01-valid.json",
+  "sha256": "43b398742e51118875250d2d9497665a0ea43d040217ff27956857fd09693420"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/02-criteria-committed-after-issue.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/02-criteria-committed-after-issue.json",
+  "sha256": "9e88e743968388df93ffa86354da413af09f4c3f099c47f8809ea60836bf1cca"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/03-self-checked.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/03-self-checked.json",
+  "sha256": "66ad94db1ca9790c5c6c050478776c5063aa356915ab887f6b038f259ca08166"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/04-required-not-evaluated.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/04-required-not-evaluated.json",
+  "sha256": "9d6b9182632daba50169f801c352c27d063534094a8ff34237320a9701b35da7"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/05-checker-key-equals-producer-key.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/05-checker-key-equals-producer-key.json",
+  "sha256": "fb28666bfb0cbd09d748602a64317f6836a156a6c71aa92ee3f40c4a05c7e830"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/06-receipt-edited-after-signing.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/06-receipt-edited-after-signing.json",
+  "sha256": "50b9c63e3ed8676cfaa80d7d2e805b55ee8acb59ca4669e4164e447696930e32"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/07-criteria-file-swapped.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/07-criteria-file-swapped.json",
+  "sha256": "ea99e9ff520162596f67e354162c80db3caad319646fceeb0cc74ea634e54fcc"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/08-receipt-token-over-another-receipt.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/08-receipt-token-over-another-receipt.json",
+  "sha256": "31fbe8f60b9d2841d484e74365fd5b9a4fc008b5cc3cd8c2f5b5c378cb104e2e"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/09-stated-pass-recomputes-incomplete.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/09-stated-pass-recomputes-incomplete.json",
+  "sha256": "6cd7e23f84aa688e27be13845e103f45cf8f6d15c1b6ed827877739f1ebe1973"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/10-committed-at-contradicts-token.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/10-committed-at-contradicts-token.json",
+  "sha256": "0feecb3f4ad81d1acfa8f43773982478f4e56ec17f889d5dcc16ec0e0f08ec98"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/11-required-criterion-fails.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/11-required-criterion-fails.json",
+  "sha256": "50b549b7c1c22c002ff9d8b499a0f7770ecf93a1959e07c156e9e2c3514e0947"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/12-signer-is-not-the-checker.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/12-signer-is-not-the-checker.json",
+  "sha256": "e982ab29ad2e653c5b5a52cd42106131f6abce766b0c31328f4a1c29a104bc6b"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/13-independent-but-same-party.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/13-independent-but-same-party.json",
+  "sha256": "973ef5174894fe6c7095b5a1b7b977f58b0e38c441a4c16e6389a4bb27e2fb2d"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/14-results-not-in-criteria.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/14-results-not-in-criteria.json",
+  "sha256": "2a5237d143cbe2b830f54c6061289833881eeb413d98e243e4a2c841b0d6288f"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/15-criteria-token-over-other-bytes.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/15-criteria-token-over-other-bytes.json",
+  "sha256": "e9fc025c22b413a00cdb5c624f6127c16442e750ffe96e32f34dcac966fe10f8"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/16-no-criteria-token.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/16-no-criteria-token.json",
+  "sha256": "e70f9253cb5d8d74aa81de2a1caf68738bcbadd5ed98dc9ec3e744814e638852"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/17-committed-at-equals-reference.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/17-committed-at-equals-reference.json",
+  "sha256": "ff38c1b6848828b98459c9ea16c9fcdf9f231586f719ff17d63833d96f08ccb5"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/18-mismatching-record-token-later-time.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/18-mismatching-record-token-later-time.json",
+  "sha256": "c2a597a2ffe6269f725ec63f27e4aa1eb65ae0eacbab7a4199e30237bdc33806"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/19-result-outside-vocabulary.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/19-result-outside-vocabulary.json",
+  "sha256": "605975f2cc7ce4b0981fec7c51361e0f337dc6941563293182cd920c9f4a0274"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/20-producer-undeclared.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/20-producer-undeclared.json",
+  "sha256": "ade5cbb9887cf13b70e5ddb3eed278103983f0cf4fdcf6ff3af543095af2cc17"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/21-unknown-schema.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/21-unknown-schema.json",
+  "sha256": "8f36612549bb60c6ce5af4e9b31db6a8fce8dfc6b7f27bc3dc2441ed32678285"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/22-matching-record-token-later-than-issued.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/22-matching-record-token-later-than-issued.json",
+  "sha256": "342a3c5ba4cbc567f35a47f28e3d2a2c22f4645637529d73439830cc7d2ff927"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/23-criteria-token-imprint-oid-sha384.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/23-criteria-token-imprint-oid-sha384.json",
+  "sha256": "129075663f7b0f3f36657585e3cde9e77a96e3f1d6c66a3b25966611b2b18299"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/24-criteria-token-imprint-oid-sha3-256.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/24-criteria-token-imprint-oid-sha3-256.json",
+  "sha256": "892d85c340eeeda866666f6e47d38771dbd108dbbe8b01f50c7c443c562a0f61"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/25-criteria-token-imprint-oid-sha512-256.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/25-criteria-token-imprint-oid-sha512-256.json",
+  "sha256": "5db523b86d17bfe6f2d0616194f5fafe7b83230cd0bc7843ca3d051564e44100"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/26-key-small-order.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/26-key-small-order.json",
+  "sha256": "44321e402f31115ed1a78f3af88f0bcfd86b10f513596c9f1a5564722842ebab"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/27-key-non-canonical-encoding.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/27-key-non-canonical-encoding.json",
+  "sha256": "6100401cda47a283a0f31adedaea7bdcd7546dde976fed4f1499f4fc67a2c74e"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/28-key-file-with-unrelated-bad-entry.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/28-key-file-with-unrelated-bad-entry.json",
+  "sha256": "f637d2e15c84889c046b8e72764b169ac09456b3a1446526956e4c03c09bf495"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/29-criteria-token-accuracy-flips-commitment.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/29-criteria-token-accuracy-flips-commitment.json",
+  "sha256": "1597789d2292f37ccc1bf41c8d0cc4d30197e1c9355823bdbbe6c2fef1af5ce1"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/30-criteria-token-accuracy-millis-still-before.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/30-criteria-token-accuracy-millis-still-before.json",
+  "sha256": "206f53b37189836ae9f17d4aeb6b167a730555a18ec8b0c11de481d69a92a7ec"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/31-tsa-freetsa-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/31-tsa-freetsa-verified.json",
+  "sha256": "3bdbd6cc0f401fe8a834fba962d3b139830bf3e1807434f6d8d3607cc3ca2862"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/32-tsa-digicert-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/32-tsa-digicert-verified.json",
+  "sha256": "83a81b8a02ab780f6e1bd4653ca5c0218cddef55b460d81fd479e9c7409b1859"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/33-tsa-unrelated-root-untrusted.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/33-tsa-unrelated-root-untrusted.json",
+  "sha256": "b7ec321a9fa02c4eca55ebdb8dd9730e42af94e6ce40cf2c1ae6c693bc98b023"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/34-tsa-tampered-signature-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/34-tsa-tampered-signature-failed.json",
+  "sha256": "f188939d997f0722088072732336c9cabacd41d34d6204f24d1348f5c6ae9552"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/35-tsa-token-without-signer-certificate.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/35-tsa-token-without-signer-certificate.json",
+  "sha256": "a1c83e3affe56215da79fb452268a1f3853ad332638b6264ac390c4baee4fbe8"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/36-tsa-no-anchors-not-evaluated.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/36-tsa-no-anchors-not-evaluated.json",
+  "sha256": "11086ffe57a80825341002c022eaeecbd69ae07397a9a09d2f12df3d7131d051"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/37-tsa-synthetic-control-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/37-tsa-synthetic-control-verified.json",
+  "sha256": "947061326ca8df1b97dee37b7a967b5bf79cc08ef79d9e3d477b8d787dfc019c"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/38-tsa-intermediate-expired-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/38-tsa-intermediate-expired-failed.json",
+  "sha256": "da8418ecc87f5d1fd7256f4abba070e9cc445c101efd9ecb033737ce1338b95d"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/39-tsa-content-type-mismatch-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/39-tsa-content-type-mismatch-failed.json",
+  "sha256": "ab7889b643cf149f69b239ffce30d648083df57dc3d3695911638af60f2ad9e9"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/40-tsa-rsassa-pss-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/40-tsa-rsassa-pss-verified.json",
+  "sha256": "7e6ddc060ac6eb4cde01c703daa8e20d73a88001e55588296205a3d38893bfaf"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/41-tsa-ecdsa-p256-verified.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/41-tsa-ecdsa-p256-verified.json",
+  "sha256": "0096496b6f1761a0db07ded16e79e1a0f3daaec28e16209e3aeb20815e4b5602"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/42-tsa-ecdsa-p521-unsupported.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/42-tsa-ecdsa-p521-unsupported.json",
+  "sha256": "0866be6b41e3701b6ce2e2ab9c6822a230ea2ed77cb1c87cfc24849e6f61651f"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/43-tsa-empty-anchor-list-not-evaluated.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/43-tsa-empty-anchor-list-not-evaluated.json",
+  "sha256": "6b9ae2c81b0bc1f5a7ae0e7b5bf8696ec59068da05cb0cb9d41e3ae986572db6"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json",
+  "sha256": "fe551d3caa4c88232737741cfe8871a984f86e166a19d5fb919b253dca611b1b"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/45-tsa-no-certificates-and-bad-digest-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/45-tsa-no-certificates-and-bad-digest-failed.json",
+  "sha256": "bb152bb1d9d2b9de4ff393550e0ca19e2247142a317c27b5dac50b7fce7dc25e"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json",
+  "sha256": "c9c282b1a644c999fd022f2c7f44861fbb0531c839f0ec7155b179f48f0d8710"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/47-receipt-payment-x402-exact.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/47-receipt-payment-x402-exact.json",
+  "sha256": "809977db97624c016a7eca2597bea079c1f355b6436c97cd05ea13cd7d48f87d"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/48-tsa-signer-without-timestamping-eku-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/48-tsa-signer-without-timestamping-eku-failed.json",
+  "sha256": "b6ad25c831e95bb31f219c5e347627e7ead6cab11be0b1af7c1698ac26541e6b"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/49-tsa-issuer-not-a-ca-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/49-tsa-issuer-not-a-ca-failed.json",
+  "sha256": "9f05407223e979c03402330a4215d4092ea9b3629af89eccc1f76c0a18907f56"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/50-criteria-token-imprint-only-in-status-string.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/50-criteria-token-imprint-only-in-status-string.json",
+  "sha256": "aa94a0e49022e7d79c70babfcad3485856a11cfc1bff38a711509941635776fd"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/51-record-token-imprint-only-in-status-string.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/51-record-token-imprint-only-in-status-string.json",
+  "sha256": "0fcf8cfbf3bd465749197f18e73673d3a8ffb9e9eadbbaba7267d5df3de84a1f"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/52-receipt-non-integer-numbers.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/52-receipt-non-integer-numbers.json",
+  "sha256": "205edd3ebb75133b520f6b23ebdce25e2aa5761a9d563434fd799c54a2474d42"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/53-tsa-anchor-same-name-other-key-untrusted.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/53-tsa-anchor-same-name-other-key-untrusted.json",
+  "sha256": "0895ef2d4538a78e94824bb34c392e7fb4420d34ef2c0ea991032009a3baee52"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/54-tsa-expired-intermediate-no-anchor-failed.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/54-tsa-expired-intermediate-no-anchor-failed.json",
+  "sha256": "fa801a182ba12f988f2d37415c5778463accc73684ae52d29f0efb4855de1a58"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/55-receipt-payment-outside-the-form.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/55-receipt-payment-outside-the-form.json",
+  "sha256": "12adf89c27fef72fc52f7b80c7bc4ef27db5d4330b8bb52da9d68a51cb2c7147"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/56-third-party-checker-live-receipt.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/56-third-party-checker-live-receipt.json",
+  "sha256": "61dc8906a49c489694c96b93661076500b2d7051d6efa7cdf7bff4d943e9aa91"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/57-receipt-integer-valued-doubles.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/57-receipt-integer-valued-doubles.json",
+  "sha256": "61007ce1b2f09cd24a0ab7d8eb628ca5e4df9d7372ecb05a152054deca503f26"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/58-criteria-token-imprint-only-in-unsigned-attribute.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/58-criteria-token-imprint-only-in-unsigned-attribute.json",
+  "sha256": "e934412d2366d73ef6f5bf2dc5714c7f0805d31685c49c06d39ce368468e2e3c"
+ },
+ {
+  "path": "fonti/upstream_48ab8c9/vectors/59-record-token-imprint-only-in-unsigned-attribute.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/48ab8c997207ce5e8b0e652f37225cd74cad89bc/vectors/59-record-token-imprint-only-in-unsigned-attribute.json",
+  "sha256": "0b13e139969be2d14bb01742e5363650bf06c311eebe49c094afba4f37867cdc"
  }
 ]

@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.1 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@06d3b94 (profile 1.4.1; 1.4 at eb0f30b, 1.3 at
-42b4ed0 and 1.2.1 at f7d8984 before it), the test vectors listed in README.md ("What was read"), and the RFCs it
-names. No other implementation of this profile was opened; an issue comment quoting parts of the reference verifier
-was read before 0.4.0, and a probe description before 0.4.1 (README.md, "What was read"). The 1.2.1 readings of version 0.1.0 are selectable with
+Written from the profile README at maximusrufus/work-acceptance-record@bc5a138 (profile 1.4.1; 06d3b94 and d79a737
+before it; 1.4 at eb0f30b, 1.3 at 42b4ed0 and 1.2.1 at f7d8984), the test vectors listed in README.md ("What was
+read"), and the RFCs it names. An issue comment quoting parts of the reference verifier was read before 0.4.0, and a
+probe description before 0.4.1. For 0.5.0 the payment form was taken from the function _in_form of the reference
+verifier/check_payment.py (opened), and the reference verifier/war_verify.py was searched once with grep and run as a
+black box (README.md, "What was read"); no other implementation of this profile was opened. The 1.2.1 readings of version 0.1.0 are selectable with
 --profile 1.2.1.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
-reason. Where a standard says what to do with something unknown (RFC 5280 4.2: a non-critical extension that is
+reason, except where profile 1.4.1 (bc5a138) fixes the outcome; each such case is listed in "notes" (README.md,
+"Closed by construction"). Where a standard says what to do with something unknown (RFC 5280 4.2: a non-critical extension that is
 not recognised MAY be ignored, a critical one MUST be rejected; RFC 3161 2.4.2: unknown PKIStatus values MUST be
 an error), that rule is followed and the event is listed in the report's "notes".
 
@@ -38,7 +41,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.4.1"
+VERSION = "war_verify 0.5.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -723,19 +726,26 @@ def parse_tsr(raw, opts):
         raise Refusal("PKIStatus %d not understood (RFC 3161 2.4.2: clients MUST generate an error)" % status)
     rest = si[1:]
     if rest and rest[0].tag == 0x30:
-        # statusString: PKIFreeText ::= SEQUENCE SIZE (1..MAX) OF UTF8String (RFC 3161 2.4.2, RFC 4210 5.1.1);
-        # grammar checked, text not interpreted
+        # statusString: PKIFreeText ::= SEQUENCE SIZE (1..MAX) OF UTF8String (RFC 3161 2.4.2, RFC 4210 5.1.1). Profile
+        # 1.4.1 step 5 (bc5a138): imprint, genTime and accuracy come from the signed TSTInfo, "never other bytes of the
+        # response, such as PKIStatusInfo.statusString". Vectors 50 and 51 fix one case outside the grammar: a
+        # UTF8String whose bytes are not UTF-8 is not a reason to refuse (until 0.4.1 it was refused); it is listed in
+        # notes. Anything else outside the grammar (an empty PKIFreeText, a member that is not a UTF8String) is not
+        # fixed by the profile and is refused, closed by construction.
         texts = rest[0].kids()
         if not texts:
             raise Refusal("PKIStatusInfo.statusString is an empty PKIFreeText")
+        bad_utf8 = False
         for t in texts:
             _expect(t, 0x0C, "PKIFreeText UTF8String")
             try:
                 t.content.decode("utf-8")
             except UnicodeDecodeError:
-                raise Refusal("PKIStatusInfo.statusString holds a UTF8String that is not UTF-8")
+                bad_utf8 = True
         rest = rest[1:]
-        notes.append("PKIStatusInfo.statusString present (not interpreted)")
+        notes.append("PKIStatusInfo.statusString present (not read)" if not bad_utf8 else
+                     "PKIStatusInfo.statusString holds a UTF8String that is not UTF-8 (RFC 4210 5.1.1): not read, "
+                     "not a reason to refuse (profile 1.4.1 vectors 50, 51)")
     if rest and rest[0].tag == 0x03:
         c = rest[0].content                   # failInfo: PKIFailureInfo ::= BIT STRING { badAlg (0), ... }
         if not c or c[0] > 7 or (len(c) == 1 and c[0]) or (len(c) > 1 and c[-1] & ((1 << c[0]) - 1)):
@@ -1269,8 +1279,8 @@ def verify_tsa(token, roots):
             pass
         chain.append(parent)
         cur = parent
-    for msg in issuer_defects:
-        bad("failed" if anchored else "untrusted", msg)
+    for msg in issuer_defects:   # 1.4.1 step 9 (bc5a138): "An issuer in the token that fails a check is `failed` whether
+        bad("failed", msg)       # or not the chain reaches a supplied anchor" (vector 54; until 0.4.1, untrusted)
     if not anchored:
         bad("untrusted", "no path from the signer certificate to a supplied root")
     res["chain"] = [c.subject.rfc4514_string() for c in chain]
@@ -1334,14 +1344,16 @@ RECEIPT_REQUIRED = {"canonicalization", "client_ref", "criteria", "files", "huma
                     "schema", "suite", "tools", "verdict"}
 RECEIPT_OPTIONAL = {"payment"}
 # Profile 1.4.1 (added at 06d3b94, outcome-neutral): optional body member `payment` = {protocol: "x402",
-# scheme: "exact", network: "eip155:<chain id>", asset, payer, pay_to, amount, nonce} (optionally settlement_tx). The text gives the
-# members, not their types: read here as non-empty strings (vector 47); anything else is refused. `network` is read as a
-# CAIP-2 chain id in the eip155 namespace (x402 v2 networks are CAIP-2): the EIP-155 chain id in decimal, no leading
-# zeros, 1 to 32 digits (CAIP-2 bounds the reference to 32 characters), so one chain has one spelling.
+# scheme: "exact", network: "eip155:<chain id>", asset, payer, pay_to, amount, nonce} (optionally settlement_tx). bc5a138
+# states the form (check_payment_form below) and "a member outside it changes no outcome" (vector 55): a payment outside
+# the form is a note, not a refusal. `network` is a CAIP-2 chain id in the eip155 namespace: the EIP-155 chain id in
+# decimal, no leading zeros, 1 to 32 digits.
 PAYMENT_REQUIRED = {"protocol", "scheme", "network", "asset", "payer", "pay_to", "amount", "nonce"}
 PAYMENT_OPTIONAL = {"settlement_tx"}
 _EIP155 = re.compile(r"\Aeip155:[1-9][0-9]{0,31}\Z")
+_DEC = re.compile(r"\A(0|[1-9][0-9]*)\Z")
 CRITERIA_MEMBERS = {"commitment", "committed_at", "id", "sha256", "version"}
+TOOLS_OPTIONAL = {"numbers_for_canonicalization"}   # bc5a138 vectors 52 and 57
 FILE_REQUIRED = {"bytes", "name", "sha256"}
 FILE_OPTIONAL = {"pages"}
 RESULT_MEMBERS = {"finding", "id", "required", "result", "title"}
@@ -1484,20 +1496,80 @@ def check_receipt_grammar(ctx, r):
             raise Refusal("%s.required is not a boolean" % rp)
     _int(r["revision"], "receipt.revision")
     t = r["tools"]
-    ctx.members(t, "receipt.tools", {"profile", "validator"})
+    # 1.4.1 vectors 52 and 57 (bc5a138): a passing receipt whose tools carries numbers_for_canonicalization, an array
+    # of numbers; the profile fixes its outcome (no problems), so it is listed in notes (until 0.4.1, refused). No
+    # vector or sentence opens tools to other members: they stay unknown members (closed by construction).
+    ctx.members(t, "receipt.tools", {"profile", "validator"}, TOOLS_OPTIONAL)
+    if "numbers_for_canonicalization" in t:
+        nums = t["numbers_for_canonicalization"]
+        if not isinstance(nums, list) or any(isinstance(x, bool) or not isinstance(x, (int, float)) for x in nums):
+            raise Refusal("receipt.tools.numbers_for_canonicalization is not an array of numbers")
+        ctx.notes.append("receipt.tools.numbers_for_canonicalization not interpreted (profile 1.4.1 vectors 52, 57: "
+                         "outcome-neutral)")
     _str(t["profile"], "receipt.tools.profile")
     _str(t["validator"], "receipt.tools.validator")
     _str(r["verdict"], "receipt.verdict")
     if "payment" in r:
-        pm = r["payment"]
-        ctx.members(pm, "receipt.payment", PAYMENT_REQUIRED, PAYMENT_OPTIONAL)
-        for m in sorted((PAYMENT_REQUIRED | PAYMENT_OPTIONAL) & set(pm)):
-            _str(pm[m], "receipt.payment." + m, nonempty=True)
-        if pm["protocol"] != "x402" or pm["scheme"] != "exact":
-            raise Refusal("receipt.payment %r/%r is not implemented (only x402/exact)" % (pm["protocol"], pm["scheme"]))
-        if not _EIP155.match(pm["network"]):
-            raise Refusal("receipt.payment.network %r is not eip155:<chain id>" % (pm["network"],))
-        ctx.notes.append("receipt.payment present: grammar checked; not checked against a chain (outcome-neutral)")
+        # 1.4.1 (bc5a138): "the payment form is stated and a member outside it changes no outcome" (vector 55); a
+        # chain checker reports it as unsupported. Until 0.4.1 a payment outside the form was refused.
+        try:
+            check_payment_form(r["payment"])
+            ctx.notes.append("receipt.payment present: inside the stated form; not checked against a chain "
+                             "(outcome-neutral)")
+        except Refusal as e:
+            ctx.notes.append("receipt.payment outside the stated form (%s%s): unsupported, outcome-neutral"
+                             % (e.reason, ": %s" % (e.detail,) if e.detail not in ("", None) else ""))
+
+
+def check_payment_form(pm):
+    """The stated payment form (README, check_payment.py of bc5a138): all members strings, network eip155: plus a
+    decimal chain id, amount a decimal string, 0x-hex addresses and nonce, no other members."""
+    if not isinstance(pm, dict):
+        raise Refusal("receipt.payment is not a JSON object")
+    missing, unknown = PAYMENT_REQUIRED - set(pm), set(pm) - PAYMENT_REQUIRED - PAYMENT_OPTIONAL
+    if missing or unknown:
+        raise Refusal("receipt.payment members", ", ".join(sorted(missing | unknown)))
+    for m in sorted(pm):
+        _str(pm[m], "receipt.payment." + m, nonempty=True)
+    if pm["protocol"] != "x402" or pm["scheme"] != "exact":
+        raise Refusal("receipt.payment %r/%r is not x402/exact" % (pm["protocol"], pm["scheme"]))
+    if not _EIP155.match(pm["network"]):
+        raise Refusal("receipt.payment.network %r is not eip155:<chain id>" % (pm["network"],))
+    if not _DEC.match(pm["amount"]):
+        raise Refusal("receipt.payment.amount is not a decimal string of atomic units")
+    for m, n in (("asset", 20), ("payer", 20), ("pay_to", 20), ("nonce", 32), ("settlement_tx", 32)):
+        if m in pm and not re.match(r"\A0x[0-9a-fA-F]{%d}\Z" % (2 * n), pm[m]):
+            raise Refusal("receipt.payment.%s is not 0x-prefixed hex of %d bytes" % (m, n))
+
+
+def check_envelope_timestamp(ctx, ts):
+    """The issuer's form of the unsigned envelope.timestamp -> (granted?, parsed gen_time or None, digest well-formed?);
+    Refusal outside it, except digest_sha256: README step 6, "the unsigned timestamp.digest_sha256 field is informative
+    and never decides the outcome", so a digest_sha256 outside its form is a note, never a refusal (until 0.4.1,
+    refused). The other members are not named by the profile and keep the issuer's form (closed by construction)."""
+    if not isinstance(ts, dict):
+        raise Refusal("envelope.timestamp is not an object or null")
+    if ts.get("status") == "granted":
+        ctx.members(ts, "envelope.timestamp", TS_GRANTED)
+        if ts["covers"] != COVERS:
+            raise Refusal("envelope.timestamp.covers names another object", ts["covers"])
+        try:
+            _hex64(ts["digest_sha256"], "envelope.timestamp.digest_sha256")
+            digest_ok = True
+        except Refusal as e:
+            digest_ok = False
+            ctx.notes.append("X_TIMESTAMP_METADATA_MALFORMED: %s (unsigned, informative, never decides the outcome: "
+                             "profile step 6)" % e.reason)
+        meta_gen = parse_generalized_time(_str(ts["gen_time"], "envelope.timestamp.gen_time"),
+                                          "envelope.timestamp.gen_time")
+        _str(ts["tsa"], "envelope.timestamp.tsa")
+        _str(ts["tsr_file"], "envelope.timestamp.tsr_file")
+        return True, meta_gen, digest_ok
+    if ts.get("status") == "none":
+        ctx.members(ts, "envelope.timestamp", TS_NONE)
+        _str(ts["reason"], "envelope.timestamp.reason")
+        return False, None, True
+    raise Refusal("envelope.timestamp.status is neither granted nor none")
 
 
 def check_step1(r):
@@ -1557,26 +1629,16 @@ def verify(inputs, options=None, keys_override=None):
         raise Refusal(STEP1_REASON, "signature.alg %r" % (sig["alg"],))
     _str(sig["key_id"], "signature.key_id", nonempty=True)
     sig_bytes = b64_strict(sig["value"], "signature.value")
+    # envelope.timestamp is outside the signature: README step 6, "the unsigned timestamp.digest_sha256 field is
+    # informative and never decides the outcome", and the token is read instead (R6). From 0.5.0 a digest_sha256
+    # outside its form is X_TIMESTAMP_METADATA_MALFORMED plus a note, never a refusal (until 0.4.1, refused); the
+    # other members keep the issuer's form.
     ts = env.get("timestamp")
     ts_declared = False
+    ts_digest_ok = True
+    meta_gen = None
     if ts is not None:
-        if not isinstance(ts, dict):
-            raise Refusal("envelope.timestamp is not an object or null")
-        if ts.get("status") == "granted":
-            ctx.members(ts, "envelope.timestamp", TS_GRANTED)
-            if ts["covers"] != COVERS:
-                raise Refusal("envelope.timestamp.covers names another object", ts["covers"])
-            _hex64(ts["digest_sha256"], "envelope.timestamp.digest_sha256")
-            meta_gen = parse_generalized_time(_str(ts["gen_time"], "envelope.timestamp.gen_time"),
-                                              "envelope.timestamp.gen_time")
-            _str(ts["tsa"], "envelope.timestamp.tsa")
-            _str(ts["tsr_file"], "envelope.timestamp.tsr_file")
-            ts_declared = True
-        elif ts.get("status") == "none":
-            ctx.members(ts, "envelope.timestamp", TS_NONE)
-            _str(ts["reason"], "envelope.timestamp.reason")
-        else:
-            raise Refusal("envelope.timestamp.status is neither granted nor none")
+        ts_declared, meta_gen, ts_digest_ok = check_envelope_timestamp(ctx, ts)
     if keys_override is not None:
         keytable = check_keyfile(ctx, keys_override)
         ctx.notes.append("inputs.keys not used: the key file was supplied with --keys")
@@ -1764,10 +1826,10 @@ def verify(inputs, options=None, keys_override=None):
                     ext.add(w.split(":")[0])
         if st == "match" and rec_tok is not None:
             covering = rec_tok["tst"]
-        if ts_declared and (ts["digest_sha256"] != rec_parsed["token"]["tst"]["hashed"].hex() or
+        if ts_declared and ((ts_digest_ok and ts["digest_sha256"] != rec_parsed["token"]["tst"]["hashed"].hex()) or
                             meta_gen["instant"] != rec_parsed["token"]["tst"]["gen"]["instant"]):
             ext.add("X_TIMESTAMP_METADATA_DISAGREES")
-    if ts_declared and ts["digest_sha256"] != receipt_digest.hex():
+    if ts_declared and ts_digest_ok and ts["digest_sha256"] != receipt_digest.hex():
         ext.add("X_TIMESTAMP_METADATA_DISAGREES")
 
     # ---- step 5: criteria commitment
@@ -2095,7 +2157,7 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  defaults follow profile 1.4.1 (maximusrufus/work-acceptance-record@06d3b94; steps 1-8 as in 1.3)
+  defaults follow profile 1.4.1 (maximusrufus/work-acceptance-record@bc5a138; steps 1-8 as in 1.3)
   --profile 1.2.1              this verifier's profile 1.2.1 readings (key-id-source envelope, reference-time
                                covering-token, accuracy ignore, key-id-agreement require, key-rule refuse,
                                independence-rule stated-independent); a switch given explicitly overrides it

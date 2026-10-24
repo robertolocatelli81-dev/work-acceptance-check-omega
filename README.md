@@ -1,12 +1,15 @@
 # war-verify: a clean-room verifier for work-acceptance records (profile 1.4.1)
 
 `war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.1 at
-maximusrufus/work-acceptance-record@06d3b94, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
+maximusrufus/work-acceptance-record@bc5a138, vectors 01-57, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
 1.2.1) the way the profile README describes, and refuses anything it does not understand. The readings this
 verifier gave to profile 1.2.1 (version 0.1.0) are kept: `--profile 1.2.1` selects all of them, and each one has
-its own switch (see "Switches"). It was written from the profile README, the published test vectors and the RFCs it names, without
-opening any other implementation; an issue comment that quotes parts of the reference verifier was read before
-version 0.4.0, and the description of a probe vector before 0.4.1 (see "What was read").
+its own switch (see "Switches"). It was written from the profile README, the published test vectors and the RFCs it
+names. No other implementation was opened, with these exceptions (see "What was read"): an issue comment that quotes
+parts of the reference verifier was read before version 0.4.0, and the description of a probe vector before 0.4.1;
+for 0.5.0 the payment form was taken from the function `_in_form` of the reference `verifier/check_payment.py`
+(opened), and the reference `verifier/war_verify.py` of bc5a138 was searched once with `grep` and run as a black box
+on this project's own probe documents.
 
 Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 `LICENSE-APACHE`). The new vectors in `vectors/` are CC0, like the upstream vectors.
@@ -14,7 +17,7 @@ Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 Third-party inputs are **not included** in this repository. `python3 tools/fetch_sources.py` downloads them from the
 commits and URLs pinned in `SOURCES.json` into `fonti/` and `roots/`, and keeps a file only if its SHA-256 matches;
 the tests need them. Their licences are their authors': the profile README is CC BY 4.0
-(maximusrufus/work-acceptance-record), the upstream vectors (01-47 at 06d3b94, 01-46 at 4daf721, 01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
+(maximusrufus/work-acceptance-record), the upstream vectors (01-59 at 48ab8c9, the head of open PR #1; 01-57 at bc5a138; 01-47 at 06d3b94, 01-46 at 4daf721, 01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
 CC0-1.0, and the babyblueviper1
 vectors and the issuer files (`selftest-pass.json`, its README, `checker-keys-live.json`) state no licence. The
 issuer's key file is fetched from its live URL, so it can change: the script then reports a mismatch and does not
@@ -37,8 +40,12 @@ Profile steps 1-9, with the problem and warning codes of step 8:
    fallback to `committed_at` with `CRITERIA_COMMITMENT_UNVERIFIED`, strict "earlier than" against the reference
    time, which is the earlier of `issued_utc` and a covering record token's genTime. A token's stated `accuracy`
    widens the comparison, a token without one is taken at its genTime, and `ordering` is ignored;
-6. record token imprint (`none` / `imprint_match` / `imprint_mismatch`); the unsigned `timestamp.digest_sha256`
-   never decides it;
+6. record token imprint (`none` / `imprint_match` / `imprint_mismatch`); the unsigned envelope `timestamp` never
+   decides it. Profile step 6: "the unsigned `timestamp.digest_sha256` field is informative and never decides the
+   outcome": from 0.5.0 a `digest_sha256` outside its form (not a string of 64 lower-case hexadecimal digits) is the
+   local code `X_TIMESTAMP_METADATA_MALFORMED` and a note, not a refusal (0.4.1 refused it). The other members of the
+   envelope timestamp are not named by the profile and keep the issuer's form, as before (refused outside it; an
+   unknown member is a note under `--unknown-fields report`);
 7. verdict recomputed from the results;
 8. independence: checker is the signer, key collision, self-check label, producer declared, and the stated
    `independence` against the one derived from the parties block;
@@ -62,8 +69,8 @@ How the values are assigned:
   SignerInfo;
 - chain: a chain of CA certificates (each signature verified, basicConstraints CA, keyUsage keyCertSign when
   present, and every issuer other than the anchor valid at genTime) must reach a supplied anchor. An issuer that
-  fails one of these checks gives `failed` when the chain reaches the anchor (1.4.1, vector 38) and `untrusted`
-  when it does not. No path to a supplied anchor is `untrusted`. The anchor's own validity period is not checked;
+  fails one of these checks gives `failed` whether or not the chain reaches a supplied anchor (bc5a138 step 9,
+  vectors 38 and 54; until 0.4.1, `untrusted` when it did not). No path to a supplied anchor is `untrusted`. The anchor's own validity period is not checked;
   the signer's is, even when the signer certificate is itself supplied as the anchor. A root carried in the token
   is used only if the same certificate is supplied as an anchor. The anchor is reached by subject name and public
   key (1.4.1 at d79a737: "matched by subject name and public key, RFC 5280 6.1.1, not by certificate bytes"): the
@@ -90,22 +97,29 @@ The output has the nine fields of the vectors' `expected` objects, plus `accepte
 - Without anchors it does not verify the time-stamp authority's signature (profile 1.4.1 step 9: `not_evaluated`).
   The tokens of vectors 01-30 are "imprint-and-time fixtures" with no SignerInfo: with anchors they read `no_signer`.
 - Revocation of TSA or CA certificates: no CRL or OCSP is fetched (profile 1.4.1: "Revocation is not checked").
-- The optional `receipt.payment` member (1.4.1 at 06d3b94) against a chain: its grammar is checked and it is covered
-  by the signature like the rest of the body, but no settlement is looked up (the profile makes it outcome-neutral).
-  Grammar, this verifier's closed reading of the member list: exactly `protocol`, `scheme`, `network`, `asset`,
-  `payer`, `pay_to`, `amount`, `nonce` and optionally `settlement_tx`, each a non-empty string; `protocol` `x402`,
-  `scheme` `exact`, `network` `eip155:` followed by the EIP-155 chain id in decimal, without leading zeros, 1 to 32
-  digits (a CAIP-2 chain id in the eip155 namespace; x402 v2 networks are CAIP-2, which bounds the reference to 32
-  characters). The profile gives the members, not their types; anything else is refused, and the report carries a
-  note that the member was present.
+- The optional `receipt.payment` member against a chain: it is covered by the signature like the rest of the body,
+  but no settlement is looked up (the profile makes it outcome-neutral). Its form is the one bc5a138 states (README and
+  `verifier/check_payment.py`): exactly `protocol`, `scheme`, `network`, `asset`, `payer`, `pay_to`, `amount`,
+  `nonce` and optionally `settlement_tx`, all strings; `protocol` `x402`, `scheme` `exact`; `network` `eip155:` and a
+  decimal chain id without leading zeros, 1 to 32 digits; `amount` a decimal string without leading zeros; `asset`,
+  `payer` and `pay_to` 20 bytes, `nonce` and `settlement_tx` 32 bytes, each `0x` and hexadecimal digits of either
+  case. "A member outside it changes no outcome" (vector 55): from 0.5.0 a payment outside the form is a note naming
+  the defect and `unsupported`, not a refusal (0.4.1 refused it); one inside the form is a note too. The rules for the
+  whole document still apply inside `payment`: an integer outside plus or minus (2^53 - 1), for example an `amount`
+  of 1000000000000000000 written as a JSON number, refuses the record (see "Closed by construction"), although
+  RFC 8785 3.1 only asks that a number be expressible as an IEEE 754 double.
 - OpenTimestamps proofs. The issuer README says its criteria commitment comes with an OpenTimestamps proof, but
   `selftest-pass.json` contains no OpenTimestamps data, so there was nothing to check.
 - Whether a criterion was judged correctly. A record states a checker's findings; this tool checks the record.
 
 ## Closed by construction
 
-Every member of every object is either understood or the input is refused with a reason naming the path. That
-includes duplicate JSON member names, lone surrogates, integers outside the I-JSON range of plus or minus
+Every member of every object is either understood or the input is refused with a reason naming the path, with the
+four exceptions the profile itself fixes, each listed in `notes` and never ignored silently: the member
+`numbers_for_canonicalization` of `receipt.tools`, an array of numbers (bc5a138 vectors 52 and 57; any other member
+of `receipt.tools` is an unknown member), a `receipt.payment` outside its form (vector 55), a `digest_sha256` outside
+its form in the unsigned envelope `timestamp` (step 6), and a `statusString` whose `UTF8String` holds bytes that are
+not UTF-8 (vectors 50 and 51). That includes duplicate JSON member names, lone surrogates, integers outside the I-JSON range of plus or minus
 (2^53 - 1), a byte order mark, non-canonical
 base64, any non-DER encoding in a token, a `GeneralizedTime` outside RFC 3161 2.4.2, and, under `--ed25519 strict`,
 a signature whose R is not canonical or is of small order. An Ed25519 public key in the key file that is not
@@ -115,20 +129,22 @@ version 0.1.0.
 
 Where a standard says what to do with an unknown element, that rule is followed and listed in `notes`: a
 non-critical TSTInfo extension is ignored (RFC 5280 4.2), a critical one is refused, and an unknown PKIStatus is an
-error (RFC 3161 2.4.2). The `PKIStatusInfo` of a time-stamp response is read to its grammar but not interpreted: a
-`statusString` must be a non-empty sequence of UTF-8 `UTF8String`s (`PKIFreeText`, RFC 4210 5.1.1) and a `failInfo` a
-DER `BIT STRING` (unused bits zero and, as `PKIFailureInfo` is a named bit list, no trailing zero bits, X.690 11.2), and
-anything else is refused like any other DER defect of the response (since 0.4.1; before, any
-sequence was accepted there; `tests/test_status_info.py`). The imprint and `genTime` are read from the signed
-`TSTInfo` only: with an imprint copied into the unsigned `statusString` of a genuine token (in the probe's layout, one
-`UTF8String` whose bytes are not UTF-8, and with the values as direct members), 0.4.0 gave
-`CRITERIA_TIMESTAMP_MISMATCH` for the criteria token and `imprint_mismatch` for the record token (measured
-2026-10-22); 0.4.1 refuses both responses in both layouts.
+error (RFC 3161 2.4.2). The imprint, `genTime` and `accuracy` are read from the signed `TSTInfo` only, "never other
+bytes of the response, such as `PKIStatusInfo.statusString`" (bc5a138 step 5). A `statusString` whose `UTF8String`
+holds bytes that are not UTF-8 (the layout of vectors 50 and 51) is listed in `notes` and not read (0.4.1 refused the
+response; `tests/test_status_info.py`), so an imprint copied there in the unsigned `statusString` of a genuine token
+gives `CRITERIA_TIMESTAMP_MISMATCH` for the criteria token and `imprint_mismatch` for the record token, as vectors 50
+and 51 expect. Anything else outside `PKIFreeText` (RFC 4210 5.1.1: an empty sequence, a member that is not a
+`UTF8String`, a member that is not DER, an element of `PKIStatusInfo` other than one `statusString` sequence and one
+`failInfo` in that order) is refused like any other DER defect of the response: no vector or sentence of the profile
+fixes it (0.4.0 accepted any sequence silently). A `failInfo` must still be a DER `BIT STRING`
+(unused bits zero and, as `PKIFailureInfo` is a named bit list, no trailing zero bits, X.690 11.2), else refusal: no
+vector or sentence of the profile says otherwise.
 
 The profile does not define the envelope, key-file or criteria-document formats. The member sets accepted for
 them are those found in the published inputs (the 26 documents of the 1.2.1 round and the 27 vectors of 1.3). For the criteria document, only `criteria[].id`, `required` and
 `title` are interpreted, and the other members are listed in `notes`. `--unknown-fields report` turns refusals
-for unknown members into notes.
+for unknown members into notes (the four exceptions above are notes under both values).
 
 ## Usage
 
@@ -189,7 +205,7 @@ Defaults follow profile 1.4.1 (its steps 1-8 are those of 1.3). `--profile 1.2.1
 | `--tokens` | `structural` (imprint and genTime) | `pkix` (the time of a token that is not `verified` is not used) | 1.4.1 step 9 "The outcome fields cover imprint and time only"; `tsa_signature` "never changes any other outcome member" (so `pkix` is a local choice) |
 | `--tsa-precedence` | `failed-first` | `evaluability-first` (the order reported for 1.4 by another verifier; not 1.4.1) | 1.4.1 step 9 "When a token has more than one defect, the value is `failed` if any check that can run fails; otherwise `no_signer`, then `unsupported`, then `untrusted`" |
 | `--name-compare` | `exact` | `normalized` (NFKC, casefold, collapsed spaces) | property 3 names parties; no equality rule |
-| `--unknown-fields` | `refuse` | `report` | profile silent |
+| `--unknown-fields` | `refuse` | `report` | profile silent, except where bc5a138 fixes the outcome: `receipt.tools.numbers_for_canonicalization` (vectors 52, 57), a `receipt.payment` outside its form (55) and the unsigned envelope `timestamp.digest_sha256` outside its form (step 6) are notes under both values |
 | `--ed25519` | `strict` (canonical R, R not of small order, S < L) | `rfc8032` (RFC 8032 5.1.7 only) | the key itself is governed by `--key-rule` |
 | `--correspondence` | `ids-required` (same ids, same `required`) | `strict` (titles too) | step 4 "check the results correspond to the criteria" |
 
@@ -237,9 +253,23 @@ Readings of 1.3 that no published vector pins (each has its own vector in `vecto
 
 ## What was read
 
-Only these files; their URLs and SHA-256 values are in `SOURCES.json`. The 1.2.1 sources were first fetched on
+Only these files; their URLs and SHA-256 values are in `SOURCES.json`, or given below for files that were read
+but are not kept. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- for 0.5.0 (2026-10-24): `fonti/upstream_bc5a138/` (profile 1.4.1 README and vectors 01-57,
+  maximusrufus/work-acceptance-record@bc5a138) and `fonti/upstream_48ab8c9/` (vectors 01-59, the head of open PR #1),
+  both fetched through `tools/fetch_sources.py` and checked by SHA-256; the README diff d79a737..bc5a138 was read in
+  full. **Not clean-room on the payment form:** the function `_in_form` of bc5a138 `verifier/check_payment.py`
+  (SHA-256 44343f91568d5be3…, lines 85-104) was opened, and the form above (byte lengths, decimal `amount` without leading zeros, either case of
+  hexadecimal digits) is taken from it, beyond the README's own sentence on the form. The reference
+  `verifier/war_verify.py` of bc5a138 (SHA-256 ac3ac35d9356cbb5…; the same file at 48ab8c9) was searched once with
+  `grep -n -i 'unknown\|extra\|members\|set(.*) -\|keys()'` (three matching lines, none about members) and was
+  otherwise not opened; it was run as a black box on this
+  project's own probe documents (outcomes compared; the comparison is not reported here). The comments on x402-foundation/tsc#4 of 2026-10-24 by
+  maximusrufus (vectors 58-59, the 1.4.1 clarification on unsigned attributes) and actaseal (candidate readings) were
+  read, and the "Implementations" table of the README at master 8e00300; the text of the README at 48ab8c9 and the
+  tsc#4 comments of 2026-10-23 were not read;
 - for 0.4.1, Tetsurohhori's comment on x402-foundation/tsc#4 (issuecomment-6327691458, 2026-10-21T22:12:28Z) and, at
   aos-standard/catalog@8c210d1, `docs/runs/work-acceptance-record-cold/probe-status-imprint/README.md` (SHA-256
   6cb5120c0a9abf8a…) and the vector `probe-status-string-imprint.json` (66f9aeb761aae596…), fetched 2026-10-22 about
@@ -303,18 +333,74 @@ TSA certificates (in `roots/`, fetched from freetsa.org/files on 2026-10-18T06:1
 was fetched: the record contains no DigiCert token.
 
 The issuer README points to its own verifier (`war_check.py`). It was not opened, and no other verifier, builder or
-runner for this profile was opened (the parts of the reference verifier quoted in the whawk46 comment above were
-read in that comment only). For the composition section only, this project's own x402 acceptance-record
+runner for this profile was opened, except as stated for 0.5.0 above (the parts of the reference verifier quoted in
+the whawk46 comment above were read in that comment only). For the composition section only, this project's own x402 acceptance-record
 checker was read and run. The vectors' own descriptions state their contributors' readings. On the points those
 descriptions decide, this verifier is not independent of them. The reading of each point is in "Switches" and in
 the `reading` field of the new vectors. Vectors 24 and 25 of 1.3 are listed in the profile README as "case from
 robertolocatelli81-dev", and the rulings comment says they "cover @robertolocatelli81-dev's omega-15 and omega-16",
 two vectors of this project: agreement on 24 and 25 is not independent evidence.
 
-## Results, profile 1.4.1 (measured 2026-10-21)
+## Readings not fixed by the vectors (`tests/test_readings_20261024.py`)
 
-Defaults: the 47 vectors of 06d3b94 and the live record (`tools/score.py`, `results/score_default.txt`): 48/48
-documents, 441/441 fields. Vectors 01-36 are byte-identical to eb0f30b and 01-46 to 4daf721 (`tests/test_vectors.py`).
+Candidate vectors listed on x402-foundation/tsc#4 on 2026-10-24, and what this verifier does with each (signed with a
+test key over this verifier's canonical form; the RFC 8785 bytes are checked against Node v22.23.2 `JSON.stringify`
+and the default `Array.prototype.sort`, which orders member names by UTF-16 code units):
+
+| reading | outcome here | decided by |
+|---|---|---|
+| exponent forms with more than one significant digit (`1.5e-7`, `1.25e+22`) | serialized as ECMAScript does; the signed receipt passes; a signature over `1.5e-07` is `SIGNATURE_INVALID` | RFC 8785 3.2.2.3 |
+| a member name outside the BMP | no receipt object has such a member: refused; under `--unknown-fields report`, ordered by UTF-16 code units (`"\U0001F600"` before `"\uFF61"`), and a signature over code-point order is `SIGNATURE_INVALID` | RFC 8785 3.2.3 |
+| envelope `signature.key_id` other than the signed `receipt.key_id` | `SIGNATURE_INVALID` | step 2 |
+| producer and checker naming the same `key_id`, or one public key listed under two ids with the producer named by the second | `KEY_COLLISION` and `INDEPENDENCE_INCONSISTENT` in both cases (the keys are compared, not the ids) | property 3, "The checker key must not equal the producer key" |
+| fractional seconds in `issued_utc` | read as RFC 3339 allows | profile silent; RFC 3339 5.6 |
+| base64 outside the alphabet, without padding, or base64url | refused | profile silent; this verifier reads canonical padded base64 only |
+| upper-case hexadecimal in a hash field | refused | profile silent; this verifier reads lower-case hexadecimal only |
+| `imprint_match` with no issue time (a receipt without `issued_utc`, record token matching) | refused: `issued_utc` is a member of every published receipt | profile silent; step 5 names `issued_utc` |
+
+The same test file pins two rules that are not among those readings: the unsigned envelope `timestamp.digest_sha256`
+(step 6, a record token whose imprint matches and a `digest_sha256` outside its form: `imprint_match`,
+`X_TIMESTAMP_METADATA_MALFORMED`; refused until 0.4.1) and the member of `receipt.tools` of vectors 52 and 57.
+
+## Results, profile 1.4.1 at bc5a138 (measured 2026-10-24, version 0.5.0)
+
+Defaults: the 57 vectors of bc5a138 and the live record (`tools/score.py`, `results/score_default.txt`): 58/58
+documents, 537/537 fields. Open PR #1 at 48ab8c9 (one commit on master 8e00300, adding vectors 58 and 59; after bc5a138
+master rewrote the descriptions of 13 vectors and added an implementations table to the README, inputs and `expected`
+unchanged): 60/60 documents,
+557/557 fields (`--set 48ab8c9`, `results/score_set_48ab8c9.txt`). The 06d3b94 set of the next section still gives
+48/48 and 441/441 (`--set 1.4.1`). The inputs and `expected` objects of 01-47 in bc5a138 and 48ab8c9 are those of
+06d3b94 (`tests/test_vectors.py`). Version 0.4.1 on the bc5a138 set: 51/57 vectors, 480/528 fields; the six it does
+not agree with are the rules this version follows (50 and 51 refused for the `statusString`; 52 and 57 refused for
+the member `numbers_for_canonicalization` of `receipt.tools`; 55 refused for the payment form; 54 `untrusted` instead
+of `failed`).
+
+Positive controls: a verifier that always answers "valid, pass, no codes" agrees only with 30, 47, 52, 55 and 57,
+whose expected outcome is exactly that; a problem code added to every `expected` is caught on all 58 (and all 60 of
+48ab8c9); our outcome with `tsa_signature` removed disagrees exactly on the 20 vectors with evaluated tokens (31-35,
+37-42, 44-46, 48-51, 53, 54).
+
+Each other value of each switch on the 58 documents (`results/score_*.txt`):
+
+| switch | documents agreeing | disagreeing vectors |
+|---|---|---|
+| `--reference-time covering-token` | 57/58 | 22 |
+| `--accuracy ignore` | 57/58 | 29 |
+| `--accuracy interval` | 28/58 | 30 vectors: `undetermined` where the tokens state no `accuracy` |
+| `--key-rule all-keys` | 57/58 | 28 |
+| `--key-rule refuse` | 55/58 | 26, 27, 28 |
+| `--independence-rule stated-independent` | 57/58 | 20 |
+| `--tsa-precedence evaluability-first` | 55/58 | 44, 45, 46 |
+| `--profile 1.2.1` | 52/58 | 20, 22, 26, 27, 28, 29 |
+| `--key-id-source envelope`, `--time-agreement exact`, `--key-id-agreement require` and `ignore`, `--name-compare normalized`, `--correspondence strict`, `--ed25519 rfc8032`, `--unknown-fields report` | 58/58 each | none |
+
+`--tokens pkix` is not in the table: it needs `--tsa-roots`, and by design it does not use the time of a token that is
+not `verified`, so the fixture tokens of 01-30 do not give the vectors' outcomes.
+
+## Results, profile 1.4.1 at 06d3b94 (measured 2026-10-21)
+
+The 47 vectors of 06d3b94 and the live record (`--set 1.4.1`, `results/score_set_1_4_1_06d3b94.txt`; the default
+until 0.4.1): 48/48 documents, 441/441 fields, also with 0.5.0. Vectors 01-36 are byte-identical to eb0f30b and 01-46 to 4daf721 (`tests/test_vectors.py`).
 Version 0.4.1 gives the same 48/48 documents and 441/441 fields (measured 2026-10-22). Vector 47 (a passing receipt whose signed body carries `payment`) agrees on its 9 fields. Vectors 48 and 49 of
 d79a737 (a signer without `id-kp-timeStamping`; an issuer without the CA flag) agree too, both `failed`, each on the
 rule its name states (`tests/test_nemesis_141b.py`); they are not in the scored set, which stays at 06d3b94. Vectors
@@ -517,15 +603,17 @@ The "strict" column is the signature primitive (`ed25519_verify`); the key rule 
 ### Generative attack (`tools/fuzz.py`, `results/fuzz.txt`)
 
 597 generated cases in 10 families, each with an expectation written from the text (profile 1.3; at 1.3 five
-expectations and one case's `issued_utc` changed and one case was added, each with the sentence in `tools/fuzz.py`). This verifier meets all 597. The
-deliberately lax verifier `tools/lax_verify.py` is the positive control: it fails 560, and wrongly reports 416 as
-accepted as stated.
+expectations and one case's `issued_utc` changed and one case was added, each with the sentence in `tools/fuzz.py`;
+at 0.5.0 the 6 wrong-type cases at the unsigned envelope `timestamp.digest_sha256` expect the outcome of the
+unaltered record, see "Closed by construction"). This verifier meets all 597. The deliberately lax verifier
+`tools/lax_verify.py` is the positive control: it fails 554, and wrongly reports 410 as accepted as stated (560 and
+416 before those 6 expectations changed).
 
 | family | cases | lax verifier fails |
 |---|---|---|
 | unknown member at every object level | 21 | 21 |
 | duplicate member at every object level | 21 | 21 |
-| wrong type at every leaf | 418 | 412 |
+| wrong type at every leaf | 418 | 406 |
 | lone surrogate in every receipt string | 40 | 39 |
 | numbers (1e21, 5e-324, 1.0, 2^53+1, -1, 1E2, -0, 0) | 24 | 18 |
 | DER / TSTInfo (lengths, trailing bytes, all same-length hash OID swaps, params, nonce/extension smuggling, GeneralizedTime grammar, ordering FALSE, status) | 41 | 36 |
@@ -560,23 +648,32 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 137 tests
+python3 -B -m unittest discover -s tests          # 164 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
 
-Measured on 2026-10-22 (0.4.1): 137/137 pass on Python 3.9.25, 3.11.2 and 3.13.15 with `cryptography` 50.0.2, and on
-3.11.2 with `cryptography` 40.0.0. With 39.0.2, 39 of 137 fail by design and the other 98 pass: each failing test
+Measured on 2026-10-24 (0.5.0): 164/164 pass on Python 3.9.25 and 3.13.15 with `cryptography` 50.0.2, on 3.11.2 with
+50.0.1, and on 3.11.2 with `cryptography` 40.0.0. With 39.0.2, 41 of 164 fail by design and the other 123 pass: each failing test
 expects a TSA value or check and gets the check that cannot run instead. On the 1.4.1 set with 39.0.2, the 14
 documents with anchors all report `cannot_run` (exit 74 for 31, 38 and 42, measured) and every `tsa_signature`
 value is `not_evaluated`; none is an evaluated value. Every test file has its positive control:
-- the scoring bench fails an accept-always verifier (0/28 on 1.3; on 1.4 only vector 30, on 1.4.1 only 30 and 47,
-  see above);
-- 46 targeted mutants of the 0.3.0, 0.4.0 and 0.4.1 changes (value classes, chain classes with and without the anchor,
+- the scoring bench fails an accept-always verifier (0/28 on 1.3; on 1.4 only vector 30, on 1.4.1 at 06d3b94 only
+  30 and 47, at bc5a138 only 30, 47, 52, 55 and 57, see above);
+- 18 of the 164 tests fail on the 0.4.1 code, the ones that state a 0.5.0 rule; the other new tests pin behaviour
+  0.4.1 already had and pass there (measured on a checkout of 0.4.1 with the 0.5.0 tests, tools and vectors copied in);
+- 68 targeted mutants of the 0.3.0, 0.4.0, 0.4.1 and 0.5.0 changes (value classes, chain classes with and without the anchor,
   the anchor's exemption from the genTime check, the signer's own check whatever the anchors, the closed list of TSA
   key algorithms read from the certificate, precedence, anchors, `tsa_signature_accepted`, comparison, the "never
   changes another member" rule, the chain API guard, the anchor among the issuer candidates, the `payment` grammar,
-  the `PKIStatusInfo` grammar) are each caught by at least one test (46/46, `tools/mutate14.py`, which exits non-zero on a survivor or on a mutant whose
-  pattern no longer applies). For 0.3.0, a second run of 24 mutants
+  the `PKIStatusInfo` grammar; for 0.5.0 the note on a `statusString` that is not UTF-8, issuer defects without the
+  anchor, the member of `receipt.tools` of vectors 52 and 57 and its type, every rule of the payment form and its note,
+  the unsigned envelope `timestamp.digest_sha256` and the form of the other envelope members, the default of
+  `--unknown-fields`) are each caught by at least one test (68/68, `tools/mutate14.py`, which exits
+  non-zero on a survivor or on a mutant whose pattern no longer applies). Of the 62 first written for 0.5.0, one
+  ("expired signer classed as issuer defect") became equivalent once issuer defects are `failed` too and was removed:
+  the same call with the same message, and over 113 vector documents and 11 test-PKI tokens with expired signers the
+  full `tsa_signature` details are identical, while a control without the signer's validity check differs on 6 of the
+  11. For 0.3.0, a second run of 24 mutants
   on the same lines by the review of 0.3.0 left 2 equivalent ones (the `anchors is roots` reuse of the pkix result
   and the narrowed `except` behind the chain API guard: 0 differences over 235 runs, a control mutant 7) and
   the tests of `tests/test_nemesis_14.py` for the rest; 4 of its 14 tests fail on the 0.3.0 code as first written

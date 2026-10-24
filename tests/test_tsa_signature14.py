@@ -90,9 +90,11 @@ class Built(unittest.TestCase):
             ("intermediate expired before genTime", tp.signed_tsr(t(), self.tsa_under_expired, r,
                                                                   certs=[self.inter_expired[1], r]), [r],
              "failed", "failed"),
+            # 1.4.1 step 9 (bc5a138): "An issuer in the token that fails a check is `failed` whether or not the chain
+            # reaches a supplied anchor" (vector 54); untrusted until 0.4.1
             ("intermediate expired, chain not reaching the anchor", tp.signed_tsr(
                 t(), self.tsa_under_expired, r, certs=[self.inter_expired[1], r]), [self.other_root[1]],
-             "untrusted", "untrusted"),
+             "failed", "failed"),
             # 1.4.1: "the signer and every issuer other than the anchor valid at genTime"
             ("anchor expired before genTime", tp.signed_tsr(t(), self.tsa_under_expired_root, self.root_expired[1]),
              [self.root_expired[1]], "verified", "verified"),

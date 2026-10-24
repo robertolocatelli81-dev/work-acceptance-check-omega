@@ -1,33 +1,33 @@
-fonti/upstream_06d3b94/vectors/01-valid.json                                AGREE    9/9
-fonti/upstream_06d3b94/vectors/02-criteria-committed-after-issue.json       AGREE    9/9
-fonti/upstream_06d3b94/vectors/03-self-checked.json                         AGREE    9/9
-fonti/upstream_06d3b94/vectors/04-required-not-evaluated.json               AGREE    9/9
-fonti/upstream_06d3b94/vectors/05-checker-key-equals-producer-key.json      AGREE    9/9
-fonti/upstream_06d3b94/vectors/06-receipt-edited-after-signing.json         AGREE    9/9
-fonti/upstream_06d3b94/vectors/07-criteria-file-swapped.json                AGREE    9/9
-fonti/upstream_06d3b94/vectors/08-receipt-token-over-another-receipt.json   AGREE    9/9
-fonti/upstream_06d3b94/vectors/09-stated-pass-recomputes-incomplete.json    AGREE    9/9
-fonti/upstream_06d3b94/vectors/10-committed-at-contradicts-token.json       AGREE    9/9
-fonti/upstream_06d3b94/vectors/11-required-criterion-fails.json             AGREE    9/9
-fonti/upstream_06d3b94/vectors/12-signer-is-not-the-checker.json            AGREE    9/9
-fonti/upstream_06d3b94/vectors/13-independent-but-same-party.json           AGREE    9/9
-fonti/upstream_06d3b94/vectors/14-results-not-in-criteria.json              AGREE    9/9
-fonti/upstream_06d3b94/vectors/15-criteria-token-over-other-bytes.json      AGREE    9/9
-fonti/upstream_06d3b94/vectors/16-no-criteria-token.json                    AGREE    9/9
-fonti/upstream_06d3b94/vectors/17-committed-at-equals-reference.json        AGREE    9/9
-fonti/upstream_06d3b94/vectors/18-mismatching-record-token-later-time.json  AGREE    9/9
-fonti/upstream_06d3b94/vectors/19-result-outside-vocabulary.json            AGREE    9/9
-fonti/upstream_06d3b94/vectors/20-producer-undeclared.json                  DISAGREE 8/9
+fonti/upstream_bc5a138/vectors/01-valid.json                                AGREE    9/9
+fonti/upstream_bc5a138/vectors/02-criteria-committed-after-issue.json       AGREE    9/9
+fonti/upstream_bc5a138/vectors/03-self-checked.json                         AGREE    9/9
+fonti/upstream_bc5a138/vectors/04-required-not-evaluated.json               AGREE    9/9
+fonti/upstream_bc5a138/vectors/05-checker-key-equals-producer-key.json      AGREE    9/9
+fonti/upstream_bc5a138/vectors/06-receipt-edited-after-signing.json         AGREE    9/9
+fonti/upstream_bc5a138/vectors/07-criteria-file-swapped.json                AGREE    9/9
+fonti/upstream_bc5a138/vectors/08-receipt-token-over-another-receipt.json   AGREE    9/9
+fonti/upstream_bc5a138/vectors/09-stated-pass-recomputes-incomplete.json    AGREE    9/9
+fonti/upstream_bc5a138/vectors/10-committed-at-contradicts-token.json       AGREE    9/9
+fonti/upstream_bc5a138/vectors/11-required-criterion-fails.json             AGREE    9/9
+fonti/upstream_bc5a138/vectors/12-signer-is-not-the-checker.json            AGREE    9/9
+fonti/upstream_bc5a138/vectors/13-independent-but-same-party.json           AGREE    9/9
+fonti/upstream_bc5a138/vectors/14-results-not-in-criteria.json              AGREE    9/9
+fonti/upstream_bc5a138/vectors/15-criteria-token-over-other-bytes.json      AGREE    9/9
+fonti/upstream_bc5a138/vectors/16-no-criteria-token.json                    AGREE    9/9
+fonti/upstream_bc5a138/vectors/17-committed-at-equals-reference.json        AGREE    9/9
+fonti/upstream_bc5a138/vectors/18-mismatching-record-token-later-time.json  AGREE    9/9
+fonti/upstream_bc5a138/vectors/19-result-outside-vocabulary.json            AGREE    9/9
+fonti/upstream_bc5a138/vectors/20-producer-undeclared.json                  DISAGREE 8/9
       problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours []
       contributor's expectation (`difference`): AGREE
-fonti/upstream_06d3b94/vectors/21-unknown-schema.json                       AGREE    2/2
-fonti/upstream_06d3b94/vectors/22-matching-record-token-later-than-issued.json DISAGREE 7/9
+fonti/upstream_bc5a138/vectors/21-unknown-schema.json                       AGREE    2/2
+fonti/upstream_bc5a138/vectors/22-matching-record-token-later-than-issued.json DISAGREE 7/9
       criteria_committed_before_check: expected "no", ours "yes"
       problem_codes: expected ["CRITERIA_COMMITTED_AFTER_CHECK"], ours []
-fonti/upstream_06d3b94/vectors/23-criteria-token-imprint-oid-sha384.json    AGREE    9/9
-fonti/upstream_06d3b94/vectors/24-criteria-token-imprint-oid-sha3-256.json  AGREE    9/9
-fonti/upstream_06d3b94/vectors/25-criteria-token-imprint-oid-sha512-256.json AGREE    9/9
-fonti/upstream_06d3b94/vectors/26-key-small-order.json                      DISAGREE 0/9
+fonti/upstream_bc5a138/vectors/23-criteria-token-imprint-oid-sha384.json    AGREE    9/9
+fonti/upstream_bc5a138/vectors/24-criteria-token-imprint-oid-sha3-256.json  AGREE    9/9
+fonti/upstream_bc5a138/vectors/25-criteria-token-imprint-oid-sha512-256.json AGREE    9/9
+fonti/upstream_bc5a138/vectors/26-key-small-order.json                      DISAGREE 0/9
       criteria_committed_before_check: expected "yes", ours "<absent>"
       criteria_hash: expected "match", ours "<absent>"
       independence: expected "independent", ours "<absent>"
@@ -37,7 +37,7 @@ fonti/upstream_06d3b94/vectors/26-key-small-order.json                      DISA
       verdict_recomputed: expected "pass", ours "<absent>"
       verdict_stated: expected "pass", ours "<absent>"
       warning_codes: expected [], ours "<absent>"
-fonti/upstream_06d3b94/vectors/27-key-non-canonical-encoding.json           DISAGREE 0/9
+fonti/upstream_bc5a138/vectors/27-key-non-canonical-encoding.json           DISAGREE 0/9
       criteria_committed_before_check: expected "yes", ours "<absent>"
       criteria_hash: expected "match", ours "<absent>"
       independence: expected "independent", ours "<absent>"
@@ -47,7 +47,7 @@ fonti/upstream_06d3b94/vectors/27-key-non-canonical-encoding.json           DISA
       verdict_recomputed: expected "pass", ours "<absent>"
       verdict_stated: expected "pass", ours "<absent>"
       warning_codes: expected [], ours "<absent>"
-fonti/upstream_06d3b94/vectors/28-key-file-with-unrelated-bad-entry.json    DISAGREE 0/9
+fonti/upstream_bc5a138/vectors/28-key-file-with-unrelated-bad-entry.json    DISAGREE 0/9
       criteria_committed_before_check: expected "yes", ours "<absent>"
       criteria_hash: expected "match", ours "<absent>"
       independence: expected "independent", ours "<absent>"
@@ -57,26 +57,36 @@ fonti/upstream_06d3b94/vectors/28-key-file-with-unrelated-bad-entry.json    DISA
       verdict_recomputed: expected "pass", ours "<absent>"
       verdict_stated: expected "pass", ours "<absent>"
       warning_codes: expected [], ours "<absent>"
-fonti/upstream_06d3b94/vectors/29-criteria-token-accuracy-flips-commitment.json DISAGREE 7/9
+fonti/upstream_bc5a138/vectors/29-criteria-token-accuracy-flips-commitment.json DISAGREE 7/9
       criteria_committed_before_check: expected "no", ours "yes"
       problem_codes: expected ["CRITERIA_COMMITTED_AFTER_CHECK"], ours []
-fonti/upstream_06d3b94/vectors/30-criteria-token-accuracy-millis-still-before.json AGREE    9/9
-fonti/upstream_06d3b94/vectors/31-tsa-freetsa-verified.json                 AGREE    10/10
-fonti/upstream_06d3b94/vectors/32-tsa-digicert-verified.json                AGREE    10/10
-fonti/upstream_06d3b94/vectors/33-tsa-unrelated-root-untrusted.json         AGREE    10/10
-fonti/upstream_06d3b94/vectors/34-tsa-tampered-signature-failed.json        AGREE    10/10
-fonti/upstream_06d3b94/vectors/35-tsa-token-without-signer-certificate.json AGREE    10/10
-fonti/upstream_06d3b94/vectors/36-tsa-no-anchors-not-evaluated.json         AGREE    10/10
-fonti/upstream_06d3b94/vectors/37-tsa-synthetic-control-verified.json       AGREE    10/10
-fonti/upstream_06d3b94/vectors/38-tsa-intermediate-expired-failed.json      AGREE    10/10
-fonti/upstream_06d3b94/vectors/39-tsa-content-type-mismatch-failed.json     AGREE    10/10
-fonti/upstream_06d3b94/vectors/40-tsa-rsassa-pss-verified.json              AGREE    10/10
-fonti/upstream_06d3b94/vectors/41-tsa-ecdsa-p256-verified.json              AGREE    10/10
-fonti/upstream_06d3b94/vectors/42-tsa-ecdsa-p521-unsupported.json           AGREE    10/10
-fonti/upstream_06d3b94/vectors/43-tsa-empty-anchor-list-not-evaluated.json  AGREE    10/10
-fonti/upstream_06d3b94/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json AGREE    10/10
-fonti/upstream_06d3b94/vectors/45-tsa-no-certificates-and-bad-digest-failed.json AGREE    10/10
-fonti/upstream_06d3b94/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json AGREE    10/10
-fonti/upstream_06d3b94/vectors/47-receipt-payment-x402-exact.json           AGREE    9/9
+fonti/upstream_bc5a138/vectors/30-criteria-token-accuracy-millis-still-before.json AGREE    9/9
+fonti/upstream_bc5a138/vectors/31-tsa-freetsa-verified.json                 AGREE    10/10
+fonti/upstream_bc5a138/vectors/32-tsa-digicert-verified.json                AGREE    10/10
+fonti/upstream_bc5a138/vectors/33-tsa-unrelated-root-untrusted.json         AGREE    10/10
+fonti/upstream_bc5a138/vectors/34-tsa-tampered-signature-failed.json        AGREE    10/10
+fonti/upstream_bc5a138/vectors/35-tsa-token-without-signer-certificate.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/36-tsa-no-anchors-not-evaluated.json         AGREE    10/10
+fonti/upstream_bc5a138/vectors/37-tsa-synthetic-control-verified.json       AGREE    10/10
+fonti/upstream_bc5a138/vectors/38-tsa-intermediate-expired-failed.json      AGREE    10/10
+fonti/upstream_bc5a138/vectors/39-tsa-content-type-mismatch-failed.json     AGREE    10/10
+fonti/upstream_bc5a138/vectors/40-tsa-rsassa-pss-verified.json              AGREE    10/10
+fonti/upstream_bc5a138/vectors/41-tsa-ecdsa-p256-verified.json              AGREE    10/10
+fonti/upstream_bc5a138/vectors/42-tsa-ecdsa-p521-unsupported.json           AGREE    10/10
+fonti/upstream_bc5a138/vectors/43-tsa-empty-anchor-list-not-evaluated.json  AGREE    10/10
+fonti/upstream_bc5a138/vectors/44-tsa-unsupported-curve-and-bad-digest-failed.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/45-tsa-no-certificates-and-bad-digest-failed.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/46-tsa-unsupported-curve-and-ess-mismatch-failed.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/47-receipt-payment-x402-exact.json           AGREE    9/9
+fonti/upstream_bc5a138/vectors/48-tsa-signer-without-timestamping-eku-failed.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/49-tsa-issuer-not-a-ca-failed.json           AGREE    10/10
+fonti/upstream_bc5a138/vectors/50-criteria-token-imprint-only-in-status-string.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/51-record-token-imprint-only-in-status-string.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/52-receipt-non-integer-numbers.json          AGREE    9/9
+fonti/upstream_bc5a138/vectors/53-tsa-anchor-same-name-other-key-untrusted.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/54-tsa-expired-intermediate-no-anchor-failed.json AGREE    10/10
+fonti/upstream_bc5a138/vectors/55-receipt-payment-outside-the-form.json     AGREE    9/9
+fonti/upstream_bc5a138/vectors/56-third-party-checker-live-receipt.json     AGREE    9/9
+fonti/upstream_bc5a138/vectors/57-receipt-integer-valued-doubles.json       AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 1.4.1: documents 42/48 agree; fields 409/441; options {'key_id_source': 'envelope', 'reference_time': 'covering-token', 'accuracy': 'ignore', 'key_id_agreement': 'require', 'key_rule': 'refuse', 'independence_rule': 'stated-independent'}
+TOTAL set bc5a138: documents 52/58 agree; fields 505/537; options {'key_id_source': 'envelope', 'reference_time': 'covering-token', 'accuracy': 'ignore', 'key_id_agreement': 'require', 'key_rule': 'refuse', 'independence_rule': 'stated-independent'}
