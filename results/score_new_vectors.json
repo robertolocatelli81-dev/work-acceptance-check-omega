@@ -282,8 +282,8 @@
  {
   "agree": true,
   "disagreements": [],
-  "fields": 1,
-  "fields_agree": 1,
+  "fields": 9,
+  "fields_agree": 9,
   "file": "vectors/omega-41-criteria-gentime-leap-second.json"
  },
  {

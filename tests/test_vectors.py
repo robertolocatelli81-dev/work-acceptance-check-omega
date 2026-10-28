@@ -124,9 +124,13 @@ class Vectors141(unittest.TestCase):
         self.assertEqual(short(score.score(verify_fn=stripped, which="1.4.1")),
                          ["31", "32", "33", "34", "35", "37", "38", "39", "40", "41", "42", "44", "45", "46"])
         # bc5a138 adds the evaluated tokens of 48-51, 53 and 54; 52 and 55-57 carry no anchors
-        self.assertEqual(short(score.score(verify_fn=stripped)),
+        self.assertEqual(short(score.score(verify_fn=stripped, which="bc5a138")),
                          ["31", "32", "33", "34", "35", "37", "38", "39", "40", "41", "42", "44", "45", "46",
                           "48", "49", "50", "51", "53", "54"])
+        # 85a310d adds 58, 59 and 83
+        self.assertEqual(short(score.score(verify_fn=stripped)),
+                         ["31", "32", "33", "34", "35", "37", "38", "39", "40", "41", "42", "44", "45", "46",
+                          "48", "49", "50", "51", "53", "54", "58", "59", "83"])
 
     def test_vector_40_accepts_unsupported_and_nothing_else(self):
         with open(score.vector_files("1.4.1")[39], "rb") as fh:
@@ -164,7 +168,7 @@ class VectorsBc5a138(unittest.TestCase):
     """Profile 1.4.1 as published at bc5a138 (57 vectors) and open PR #1 at 48ab8c9 (59), each with the live record."""
 
     def test_bc5a138_58_of_58(self):
-        rows = score.score()
+        rows = score.score(which="bc5a138")
         self.assertEqual(len(rows), 58)
         self.assertEqual(short(rows), [])
 

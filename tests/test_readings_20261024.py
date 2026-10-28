@@ -59,7 +59,8 @@ def verify(i, opts=None):
     try:
         return wv.verify(i, opts)
     except wv.Refusal as e:
-        return {"refused": True, "reason": e.reason}
+        # 0.6.0: a type error is refused with the step 1 reason (profile 1.4.2 R8) and the path in the detail
+        return {"refused": True, "reason": e.reason if not e.detail else "%s | %s" % (e.reason, e.detail)}
 
 
 class Canonicalization(unittest.TestCase):
@@ -123,9 +124,14 @@ class Keys(unittest.TestCase):
 
 class Times(unittest.TestCase):
     def test_fractional_seconds_in_issued_utc_are_read(self):
-        rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".5Z"))))
+        # profile 1.4.2 R5: YYYY-MM-DDTHH:MM:SS[.fff]Z. Reading (README, R5): exactly three digits; until 0.5.0 one to
+        # nine digits were read, from 0.6.0 ".5Z" is RECEIPT_TIME_UNREADABLE.
+        rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".500Z"))))
         self.assertFalse(rep.get("refused"), rep)
         self.assertEqual(rep["problem_codes"], [])
+        rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".5Z"))))
+        self.assertEqual(rep["problem_codes"], ["RECEIPT_TIME_UNREADABLE"])
+        self.assertEqual(rep["criteria_committed_before_check"], "no")
 
 
 class Times2(unittest.TestCase):
@@ -173,18 +179,23 @@ class Tools(unittest.TestCase):
 
 
 class Encodings(unittest.TestCase):
-    """The profile is silent; this verifier refuses (README: canonical padded base64, lower-case hex)."""
+    """Until 0.5.0 the profile was silent and this verifier refused; profile 1.4.2 fixes both: a non-canonical
+    signature value is SIGNATURE_INVALID (R1, vectors 60-63) and an upper-case digest matches nothing (R2, 67)."""
 
     def test_base64_outside_the_alphabet_unpadded_or_url_refused(self):
         sig = doc()["receipt"]["signature"]["value"]
         for v in (sig[:-3] + "*==", sig.rstrip("="), sig.replace("+", "-").replace("/", "_")):
             if v == sig:
                 continue
-            self.assertTrue(verify(doc(sig_value=v)).get("refused"), v)
+            rep = verify(doc(sig_value=v))
+            self.assertFalse(rep.get("refused"), v)
+            self.assertIs(rep["signature_valid"], False)
+            self.assertEqual(rep["problem_codes"], ["SIGNATURE_INVALID"], v)
 
     def test_upper_case_hex_refused(self):
         rep = verify(doc(lambda r: r["criteria"].__setitem__("sha256", r["criteria"]["sha256"].upper())))
-        self.assertTrue(rep.get("refused"))
+        self.assertFalse(rep.get("refused"))
+        self.assertIn("CRITERIA_HASH_MISMATCH", rep["problem_codes"])
 
 
 class EnvelopeTimestamp(unittest.TestCase):

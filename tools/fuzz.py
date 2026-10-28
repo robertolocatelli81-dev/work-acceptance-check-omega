@@ -186,9 +186,12 @@ def fam_der(base):
                   tp.unsigned_tsr(tp.tstinfo(b"\x11" * 32, extensions=[tp.seq(tp.oid("1.2.3.99"), tp.octets(d))])), MISM))
     cases.append(("unknown critical extension", tp.unsigned_tsr(tp.tstinfo(d, extensions=[tp.seq(tp.oid("1.2.3.99"), tp.boolean(True), tp.octets(b"x"))])), REF))
     cases.append(("unknown non-critical extension", tp.unsigned_tsr(tp.tstinfo(d, extensions=[tp.seq(tp.oid("1.2.3.99"), tp.octets(b"x"))])), {"problem_codes": [], "warning_codes": []}))
-    for g, exp in (("20260301000000", REF), ("20260301000000.0Z", REF), ("20260301000000.Z", REF),
-                   ("20260301000060Z", REF), ("202603010000Z", REF), ("20260301000000+0000", REF),
-                   ("20260301000000z", REF), ("20260230000000Z", REF), ("20260301240000Z", REF),
+    # profile 1.4.2 R4 (85a310d, vectors 70-74, 78): a genTime in another form is no usable time, the token gives
+    # none: fallback to committed_at with CRITERIA_COMMITMENT_UNVERIFIED and no problem (until 0.5.0: refused)
+    GT_NONE = {"problem_codes": [], "warning_codes": ["CRITERIA_COMMITMENT_UNVERIFIED"]}
+    for g, exp in (("20260301000000", GT_NONE), ("20260301000000.0Z", GT_NONE), ("20260301000000.Z", GT_NONE),
+                   ("20260301000060Z", GT_NONE), ("202603010000Z", GT_NONE), ("20260301000000+0000", GT_NONE),
+                   ("20260301000000z", GT_NONE), ("20260230000000Z", GT_NONE), ("20260301240000Z", GT_NONE),
                    ("20260301000000.5Z", {"problem_codes": [], "warning_codes": []}),
                    ("20260301000001Z", {"problem_codes": ["CRITERIA_TIME_MISMATCH"], "warning_codes": []})):
         cases.append(("genTime %r" % g, tp.unsigned_tsr(tp.tstinfo(d, gen=g)), exp))
@@ -298,14 +301,19 @@ def fam_time(base):
     yes = {"criteria_committed_before_check": "yes"}
     yield "criteria genTime == record genTime", mk("2026-06-01T12:00:05Z", "2026-06-01T12:00:00Z", "20260601120005Z", "20260601120005Z"), no
     # 1.3 step 5: reference = the earlier of issued_utc and the covering token; issued_utc 12:00:06 keeps the token
-    yield "criteria genTime 1 microsecond before record genTime", mk("2026-06-01T12:00:04.999999Z", "2026-06-01T12:00:06Z", "20260601120004.999999Z", "20260601120005Z"), yes
-    yield "criteria before record genTime, after issued_utc (earlier-of)", mk("2026-06-01T12:00:04.999999Z", "2026-06-01T12:00:00Z", "20260601120004.999999Z", "20260601120005Z"), no
+    # profile 1.4.2 R4/R5: stated times carry at most milliseconds ([.fff]); the token time is rounded up to the ms
+    yield "criteria genTime 1 millisecond before record genTime", mk("2026-06-01T12:00:04.999Z", "2026-06-01T12:00:06Z", "20260601120004.999Z", "20260601120005Z"), yes
+    yield "criteria genTime 1 microsecond before record genTime (rounds up to it)", mk("2026-06-01T12:00:04.999Z", "2026-06-01T12:00:06Z", "20260601120004.999999Z", "20260601120005Z"), no
+    yield "criteria before record genTime, after issued_utc (earlier-of)", mk("2026-06-01T12:00:04.999Z", "2026-06-01T12:00:00Z", "20260601120004.999Z", "20260601120005Z"), no
     yield "criteria genTime 0.5 s after a seconds-precision issued_utc", mk("2026-06-01T12:00:00Z", "2026-06-01T12:00:00Z", "20260601120000.5Z"), no
     yield "committed_at == issued_utc, no tokens", mk("2026-06-01T12:00:00Z", "2026-06-01T12:00:00Z"), dict(no, warning_codes=["CRITERIA_COMMITMENT_UNVERIFIED"])
-    yield "committed_at 1 microsecond before issued_utc, no tokens", mk("2026-06-01T11:59:59.999999Z", "2026-06-01T12:00:00Z"), dict(yes, warning_codes=["CRITERIA_COMMITMENT_UNVERIFIED"])
-    yield "committed_at with +00:00 offset", mk("2026-03-01T00:00:00+00:00", "2026-06-01T12:00:00Z"), REF
-    yield "committed_at lower-case z", mk("2026-03-01T00:00:00z", "2026-06-01T12:00:00Z"), REF
-    yield "issued_utc leap second", mk("2026-03-01T00:00:00Z", "2026-06-30T23:59:60Z"), REF
+    yield "committed_at 1 millisecond before issued_utc, no tokens", mk("2026-06-01T11:59:59.999Z", "2026-06-01T12:00:00Z"), dict(yes, warning_codes=["CRITERIA_COMMITMENT_UNVERIFIED"])
+    # profile 1.4.2 R5 (vector 76): a stated time in another form is RECEIPT_TIME_UNREADABLE and "no" (until 0.5.0: refused)
+    unread = dict(no, problem_codes=["RECEIPT_TIME_UNREADABLE"])
+    yield "committed_at with microseconds", mk("2026-06-01T11:59:59.999999Z", "2026-06-01T12:00:00Z"), dict(unread, warning_codes=["CRITERIA_COMMITMENT_UNVERIFIED"])
+    yield "committed_at with +00:00 offset", mk("2026-03-01T00:00:00+00:00", "2026-06-01T12:00:00Z"), unread
+    yield "committed_at lower-case z", mk("2026-03-01T00:00:00z", "2026-06-01T12:00:00Z"), unread
+    yield "issued_utc leap second", mk("2026-03-01T00:00:00Z", "2026-06-30T23:59:60Z"), unread
     yield "criteria token 0.5 s later than a seconds-precision committed_at (truncate agrees)", \
         mk("2026-03-01T00:00:00Z", "2026-06-01T12:00:00Z", "20260301000000.5Z"), dict(yes, problem_codes=[])
 

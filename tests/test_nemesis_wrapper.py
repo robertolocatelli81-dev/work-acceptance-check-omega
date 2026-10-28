@@ -26,6 +26,13 @@ EXPECTED_1_3_FAILS = {
     "M60 y>=p refused in rfc8032",                # idem
     "F11 X_WEAK_KEY in extension codes",          # idem: the weak key is rejected, not accepted with a note
 }
+# Profile 1.4.2 (85a310d, 0.6.0) fixes three cases the checks pinned as refusals while the profile was silent:
+# R1 a non-canonical public key is KEY_REJECTED (69), R3 a repeated key_id is KEY_REJECTED (75, 79), R2 an upper-case
+# digest matches nothing (67). Under the 1.2.1 readings (--key-rule refuse) M30 and M36 are still refusals; M53 is not:
+# no 1.2.1 switch covers the digest form.
+EXPECTED_1_4_2_FAILS = {"M30 non-canonical base64 refused", "M36 duplicate key_id refused",
+                        "M53 upper-case hex refused"}
+EXPECTED_1_2_1_SHIM_FAILS = {"M53 upper-case hex refused"}
 
 
 def run(d):
@@ -41,13 +48,14 @@ class NemesisRound1(unittest.TestCase):
             with open(os.path.join(t, "war_verify.py"), "w") as fh:
                 fh.write(SHIM % os.path.join(_paths.ROOT, "war_verify.py"))
             p = run(t)
-        self.assertEqual(p.returncode, 0, p.stdout[-2000:] + p.stderr[-2000:])
-        self.assertIn("FAILED: 0", p.stdout)
+        fails = {ln[5:] for ln in p.stdout.splitlines() if ln.startswith("FAIL ")}
+        self.assertEqual(fails, EXPECTED_1_2_1_SHIM_FAILS, p.stdout[-2000:] + p.stderr[-2000:])
+        self.assertIn("FAILED: %d" % len(EXPECTED_1_2_1_SHIM_FAILS), p.stdout)
 
     def test_under_1_3_only_the_1_2_1_readings_fail(self):
         p = run(_paths.ROOT)
         fails = {ln[5:] for ln in p.stdout.splitlines() if ln.startswith("FAIL ")}
-        self.assertEqual(fails, EXPECTED_1_3_FAILS, p.stdout[-2000:] + p.stderr[-2000:])
+        self.assertEqual(fails, EXPECTED_1_3_FAILS | EXPECTED_1_4_2_FAILS, p.stdout[-2000:] + p.stderr[-2000:])
 
 
 if __name__ == "__main__":

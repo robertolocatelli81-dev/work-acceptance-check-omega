@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.1 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.2 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@bc5a138 (profile 1.4.1; 06d3b94 and d79a737
-before it; 1.4 at eb0f30b, 1.3 at 42b4ed0 and 1.2.1 at f7d8984), the test vectors listed in README.md ("What was
-read"), and the RFCs it names. An issue comment quoting parts of the reference verifier was read before 0.4.0, and a
+Written from the profile README at maximusrufus/work-acceptance-record@85a310d (profile 1.4.2, step 10 and its
+changelog entry; 1.4.1 at bc5a138, 06d3b94 and d79a737 before it; 1.4 at eb0f30b, 1.3 at 42b4ed0 and 1.2.1 at
+f7d8984), the test vectors listed in README.md ("What was read"), and the RFCs it names. For 0.6.0 the reference
+verifier/, interop/ and composition/ of 85a310d were not opened. An issue comment quoting parts of the reference verifier was read before 0.4.0, and a
 probe description before 0.4.1. For 0.5.0 the payment form was taken from the function _in_form of the reference
 verifier/check_payment.py (opened), and the reference verifier/war_verify.py was searched once with grep and run as a
 black box (README.md, "What was read"); no other implementation of this profile was opened. The 1.2.1 readings of version 0.1.0 are selectable with
 --profile 1.2.1.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
-reason, except where profile 1.4.1 (bc5a138) fixes the outcome; each such case is listed in "notes" (README.md,
+reason, except where profile 1.4.1 (bc5a138) or 1.4.2 (85a310d) fixes the outcome; each such case is listed in "notes" (README.md,
 "Closed by construction"). Where a standard says what to do with something unknown (RFC 5280 4.2: a non-critical extension that is
 not recognised MAY be ignored, a critical one MUST be rejected; RFC 3161 2.4.2: unknown PKIStatus values MUST be
 an error), that rule is followed and the event is listed in the report's "notes".
@@ -41,7 +42,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.5.0"
+VERSION = "war_verify 0.6.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -59,7 +60,7 @@ VOCAB = ("pass", "fail", "not-evaluated", "error")                       # READM
 PROBLEM_CODES = frozenset((                                               # README step 8, closed list
     "SIGNATURE_INVALID", "KEY_REJECTED", "CHECKER_NOT_SIGNER", "KEY_COLLISION", "INDEPENDENCE_INCONSISTENT", "RESULT_VOCABULARY",
     "VERDICT_MISMATCH", "CRITERIA_HASH_MISMATCH", "CRITERIA_RESULTS_MISMATCH", "CRITERIA_TIMESTAMP_MISMATCH",
-    "CRITERIA_TIME_MISMATCH", "CRITERIA_COMMITTED_AFTER_CHECK"))
+    "CRITERIA_TIME_MISMATCH", "CRITERIA_COMMITTED_AFTER_CHECK", "RECEIPT_TIME_UNREADABLE"))   # 1.4.2 adds the last
 WARNING_CODES = frozenset(("SELF_CHECKED", "PRODUCER_UNDECLARED", "CRITERIA_COMMITMENT_UNVERIFIED"))
 STEP1_REASON = "unknown schema, canonicalization or suite"                # README step 1 wording
 COVERS = "sha256 of the canonical receipt object"
@@ -325,9 +326,23 @@ def jcs(value):
 _B64 = re.compile(r"\A[A-Za-z0-9+/]*={0,2}\Z")
 
 
+def b64_canonical(s):
+    """Profile 1.4.2 R1: bytes if s is canonical base64 (standard alphabet, '=' padding to a multiple of four, no
+    whitespace, re-encoding gives s), else None. s must be a str (the caller checks the type: R8)."""
+    if not _B64.match(s) or len(s) % 4:
+        return None
+    try:
+        raw = base64.b64decode(s, validate=True)
+    except (binascii.Error, ValueError):
+        return None
+    return raw if base64.b64encode(raw).decode("ascii") == s else None
+
+
 def b64_strict(s, what):
     """RFC 4648 section 4 with padding, canonical (no non-zero pad bits, no whitespace)."""
-    if not isinstance(s, str) or not _B64.match(s) or len(s) % 4:
+    if not isinstance(s, str):
+        raise Refusal(STEP1_REASON, "%s is not a string (profile 1.4.2 types)" % what)
+    if not _B64.match(s) or len(s) % 4:
         raise Refusal("%s is not canonical padded base64" % what)
     try:
         raw = base64.b64decode(s, validate=True)
@@ -352,7 +367,7 @@ def _valid_date(y, mo, d, h, mi, s):
     if not (1 <= mo <= 12 and 0 <= h <= 23 and 0 <= mi <= 59):
         return "out-of-range field"
     if s == 60:
-        return "leap second 60 (not accepted: see README, 'Times')"
+        return "leap second 60 (not a real calendar field here: README 'Profile 1.4.2 rules' R4, R5 and Q7)"
     if not 0 <= s <= 59:
         return "out-of-range seconds"
     leap = y % 4 == 0 and (y % 100 != 0 or y % 400 == 0)
@@ -384,6 +399,34 @@ def parse_rfc3339z(v, what):
         raise Refusal("%s: %s" % (what, bad), v)
     frac = m.group(7) or ""
     return {"instant": _to_instant(y, mo, d, h, mi, s, frac), "digits": len(frac), "text": v}
+
+
+_STATED = re.compile(r"\A([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.([0-9]{3}))?Z\Z")
+
+
+def parse_stated_time(v):
+    """Profile 1.4.2 R5: committed_at / issued_utc as YYYY-MM-DDTHH:MM:SS[.fff]Z (reading: exactly three fraction
+    digits) with real calendar fields -> parsed dict, or None when the string is in another form."""
+    m = _STATED.match(v)
+    if not m:
+        return None
+    y, mo, d, h, mi, s = (int(m.group(i)) for i in range(1, 7))
+    if _valid_date(y, mo, d, h, mi, s):
+        return None
+    frac = m.group(7) or ""
+    return {"instant": _to_instant(y, mo, d, h, mi, s, frac), "digits": len(frac), "text": v}
+
+
+def ceil_ms(x):
+    """Profile 1.4.2 R4: the criteria time rounded up to the millisecond."""
+    q = Fraction(1, 1000)
+    return -((-x) // q) * q
+
+
+def floor_ms(x):
+    """Profile 1.4.2 R4: the reference time rounded down to the millisecond."""
+    q = Fraction(1, 1000)
+    return (x // q) * q
 
 
 _GENTIME = re.compile(r"\A([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})(?:\.([0-9]*[1-9]))?Z\Z")
@@ -842,7 +885,14 @@ def parse_tstinfo(raw, notes):
     if serial.bit_length() > 160:
         notes.append("TSTInfo.serialNumber longer than 160 bits")
     _expect(kids[4], 0x18, "genTime")
-    gen = parse_generalized_time(kids[4].content, "genTime")
+    try:
+        gen = parse_generalized_time(kids[4].content, "genTime")
+    except Refusal as e:
+        # Profile 1.4.2 R4 (vectors 70-74, 78): a genTime in any other form is no usable time; the token gives none.
+        # Until 0.5.0 the whole input was refused.
+        gen = None
+        notes.append("X_GENTIME_UNUSABLE: %s%s: the token gives no time (profile 1.4.2, vectors 70-74, 78)"
+                     % (e.reason, " %r" % (e.detail,) if e.detail else ""))
     rest = kids[5:]
     accuracy = None
     ordering = False
@@ -917,7 +967,9 @@ def imprint_status(tst, expected_digest):
         reasons.append("hashAlgorithm %s is not SHA-256" % tst["hash_alg"])
     if tst["hash_params"] == "other":
         reasons.append("SHA-256 AlgorithmIdentifier with parameters other than NULL/absent")
-    if tst["hashed"] != expected_digest:
+    if expected_digest is None:
+        reasons.append("the record's digest is not 64 lower-case hex digits: matches no digest (profile 1.4.2 R2)")
+    elif tst["hashed"] != expected_digest:
         reasons.append("hashedMessage differs")
     known = HASH_OIDS.get(tst["hash_alg"])
     if known and len(tst["hashed"]) != hashlib.new(known).digest_size:
@@ -1209,6 +1261,10 @@ def verify_tsa(token, roots):
             bad("unsupported", "TSA signature check: %s %s" % (UNSUPPORTED_SUFFIX, e))
         except Exception as e:  # malformed signature values, key/algorithm mismatches
             bad("failed", "TSA signature check failed: %s" % e)
+    if token["tst"]["gen"] is None:
+        # Profile 1.4.2 R4: no usable genTime, so validity at genTime cannot be shown (reading: failed).
+        bad("failed", "genTime is not a usable time (profile 1.4.2): validity at genTime cannot be checked")
+        return res
     gen = token["tst"]["gen"]["instant"]
     # leaf: EKU (RFC 3161 2.3)
     try:
@@ -1317,14 +1373,15 @@ def tsa_outcome(v, precedence):
 def load_roots_b64(items):
     """inputs.tsa_roots_base64: a JSON array of base64 DER certificates (profile 1.4 vectors 31-36)."""
     if not isinstance(items, list):
-        raise Refusal("inputs.tsa_roots_base64 is not an array")
+        raise TypeRefusal("inputs.tsa_roots_base64 is not an array")
     if not items:
         return []
+    for i, it in enumerate(items):                 # R8: a wrong type is refused before any check that may not run
+        if not isinstance(it, str):
+            raise TypeRefusal("inputs.tsa_roots_base64[%d] is not a string" % i)
     _require_pkix()
     out = []
     for i, it in enumerate(items):
-        if not isinstance(it, str):
-            raise Refusal("inputs.tsa_roots_base64[%d] is not a string" % i)
         der = b64_strict(it, "inputs.tsa_roots_base64[%d]" % i)
         try:
             cert = _load_cert(der)
@@ -1353,7 +1410,9 @@ PAYMENT_OPTIONAL = {"settlement_tx"}
 _EIP155 = re.compile(r"\Aeip155:[1-9][0-9]{0,31}\Z")
 _DEC = re.compile(r"\A(0|[1-9][0-9]*)\Z")
 CRITERIA_MEMBERS = {"commitment", "committed_at", "id", "sha256", "version"}
-TOOLS_OPTIONAL = {"numbers_for_canonicalization"}   # bc5a138 vectors 52 and 57
+TOOLS_OPTIONAL = {"numbers_for_canonicalization",   # bc5a138 vectors 52 and 57
+                  "numbers_exponent_form",          # 85a310d vector 84 (array of numbers)
+                  "keys_utf16_order"}               # 85a310d vector 85 (object of strings)
 FILE_REQUIRED = {"bytes", "name", "sha256"}
 FILE_OPTIONAL = {"pages"}
 RESULT_MEMBERS = {"finding", "id", "required", "result", "title"}
@@ -1368,7 +1427,7 @@ class Ctx(object):
 
     def members(self, obj, path, required, optional=frozenset()):
         if not isinstance(obj, dict):
-            raise Refusal("%s is not a JSON object" % path)
+            raise TypeRefusal("%s is not a JSON object" % path)
         missing = set(required) - set(obj)
         if missing:
             raise Refusal("%s lacks required member(s)" % path, ", ".join(sorted(missing)))
@@ -1381,11 +1440,17 @@ class Ctx(object):
                                   % (path, u))
 
 
+def TypeRefusal(msg):
+    """Profile 1.4.2 R8 (vector 77): a member of the record or the inputs of another type than the specification
+    gives is refused as an unsupported schema: the step 1 outcome, the path in reason_detail."""
+    return Refusal(STEP1_REASON, msg + " (profile 1.4.2: wrong type, refused as an unsupported schema)")
+
+
 def _str(v, path, nullable=False, nonempty=False):
     if v is None and nullable:
         return None
     if not isinstance(v, str):
-        raise Refusal("%s is not a string%s" % (path, " or null" if nullable else ""))
+        raise TypeRefusal("%s is not a string%s" % (path, " or null" if nullable else ""))
     if nonempty and v == "":
         raise Refusal("%s is empty" % path)
     return v
@@ -1393,7 +1458,7 @@ def _str(v, path, nullable=False, nonempty=False):
 
 def _int(v, path, minimum=0):
     if isinstance(v, bool) or not isinstance(v, int):
-        raise Refusal("%s is not a JSON integer" % path)
+        raise TypeRefusal("%s is not a JSON integer" % path)
     if v < minimum:
         raise Refusal("%s is below %d" % (path, minimum))
     return v
@@ -1405,6 +1470,21 @@ def _hex64(v, path):
     return v
 
 
+_HEX64_ANYCASE = re.compile(r"\A[0-9a-fA-F]{64}\Z")
+
+
+def _digest64(ctx, v, path):
+    """Profile 1.4.2 R2 (vector 67): a SHA-256 digest in a record is 64 lower-case hex digits; upper case matches no
+    digest (never lower-cased). Reading: any other string is still refused (the profile names upper case only)."""
+    _str(v, path)
+    if not _HEX64_ANYCASE.match(v):
+        raise Refusal("%s is not 64 hexadecimal digits" % path)
+    if not _HEX64.match(v):
+        ctx.notes.append("X_DIGEST_NOT_LOWERCASE: %s has upper-case hex digits: matches no digest (profile 1.4.2, "
+                         "vector 67)" % path)
+    return v
+
+
 def check_keyfile(ctx, kf):
     ctx.members(kf, "keys", {"issuer", "keys"}, KEYFILE_MEMBERS - {"issuer", "keys"})
     _str(kf["issuer"], "keys.issuer")
@@ -1413,23 +1493,43 @@ def check_keyfile(ctx, kf):
             _str(kf[m], "keys." + m)
     if "also_published" in kf:
         if not isinstance(kf["also_published"], list) or not all(isinstance(x, str) for x in kf["also_published"]):
-            raise Refusal("keys.also_published is not a list of strings")
-    if not isinstance(kf["keys"], list) or not kf["keys"]:
-        raise Refusal("keys.keys is not a non-empty list")
+            raise TypeRefusal("keys.also_published is not a list of strings")
+    if not isinstance(kf["keys"], list):
+        raise TypeRefusal("keys.keys is not a list")
+    if not kf["keys"]:
+        raise Refusal("keys.keys is an empty list")
     table = {}
     for i, k in enumerate(kf["keys"]):
         p = "keys.keys[%d]" % i
         ctx.members(k, p, {"alg", "key_id", "public_key_base64", "status"}, {"since"})
+        _str(k["alg"], p + ".alg")
         if k["alg"] != "Ed25519":
             raise Refusal("%s.alg is not Ed25519" % p)
         kid = _str(k["key_id"], p + ".key_id", nonempty=True)
-        if kid in table:
-            raise Refusal("duplicate key_id in the key file", kid)
+        _str(k["status"], p + ".status")
         if k["status"] not in KEY_STATUSES:
             raise Refusal("%s.status %r is not one of %s" % (p, k["status"], KEY_STATUSES))
         if "since" in k:
             _str(k["since"], p + ".since")
-        pub = b64_strict(k["public_key_base64"], p + ".public_key_base64")
+        _str(k["public_key_base64"], p + ".public_key_base64")
+        if ctx.opts["key_rule"] == "refuse" and kid in table:     # 1.2.1 behaviour of this verifier
+            raise Refusal("duplicate key_id in the key file", kid)
+        if kid in table:
+            # Profile 1.4.2 R3 (vectors 75, 79): a key_id listed more than once names no single key: KEY_REJECTED,
+            # whichever entry comes first. Every entry under that identifier is rejected.
+            table[kid].update({"pub": None, "rejected": "key_id listed more than once", "dup": True})
+            continue
+        if ctx.opts["key_rule"] == "refuse":
+            pub = b64_strict(k["public_key_base64"], p + ".public_key_base64")
+        else:
+            pub = b64_canonical(k["public_key_base64"])
+            if pub is None:
+                # Profile 1.4.2 R1 (vector 69): a non-canonical public key is KEY_REJECTED; it is compared with no key.
+                ctx.notes.append("X_BASE64_NONCANONICAL: %s.public_key_base64 is not canonical base64: rejected key "
+                                 "(profile 1.4.2, vector 69)" % p)
+                table[kid] = {"pub": None, "status": k["status"], "rejected": "public_key_base64 not canonical base64",
+                              "noncanonical": True}
+                continue
         rejected = None
         if ctx.opts["key_rule"] == "refuse":            # 1.2.1 behaviour of this verifier
             if len(pub) != 32:
@@ -1454,11 +1554,12 @@ def check_receipt_grammar(ctx, r):
     _str(r["key_id"], "receipt.key_id", nonempty=True)
     c = r["criteria"]
     ctx.members(c, "receipt.criteria", CRITERIA_MEMBERS)
+    _str(c["commitment"], "receipt.criteria.commitment")
     if c["commitment"] != "rfc3161":
         raise Refusal("receipt.criteria.commitment %r is not implemented (only rfc3161)" % (c["commitment"],))
-    parse_rfc3339z(c["committed_at"], "receipt.criteria.committed_at")
+    _str(c["committed_at"], "receipt.criteria.committed_at")   # form: profile 1.4.2 R5, read in step 5
     _str(c["id"], "receipt.criteria.id")
-    _hex64(c["sha256"], "receipt.criteria.sha256")
+    _digest64(ctx, c["sha256"], "receipt.criteria.sha256")
     _str(c["version"], "receipt.criteria.version")
     f = r["files"]
     ctx.members(f, "receipt.files", {"remediated"}, {"original"})
@@ -1468,44 +1569,52 @@ def check_receipt_grammar(ctx, r):
             ctx.members(f[name], p, FILE_REQUIRED, FILE_OPTIONAL)
             _int(f[name]["bytes"], p + ".bytes")
             _str(f[name]["name"], p + ".name")
-            _hex64(f[name]["sha256"], p + ".sha256")
+            _digest64(ctx, f[name]["sha256"], p + ".sha256")
             if "pages" in f[name]:
                 _int(f[name]["pages"], p + ".pages")
     h = r["human_review"]
     ctx.members(h, "receipt.human_review", {"scope", "status"})
     if not isinstance(h["scope"], list) or not all(isinstance(x, str) for x in h["scope"]):
-        raise Refusal("receipt.human_review.scope is not a list of strings")
+        raise TypeRefusal("receipt.human_review.scope is not a list of strings")
     _str(h["status"], "receipt.human_review.status")
+    _str(r["independence"], "receipt.independence")
     if r["independence"] not in ("independent", "self-checked"):
         raise Refusal("receipt.independence %r is neither independent nor self-checked" % (r["independence"],))
-    parse_rfc3339z(r["issued_utc"], "receipt.issued_utc")
+    _str(r["issued_utc"], "receipt.issued_utc")               # form: profile 1.4.2 R5, read in step 5
     p = r["parties"]
     ctx.members(p, "receipt.parties", {"checker", "producer"})
     for role in ("checker", "producer"):
-        ctx.members(p[role], "receipt.parties." + role, PARTY_MEMBERS)
-        _str(p[role]["key_id"], "receipt.parties.%s.key_id" % role, nullable=True)
+        # Profile 1.4.2 R6 (vector 82): a party's key_id may be absent ("states no key_id"); absent reads as null.
+        ctx.members(p[role], "receipt.parties." + role, {"name"}, {"key_id"})
+        _str(p[role].get("key_id"), "receipt.parties.%s.key_id" % role, nullable=True)
         _str(p[role]["name"], "receipt.parties.%s.name" % role, nullable=True)
     if not isinstance(r["results"], list):
-        raise Refusal("receipt.results is not a list")
+        raise TypeRefusal("receipt.results is not a list")
     for i, res in enumerate(r["results"]):
         rp = "receipt.results[%d]" % i
         ctx.members(res, rp, RESULT_MEMBERS)
         for m in ("finding", "id", "result", "title"):
             _str(res[m], rp + "." + m)
         if not isinstance(res["required"], bool):
-            raise Refusal("%s.required is not a boolean" % rp)
+            raise TypeRefusal("%s.required is not a boolean" % rp)
     _int(r["revision"], "receipt.revision")
     t = r["tools"]
     # 1.4.1 vectors 52 and 57 (bc5a138): a passing receipt whose tools carries numbers_for_canonicalization, an array
     # of numbers; the profile fixes its outcome (no problems), so it is listed in notes (until 0.4.1, refused). No
     # vector or sentence opens tools to other members: they stay unknown members (closed by construction).
     ctx.members(t, "receipt.tools", {"profile", "validator"}, TOOLS_OPTIONAL)
-    if "numbers_for_canonicalization" in t:
-        nums = t["numbers_for_canonicalization"]
-        if not isinstance(nums, list) or any(isinstance(x, bool) or not isinstance(x, (int, float)) for x in nums):
-            raise Refusal("receipt.tools.numbers_for_canonicalization is not an array of numbers")
-        ctx.notes.append("receipt.tools.numbers_for_canonicalization not interpreted (profile 1.4.1 vectors 52, 57: "
-                         "outcome-neutral)")
+    for m, vecs in (("numbers_for_canonicalization", "1.4.1 vectors 52, 57"), ("numbers_exponent_form",
+                                                                                   "1.4.2 vector 84")):
+        if m in t:
+            nums = t[m]
+            if not isinstance(nums, list) or any(isinstance(x, bool) or not isinstance(x, (int, float)) for x in nums):
+                raise TypeRefusal("receipt.tools.%s is not an array of numbers" % m)
+            ctx.notes.append("receipt.tools.%s not interpreted (profile %s: outcome-neutral)" % (m, vecs))
+    if "keys_utf16_order" in t:
+        ko = t["keys_utf16_order"]
+        if not isinstance(ko, dict) or not all(isinstance(x, str) for x in ko.values()):
+            raise TypeRefusal("receipt.tools.keys_utf16_order is not an object of strings")
+        ctx.notes.append("receipt.tools.keys_utf16_order not interpreted (profile 1.4.2 vector 85: outcome-neutral)")
     _str(t["profile"], "receipt.tools.profile")
     _str(t["validator"], "receipt.tools.validator")
     _str(r["verdict"], "receipt.verdict")
@@ -1548,9 +1657,12 @@ def check_envelope_timestamp(ctx, ts):
     and never decides the outcome", so a digest_sha256 outside its form is a note, never a refusal (until 0.4.1,
     refused). The other members are not named by the profile and keep the issuer's form (closed by construction)."""
     if not isinstance(ts, dict):
-        raise Refusal("envelope.timestamp is not an object or null")
+        raise TypeRefusal("envelope.timestamp is not an object or null")
+    if "status" in ts:
+        _str(ts["status"], "envelope.timestamp.status")
     if ts.get("status") == "granted":
         ctx.members(ts, "envelope.timestamp", TS_GRANTED)
+        _str(ts["covers"], "envelope.timestamp.covers")
         if ts["covers"] != COVERS:
             raise Refusal("envelope.timestamp.covers names another object", ts["covers"])
         try:
@@ -1575,7 +1687,7 @@ def check_envelope_timestamp(ctx, ts):
 def check_step1(r):
     """README step 1: refuse an unknown schema, canonicalization or suite (before the 1.2 grammar applies)."""
     if not isinstance(r, dict):
-        raise Refusal("receipt is not a JSON object")
+        raise TypeRefusal("receipt is not a JSON object")
     schema, canon, suite = r.get("schema"), r.get("canonicalization"), r.get("suite")
     if schema != SCHEMA:
         raise Refusal(STEP1_REASON, "schema %r" % (schema,))
@@ -1614,11 +1726,11 @@ def verify(inputs, options=None, keys_override=None):
     ext = set()
     details = {}
     if not isinstance(inputs, dict):
-        raise Refusal("inputs is not a JSON object")
+        raise TypeRefusal("inputs is not a JSON object")
     ctx.members(inputs, "inputs", {"keys", "receipt"}, INPUT_MEMBERS - {"keys", "receipt"})
     env = inputs["receipt"]
     if not isinstance(env, dict):
-        raise Refusal("inputs.receipt is not a JSON object")
+        raise TypeRefusal("inputs.receipt is not a JSON object")
     ctx.members(env, "envelope", {"receipt", "signature"}, {"timestamp"})
     r = env["receipt"]
     check_step1(r)
@@ -1627,8 +1739,13 @@ def verify(inputs, options=None, keys_override=None):
     ctx.members(sig, "signature", SIGNATURE_MEMBERS)
     if sig["alg"] != "Ed25519":
         raise Refusal(STEP1_REASON, "signature.alg %r" % (sig["alg"],))
+    _str(sig["alg"], "signature.alg")
     _str(sig["key_id"], "signature.key_id", nonempty=True)
-    sig_bytes = b64_strict(sig["value"], "signature.value")
+    # Profile 1.4.2 R1 (vectors 60-63): a non-canonical signature value is SIGNATURE_INVALID, not a refusal.
+    sig_bytes = b64_canonical(_str(sig["value"], "signature.value"))
+    if sig_bytes is None:
+        ctx.notes.append("X_BASE64_NONCANONICAL: signature.value is not canonical base64: SIGNATURE_INVALID, no "
+                         "signature check (profile 1.4.2, vectors 60-63)")
     # envelope.timestamp is outside the signature: README step 6, "the unsigned timestamp.digest_sha256 field is
     # informative and never decides the outcome", and the token is read instead (R6). From 0.5.0 a digest_sha256
     # outside its form is X_TIMESTAMP_METADATA_MALFORMED plus a note, never a refusal (until 0.4.1, refused); the
@@ -1645,11 +1762,19 @@ def verify(inputs, options=None, keys_override=None):
     else:
         keytable = check_keyfile(ctx, inputs["keys"])
 
+    noncanon = set()
+
     def opt_b64(name):
+        # Profile 1.4.2 R1: "a token or criteria file that is not canonical base64 matches nothing".
         v = inputs.get(name)
         if v is None:
             return None
-        return b64_strict(v, "inputs." + name)
+        raw = b64_canonical(_str(v, "inputs." + name))
+        if raw is None:
+            noncanon.add(name)
+            ctx.notes.append("X_BASE64_NONCANONICAL: inputs.%s is not canonical base64: matches nothing (profile "
+                             "1.4.2)" % name)
+        return raw
 
     crit_file = opt_b64("criteria_file_base64")
     crit_tsr = opt_b64("criteria_tsr_base64")
@@ -1714,18 +1839,26 @@ def verify(inputs, options=None, keys_override=None):
     key_rejected = False
     if opts["key_rule"] == "all-keys" and rejected_keys:
         problems.add("KEY_REJECTED")
+    # Profile 1.4.2 R1/R3 (vectors 69, 75, 79): a repeated identifier or a non-canonical entry anywhere in the key
+    # list is KEY_REJECTED (reading for a non-canonical entry named by no party: README, R1).
+    if any(v.get("dup") or v.get("noncanonical") for v in keytable.values()):
+        problems.add("KEY_REJECTED")
     if entry is None:
         sig_ok, why = False, "key_id %r not in the key file" % used_kid
     elif entry.get("rejected"):                 # 1.3 step 2: "no signature check is run"
         sig_ok, why, key_rejected = False, "KEY_REJECTED: key %r is %s" % (used_kid, entry["rejected"]), True
         problems.add("KEY_REJECTED")
+    elif sig_bytes is None:
+        sig_ok, why = False, "signature.value is not canonical base64 (profile 1.4.2 R1): no signature check"
     else:
         try:
             sig_ok, why = ed25519_verify(entry["pub"], canon, sig_bytes, opts["ed25519"])
         except CannotRun as e:
             sig_ok, why = None, str(e)
             cannot.append("signature: %s" % e)
-    if opts["key_rule"] == "signer" and any(k != used_kid for k in rejected_keys):
+    if opts["key_rule"] == "signer" and any(k != used_kid and not (keytable[k].get("dup") or
+                                                                   keytable[k].get("noncanonical"))
+                                            for k in rejected_keys):
         ext.add("X_UNUSED_KEY_REJECTED")
     if sig_ok is False and not key_rejected:
         problems.add("SIGNATURE_INVALID")
@@ -1741,8 +1874,9 @@ def verify(inputs, options=None, keys_override=None):
 
     # ---- step 3: delivered / original files (no problem code in the profile: extension codes only)
     files_out = {}
-    for nm, data in (("remediated", delivered), ("original", original)):
-        if data is None:
+    for nm, data, key in (("remediated", delivered, "delivered_file_base64"),
+                          ("original", original, "original_file_base64")):
+        if data is None and key not in noncanon:
             files_out[nm] = "not-supplied"
             continue
         fr = r["files"].get(nm)
@@ -1750,8 +1884,8 @@ def verify(inputs, options=None, keys_override=None):
             files_out[nm] = "not-in-record"
             ext.add("X_FILE_NOT_IN_RECORD")
             continue
-        okh = hashlib.sha256(data).hexdigest() == fr["sha256"]
-        okb = len(data) == fr["bytes"]
+        okh = data is not None and hashlib.sha256(data).hexdigest() == fr["sha256"]
+        okb = data is not None and len(data) == fr["bytes"]
         files_out[nm] = "match" if okh and okb else "mismatch"
         if not okh:
             ext.add("X_%s_FILE_HASH_MISMATCH" % nm.upper())
@@ -1760,8 +1894,9 @@ def verify(inputs, options=None, keys_override=None):
 
     # ---- step 4: criteria document
     crit_hash = "not-supplied"
-    if crit_file is not None:
-        crit_hash = "match" if hashlib.sha256(crit_file).hexdigest() == r["criteria"]["sha256"] else "mismatch"
+    if crit_file is not None or "criteria_file_base64" in noncanon:
+        crit_hash = "match" if crit_file is not None and \
+            hashlib.sha256(crit_file).hexdigest() == r["criteria"]["sha256"] else "mismatch"
         if crit_hash == "mismatch":
             problems.add("CRITERIA_HASH_MISMATCH")
         else:
@@ -1805,6 +1940,15 @@ def verify(inputs, options=None, keys_override=None):
             v = verify_tsa(prs["token"], anchors)
             details[label + "_tsa_signature"] = v
         tsa_sig[key] = tsa_outcome(v, opts["tsa_precedence"])
+    for key, name in (("criteria", "criteria_tsr_base64"), ("receipt", "receipt_tsr_base64")):
+        if name in noncanon:
+            # A token that is not canonical base64 is not decoded (R1): without anchors not_evaluated, with anchors
+            # failed, like any token that cannot be verified (the profile author's answer on x402-foundation/tsc#4
+            # after cb7e8f1; not in the profile text, README Q3). Until this change the member was absent.
+            tsa_sig[key] = "not_evaluated" if anchors is None else "failed"
+            if anchors is not None:
+                details[("criteria_token" if key == "criteria" else "record_token") + "_tsa_signature"] = \
+                    {"status": "failed", "reasons": ["inputs.%s is not canonical base64: not decoded" % name]}
     if crit_parsed is not None and crit_parsed["token"] is None:
         ext.add("X_CRITERIA_TOKEN_NOT_GRANTED")
     if rec_parsed is not None and rec_parsed["token"] is None:
@@ -1818,51 +1962,62 @@ def verify(inputs, options=None, keys_override=None):
     if rec_parsed is not None and rec_parsed["token"] is not None:      # R6: the token, never the unsigned envelope
         st, why_r = imprint_status(rec_parsed["token"]["tst"], receipt_digest)
         rec_ts = "imprint_match" if st == "match" else "imprint_mismatch"
-        details["record_token_genTime"] = rec_parsed["token"]["tst"]["gen"]["text"]
+        rgen = rec_parsed["token"]["tst"]["gen"]
+        details["record_token_genTime"] = rgen["text"] if rgen is not None else "unusable (profile 1.4.2 R4)"
         if why_r:
             details["record_token_imprint"] = why_r
             for w in why_r:
                 if w.startswith("X_"):
                     ext.add(w.split(":")[0])
-        if st == "match" and rec_tok is not None:
+        if st == "match" and rec_tok is not None and rgen is not None:   # 1.4.2 R4: no usable time, no reference
             covering = rec_tok["tst"]
         if ts_declared and ((ts_digest_ok and ts["digest_sha256"] != rec_parsed["token"]["tst"]["hashed"].hex()) or
-                            meta_gen["instant"] != rec_parsed["token"]["tst"]["gen"]["instant"]):
+                            rgen is None or meta_gen["instant"] != rgen["instant"]):
             ext.add("X_TIMESTAMP_METADATA_DISAGREES")
+    if "receipt_tsr_base64" in noncanon:                                 # 1.4.2 R1: matches nothing
+        rec_ts = "imprint_mismatch"
     if ts_declared and ts_digest_ok and ts["digest_sha256"] != receipt_digest.hex():
         ext.add("X_TIMESTAMP_METADATA_DISAGREES")
 
     # ---- step 5: criteria commitment
-    issued = parse_rfc3339z(r["issued_utc"], "issued_utc")
-    committed_at = parse_rfc3339z(r["criteria"]["committed_at"], "committed_at")
-    crit_digest = bytes.fromhex(r["criteria"]["sha256"])
+    # Profile 1.4.2 R5 (vector 76): a stated time in another form is RECEIPT_TIME_UNREADABLE, not a refusal.
+    issued = parse_stated_time(r["issued_utc"])
+    committed_at = parse_stated_time(r["criteria"]["committed_at"])
+    crit_sha = r["criteria"]["sha256"]
+    crit_digest = bytes.fromhex(crit_sha) if _HEX64.match(crit_sha) else None    # 1.4.2 R2: upper case, no digest
     commit_time, commit_acc, commit_tst = None, None, None
+    if "criteria_tsr_base64" in noncanon:                                # 1.4.2 R1: matches nothing (reading)
+        problems.add("CRITERIA_TIMESTAMP_MISMATCH")
+        details["criteria_token_imprint"] = ["criteria_tsr_base64 is not canonical base64: matches nothing"]
     if crit_parsed is not None and crit_parsed["token"] is not None:
+        cgen = crit_parsed["token"]["tst"]["gen"]
         st, why_c = imprint_status(crit_parsed["token"]["tst"], crit_digest)
-        details["criteria_token_genTime"] = crit_parsed["token"]["tst"]["gen"]["text"]
+        details["criteria_token_genTime"] = cgen["text"] if cgen is not None else "unusable (profile 1.4.2 R4)"
         if st != "match":
             problems.add("CRITERIA_TIMESTAMP_MISMATCH")
             details["criteria_token_imprint"] = why_c
             for w in why_c:
                 if w.startswith("X_"):
                     ext.add(w.split(":")[0])
-        elif crit_tok is not None:
+        elif crit_tok is not None and cgen is not None:                 # 1.4.2 R4: no usable time, no commitment
             commit_tst = crit_tok["tst"]
     if commit_tst is not None:
         commit_time = commit_tst["gen"]["instant"]
         commit_acc = commit_tst["accuracy"]
-        if not _times_agree(committed_at, commit_tst["gen"], opts["time_agreement"]):
+        # cb7e8f1 vector 88 (clarification of 2026-10-27): with a usable criteria token, step 5 does not use
+        # committed_at; one in another form disagrees with genTime: CRITERIA_TIME_MISMATCH, not RECEIPT_TIME_UNREADABLE.
+        if committed_at is None or not _times_agree(committed_at, commit_tst["gen"], opts["time_agreement"]):
             problems.add("CRITERIA_TIME_MISMATCH")
     else:
         warnings.add("CRITERIA_COMMITMENT_UNVERIFIED")
-        commit_time = committed_at["instant"]
-    if covering is not None:
-        ref_time = covering["gen"]["instant"]
-        ref_src = "record token genTime"
-        if opts["reference_time"] == "earlier" and issued["instant"] < ref_time:
-            ref_time, ref_src = issued["instant"], "issued_utc (earlier than the covering token)"
-    else:
-        ref_time, ref_src = issued["instant"], "issued_utc"
+        commit_time = committed_at["instant"] if committed_at is not None else None
+    # Profile 1.4.2 R5 (76) as clarified at cb7e8f1 (88): "a stated time that step 5 uses and that is in another form"
+    # gives RECEIPT_TIME_UNREADABLE; issued_utc is always used, committed_at only without a usable criteria token.
+    unreadable = [n for n, v in (("issued_utc", issued), ("criteria.committed_at", committed_at))
+                  if v is None and (n == "issued_utc" or commit_tst is None)]
+    if unreadable:
+        problems.add("RECEIPT_TIME_UNREADABLE")
+        details["unreadable_times"] = unreadable
     auth = {}
     for label, prs, used in (("criteria_token", crit_parsed, commit_tst is not None),
                              ("record_token", rec_parsed, covering is not None)):
@@ -1878,41 +2033,58 @@ def verify(inputs, options=None, keys_override=None):
     if "X_TSA_NOT_VERIFIED" in ext:
         ctx.notes.append("X_TSA_NOT_VERIFIED: a genTime was taken from a token whose TSA signature was not checked; "
                          "the profile fields follow the profile, exit 0 needs --tokens pkix --tsa-roots")
-    details["commitment_time"] = fmt_instant(commit_time)
-    details["reference_time"] = fmt_instant(ref_time)
-    details["reference_source"] = ref_src
-    if opts["accuracy"] == "widen":
-        # 1.3 step 5: "A token's stated `accuracy` widens its time against 'committed before'; a token stating none
-        # is taken at its genTime; `ordering` is ignored". The commitment is taken at its latest (genTime +
-        # accuracy) and the reference at its earliest: issued_utc, or a covering token's genTime - accuracy, whichever
-        # is earlier (with no stated accuracy this is exactly the earlier-of rule above).
-        acc_c = (commit_tst["accuracy"] or Fraction(0)) if commit_tst is not None else Fraction(0)
-        commit_hi = commit_time + acc_c
-        if covering is not None:
-            acc_r = covering["accuracy"] or Fraction(0)
-            lo_tok = covering["gen"]["instant"] - acc_r
-            if opts["reference_time"] == "earlier" and issued["instant"] < lo_tok:
-                ref_lo, ref_src = issued["instant"], "issued_utc (earlier than the covering token's earliest time)"
-            else:
-                ref_lo = lo_tok
-                ref_src = "record token genTime" + (" - accuracy" if acc_r else "")
-        else:
-            ref_lo = issued["instant"]
-        details["reference_source"] = ref_src
-        details["commitment_time_latest"] = fmt_instant(commit_hi)
-        details["reference_time_earliest"] = fmt_instant(ref_lo)
-        before = "yes" if commit_hi < ref_lo else "no"
+    if unreadable:
+        # Profile 1.4.2 R5 (76): RECEIPT_TIME_UNREADABLE and criteria_committed_before_check no, never
+        # CRITERIA_COMMITTED_AFTER_CHECK.
+        before = "no"
+        details["commitment_time"] = fmt_instant(commit_time)
+        details["reference_source"] = "unreadable stated time: %s" % ", ".join(unreadable)
     else:
-        before = "yes" if commit_time < ref_time else "no"
-    order = _provable_order(commit_tst, covering if ref_src.startswith("record token") else None, commit_time,
-                            ref_time)
-    details["ordering_provable_under_accuracy"] = order
-    if order != "yes" and before == "yes":
-        ext.add("X_ORDER_NOT_PROVABLE_UNDER_ACCURACY")
-    if opts["accuracy"] == "interval" and before == "yes" and order != "yes":
-        before = "undetermined"
-    if before == "no":
-        problems.add("CRITERIA_COMMITTED_AFTER_CHECK")
+        if covering is not None:
+            ref_time = covering["gen"]["instant"]
+            ref_src = "record token genTime"
+            if opts["reference_time"] == "earlier" and issued["instant"] < ref_time:
+                ref_time, ref_src = issued["instant"], "issued_utc (earlier than the covering token)"
+        else:
+            ref_time, ref_src = issued["instant"], "issued_utc"
+        details["commitment_time"] = fmt_instant(commit_time)
+        details["reference_time"] = fmt_instant(ref_time)
+        details["reference_source"] = ref_src
+        if opts["accuracy"] == "widen":
+            # 1.3 step 5: "A token's stated `accuracy` widens its time against 'committed before'; a token stating none
+            # is taken at its genTime; `ordering` is ignored". The commitment is taken at its latest (genTime +
+            # accuracy) and the reference at its earliest: issued_utc, or a covering token's genTime - accuracy, whichever
+            # is earlier (with no stated accuracy this is exactly the earlier-of rule above).
+            # Profile 1.4.2 R4 (66, 68): the criteria time rounded up to the millisecond, the reference time down; the
+            # accuracy is added after rounding (reading).
+            acc_c = (commit_tst["accuracy"] or Fraction(0)) if commit_tst is not None else Fraction(0)
+            commit_hi = ceil_ms(commit_time) + acc_c
+            if covering is not None:
+                acc_r = covering["accuracy"] or Fraction(0)
+                lo_tok = floor_ms(covering["gen"]["instant"]) - acc_r
+                if opts["reference_time"] == "earlier" and floor_ms(issued["instant"]) < lo_tok:
+                    ref_lo, ref_src = floor_ms(issued["instant"]), \
+                        "issued_utc (earlier than the covering token's earliest time)"
+                else:
+                    ref_lo = lo_tok
+                    ref_src = "record token genTime" + (" - accuracy" if acc_r else "")
+            else:
+                ref_lo = floor_ms(issued["instant"])
+            details["reference_source"] = ref_src
+            details["commitment_time_latest"] = fmt_instant(commit_hi)
+            details["reference_time_earliest"] = fmt_instant(ref_lo)
+            before = "yes" if commit_hi < ref_lo else "no"
+        else:
+            before = "yes" if ceil_ms(commit_time) < floor_ms(ref_time) else "no"
+        order = _provable_order(commit_tst, covering if ref_src.startswith("record token") else None, commit_time,
+                                ref_time)
+        details["ordering_provable_under_accuracy"] = order
+        if order != "yes" and before == "yes":
+            ext.add("X_ORDER_NOT_PROVABLE_UNDER_ACCURACY")
+        if opts["accuracy"] == "interval" and before == "yes" and order != "yes":
+            before = "undetermined"
+        if before == "no":
+            problems.add("CRITERIA_COMMITTED_AFTER_CHECK")
 
     # ---- step 7: verdict
     for x in r["results"]:
@@ -1926,11 +2098,17 @@ def verify(inputs, options=None, keys_override=None):
 
     # ---- independence (property 3, step 8)
     parties = r["parties"]
-    ck, pk = parties["checker"]["key_id"], parties["producer"]["key_id"]
+    ck, pk = parties["checker"].get("key_id"), parties["producer"].get("key_id")   # absent = null (1.4.2, 82)
     signer_pub = entry["pub"] if entry else None
+    # a repeated or non-canonical entry has pub None: it is compared with no key (1.4.2 R1, R3; vector 69)
     ck_pub = keytable.get(ck, {}).get("pub") if ck else None
     pk_pub = keytable.get(pk, {}).get("pub") if pk else None
-    if ck is None or ck_pub is None or signer_pub is None or ck_pub != signer_pub:
+    if opts["key_id_source"] == "receipt":
+        # Profile 1.4.2 R7 (64, 86): the checker's key_id against the signed key_id, as identifiers; never the
+        # unsigned envelope's. Until 0.5.0, by public key.
+        if ck != r["key_id"]:
+            problems.add("CHECKER_NOT_SIGNER")
+    elif ck is None or ck_pub is None or signer_pub is None or ck_pub != signer_pub:
         problems.add("CHECKER_NOT_SIGNER")
     if r["key_id"] != used_kid and (keytable.get(r["key_id"], {}).get("pub") != signer_pub):
         ext.add("X_RECEIPT_KEY_ID_NOT_SIGNER")
@@ -1945,7 +2123,16 @@ def verify(inputs, options=None, keys_override=None):
     same_name = cn is not None and pn is not None and cn == pn
     pname = parties["producer"]["name"]
     undeclared = (pname is None or pname.strip() == "") and pk is None
-    derived = "undeclared" if undeclared else ("self-checked" if (same_name or collision) else "independent")
+    # Profile 1.4.2 R6 (80, 81; R1/R3 for 69, 75): a stated party key_id that is empty, not listed, listed more than
+    # once or not canonical base64 cannot carry independence: derived self-checked.
+    unresolved = [role for role, kid in (("checker", ck), ("producer", pk))
+                  if kid is not None and (kid not in keytable or keytable[kid].get("dup") or
+                                          keytable[kid].get("noncanonical"))]
+    if unresolved:
+        details["party_key_unresolved"] = unresolved
+    by_key = unresolved if opts["independence_rule"] == "derived" else []
+    derived = "undeclared" if undeclared else ("self-checked" if (same_name or collision or by_key)
+                                               else "independent")
     details["independence_derived"] = derived
     if opts["independence_rule"] == "derived":
         # 1.3 step 8: "a stated `independence` that differs from the derived one is also `INDEPENDENCE_INCONSISTENT`"
@@ -2066,7 +2253,9 @@ def _correspondence(ctx, crit_bytes, results, mode):
 # ================================================================================================= CLI
 VECTOR_META = {"description", "expected", "inputs", "license", "spec", "title", "vector", "warning",
                "contributed_by", "expected_is", "source", "pins", "name", "test_key", "kills",
-               "expected_extensions", "reading", "difference", "expected_1_2_1", "tsa_signature_accepted"}
+               "expected_extensions", "reading", "difference", "expected_1_2_1", "tsa_signature_accepted",
+               "test_key_seeds",   # 85a310d vectors 84-87: the test keys' seeds, metadata (not an input)
+               "proposed_by"}      # cb7e8f1 vector 88: who proposed the case, metadata (not an input)
 COMPARED = ("criteria_committed_before_check", "criteria_hash", "independence", "problem_codes",
             "receipt_timestamp", "signature_valid", "verdict_recomputed", "verdict_stated", "warning_codes")
 
@@ -2157,7 +2346,8 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  defaults follow profile 1.4.1 (maximusrufus/work-acceptance-record@bc5a138; steps 1-8 as in 1.3)
+  defaults follow profile 1.4.2 (maximusrufus/work-acceptance-record@85a310d, clarification cb7e8f1; steps 1-8 as
+                               in 1.3, step 10 rules of 1.4.2)
   --profile 1.2.1              this verifier's profile 1.2.1 readings (key-id-source envelope, reference-time
                                covering-token, accuracy ignore, key-id-agreement require, key-rule refuse,
                                independence-rule stated-independent); a switch given explicitly overrides it

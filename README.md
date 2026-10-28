@@ -1,15 +1,18 @@
-# war-verify: a clean-room verifier for work-acceptance records (profile 1.4.1)
+# war-verify: a clean-room verifier for work-acceptance records (profile 1.4.2)
 
-`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.1 at
-maximusrufus/work-acceptance-record@bc5a138, vectors 01-57, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
-1.2.1) the way the profile README describes, and refuses anything it does not understand. The readings this
+`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.2 at
+maximusrufus/work-acceptance-record@85a310d, vectors 01-87, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
+1.2.1) the way the profile README describes, and refuses anything it does not understand. Version 0.6.0 follows the
+1.4.2 rules (see "Profile 1.4.2 rules") and the clarification of 2026-10-27 (cb7e8f1, vectors 88-90, read on
+2026-10-28); the 1.4.1 sets (bc5a138, 48ab8c9, 06d3b94) still agree in full. The readings this
 verifier gave to profile 1.2.1 (version 0.1.0) are kept: `--profile 1.2.1` selects all of them, and each one has
 its own switch (see "Switches"). It was written from the profile README, the published test vectors and the RFCs it
 names. No other implementation was opened, with these exceptions (see "What was read"): an issue comment that quotes
 parts of the reference verifier was read before version 0.4.0, and the description of a probe vector before 0.4.1;
 for 0.5.0 the payment form was taken from the function `_in_form` of the reference `verifier/check_payment.py`
 (opened), and the reference `verifier/war_verify.py` of bc5a138 was searched once with `grep` and run as a black box
-on this project's own probe documents.
+on this project's own probe documents. For 0.6.0, `verifier/`, `interop/` and `composition/` of 85a310d were not
+opened.
 
 Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 `LICENSE-APACHE`). The new vectors in `vectors/` are CC0, like the upstream vectors.
@@ -17,7 +20,8 @@ Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 Third-party inputs are **not included** in this repository. `python3 tools/fetch_sources.py` downloads them from the
 commits and URLs pinned in `SOURCES.json` into `fonti/` and `roots/`, and keeps a file only if its SHA-256 matches;
 the tests need them. Their licences are their authors': the profile README is CC BY 4.0
-(maximusrufus/work-acceptance-record), the upstream vectors (01-59 at 48ab8c9, the head of open PR #1; 01-57 at bc5a138; 01-47 at 06d3b94, 01-46 at 4daf721, 01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
+(maximusrufus/work-acceptance-record), the upstream vectors (88-90 at cb7e8f1; 01-87 at 85a310d; 01-59 at 48ab8c9, then the head of PR #1, merged on
+2026-10-27; 01-57 at bc5a138; 01-47 at 06d3b94, 01-46 at 4daf721, 01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
 CC0-1.0, and the babyblueviper1
 vectors and the issuer files (`selftest-pass.json`, its README, `checker-keys-live.json`) state no licence. The
 issuer's key file is fetched from its live URL, so it can change: the script then reports a mismatch and does not
@@ -39,7 +43,9 @@ Profile steps 1-9, with the problem and warning codes of step 8:
 5. criteria commitment: imprint of the criteria token (SHA-256 by OID), its genTime against `committed_at`,
    fallback to `committed_at` with `CRITERIA_COMMITMENT_UNVERIFIED`, strict "earlier than" against the reference
    time, which is the earlier of `issued_utc` and a covering record token's genTime. A token's stated `accuracy`
-   widens the comparison, a token without one is taken at its genTime, and `ordering` is ignored;
+   widens the comparison, a token without one is taken at its genTime, and `ordering` is ignored. From 0.6.0
+   (1.4.2): times to the millisecond (criteria up, reference down), a `genTime` outside DER UTC form gives no time,
+   and a stated time outside `YYYY-MM-DDTHH:MM:SS[.fff]Z` is `RECEIPT_TIME_UNREADABLE` (R4, R5);
 6. record token imprint (`none` / `imprint_match` / `imprint_mismatch`); the unsigned envelope `timestamp` never
    decides it. Profile step 6: "the unsigned `timestamp.digest_sha256` field is informative and never decides the
    outcome": from 0.5.0 a `digest_sha256` outside its form (not a string of 64 lower-case hexadecimal digits) is the
@@ -47,8 +53,9 @@ Profile steps 1-9, with the problem and warning codes of step 8:
    envelope timestamp are not named by the profile and keep the issuer's form, as before (refused outside it; an
    unknown member is a note under `--unknown-fields report`);
 7. verdict recomputed from the results;
-8. independence: checker is the signer, key collision, self-check label, producer declared, and the stated
-   `independence` against the one derived from the parties block;
+8. independence: checker is the signer (by the signed `key_id`, R7), key collision (keys compared as decoded bytes),
+   self-check label, producer declared, a stated party `key_id` that is empty, unlisted, repeated or not canonical
+   (derived `self-checked`, R6), and the stated `independence` against the one derived from the parties block;
 9. time-stamp authority signature (profile 1.4.1): with relying-party anchors (`inputs.tsa_roots_base64` in the
    vectors, or `--tsa-roots`), `tsa_signature` has one key per token present (`criteria`, `receipt`) with the value
    `verified`, `failed`, `untrusted`, `unsupported` or `no_signer`; without anchors `not_evaluated`. It never changes
@@ -115,13 +122,17 @@ The output has the nine fields of the vectors' `expected` objects, plus `accepte
 ## Closed by construction
 
 Every member of every object is either understood or the input is refused with a reason naming the path, with the
-four exceptions the profile itself fixes, each listed in `notes` and never ignored silently: the member
-`numbers_for_canonicalization` of `receipt.tools`, an array of numbers (bc5a138 vectors 52 and 57; any other member
-of `receipt.tools` is an unknown member), a `receipt.payment` outside its form (vector 55), a `digest_sha256` outside
-its form in the unsigned envelope `timestamp` (step 6), and a `statusString` whose `UTF8String` holds bytes that are
-not UTF-8 (vectors 50 and 51). That includes duplicate JSON member names, lone surrogates, integers outside the I-JSON range of plus or minus
-(2^53 - 1), a byte order mark, non-canonical
-base64, any non-DER encoding in a token, a `GeneralizedTime` outside RFC 3161 2.4.2, and, under `--ed25519 strict`,
+exceptions the profile itself fixes, each listed in `notes` and never ignored silently: the members
+`numbers_for_canonicalization` (bc5a138 vectors 52 and 57), `numbers_exponent_form` (85a310d vector 84) and
+`keys_utf16_order` (85a310d vector 85) of `receipt.tools` (any other member of `receipt.tools` is an unknown member),
+a `receipt.payment` outside its form (vector 55), a `digest_sha256` outside its form in the unsigned envelope
+`timestamp` (step 6), a `statusString` whose `UTF8String` holds bytes that are not UTF-8 (vectors 50 and 51), and the
+1.4.2 cases that are outcomes, not refusals (non-canonical base64 in a signature, a key entry, a token or a supplied
+file; an upper-case digest; a token `genTime` that is no usable time; a stated time in another form; a repeated
+`key_id`: see "Profile 1.4.2 rules"). A member of another type than the specification gives is refused with the step
+1 outcome (1.4.2 R8). That includes duplicate JSON member names, lone surrogates, integers outside the I-JSON range of plus or minus
+(2^53 - 1), a byte order mark, base64 that is not canonical in `tsa_roots_base64`, any non-DER encoding in a token
+(a `genTime` element not tagged GeneralizedTime included), and, under `--ed25519 strict`,
 a signature whose R is not canonical or is of small order. An Ed25519 public key in the key file that is not
 canonical or not of prime order is not refused: as the signer's key it is `KEY_REJECTED` (profile 1.3 step 2), as
 any other entry it is the local block `X_UNUSED_KEY_REJECTED`. Under `--profile 1.2.1` the input is refused, as in
@@ -145,6 +156,89 @@ The profile does not define the envelope, key-file or criteria-document formats.
 them are those found in the published inputs (the 26 documents of the 1.2.1 round and the 27 vectors of 1.3). For the criteria document, only `criteria[].id`, `required` and
 `title` are interpreted, and the other members are listed in `notes`. `--unknown-fields report` turns refusals
 for unknown members into notes (the four exceptions above are notes under both values).
+
+## Profile 1.4.2 rules (85a310d, vectors 58-87; version 0.6.0)
+
+Profile 1.4.2 (maximusrufus/work-acceptance-record@85a310d, README step 10 "Profile 1.4.2 rules" and its changelog
+entry of 2026-10-27) is the default from 0.6.0. Each rule below is written from that text and the vectors named; the
+number after each rule is the vector that fixes it. Where the text leaves a case open, the reading taken here is
+marked **reading** and listed in "Readings not fixed by the vectors" as a question for the profile author.
+
+- **R1 canonical base64** (60-63, 69). A base64 value is canonical when it uses the standard alphabet, `=` padding to
+  a multiple of four, no whitespace, and re-encoding the decoded bytes gives the same string (RFC 4648 4).
+  - `signature.value` not canonical: `SIGNATURE_INVALID`, `signature_valid` false, no signature check; the other
+    outcome members are still computed (60-63). A value that is not a string is a type error (R8).
+  - a key-file `public_key_base64` not canonical: that entry is a rejected key and the problem `KEY_REJECTED` is
+    raised. As the signer's key, no signature check runs; as the producer's or checker's, independence is derived
+    `self-checked` and the entry is not compared with any other key (69). **Reading:** an entry named by no party
+    and not the signer's also gives `KEY_REJECTED` (the R1 sentence "a non-canonical public key is `KEY_REJECTED`"
+    has no restriction, unlike the step 2 point rule; no vector).
+  - `criteria_file_base64` not canonical: it matches nothing, `criteria_hash` `mismatch` and
+    `CRITERIA_HASH_MISMATCH` (cb7e8f1 vector 89). `criteria_tsr_base64` not canonical: a token over other bytes,
+    `CRITERIA_TIMESTAMP_MISMATCH` and the fallback with `CRITERIA_COMMITMENT_UNVERIFIED` (first a **reading**, then
+    cb7e8f1 vector 90); `tsa_signature.criteria` is `not_evaluated` without anchors and `failed` with them: the token
+    is not decoded (the profile author's answer on x402-foundation/tsc#4, comment 6460276466 of 2026-10-28, not in
+    the profile text, Q3; as first written for 85a310d the member was absent). `receipt_tsr_base64` not canonical:
+    `imprint_mismatch`, and `tsa_signature.receipt` takes the same values: the answer names the criteria token, and
+    "as for any malformed token" is read here as covering the record token too (**reading**). Delivered and
+    original files: `mismatch` (local codes, as for a hash mismatch). `tsa_roots_base64` is not named by R1 and stays
+    refused when not canonical (closed by construction). Each case is listed in `notes` (`X_BASE64_NONCANONICAL`).
+- **R2 lower-case digests** (67). `criteria.sha256`, `files.*.sha256`: a string of 64 hexadecimal digits in which
+  any digit is upper case matches no digest (not lower-cased): `criteria_hash` `mismatch`, and the criteria token
+  over the lower-case value is `CRITERIA_TIMESTAMP_MISMATCH`. Any other string (wrong length, not hexadecimal) is
+  still refused: the profile names upper case only (**reading**).
+- **R3 repeated key identifier** (75, 79). A `key_id` listed more than once in the key list is `KEY_REJECTED`,
+  whichever entry comes first and wherever it is (79: neither party's, signature still valid). As the signer's
+  identifier no signature check runs (`signature_valid` false, 75); as a party's identifier independence is derived
+  `self-checked`. Under `--key-rule refuse` (`--profile 1.2.1`) the input is refused, as before.
+- **R4 form of `genTime`** (66, 68, 70-74, 78). A token `genTime` is usable only as DER GeneralizedTime in UTC:
+  `YYYYMMDDHHMMSS`, optionally `.` and digits whose last is not `0`, then `Z`, with real calendar fields (second 60
+  is not accepted: **reading**). Any other content is no usable time: the token gives no time, the criteria side falls
+  back to `committed_at` with `CRITERIA_COMMITMENT_UNVERIFIED` and raises no problem when the imprint matches (78);
+  the imprint is still checked (a mismatch is still `CRITERIA_TIMESTAMP_MISMATCH`). On the record side
+  `receipt_timestamp` still reports the imprint, but the token is not a reference time (**reading**). Note
+  `X_GENTIME_UNUSABLE`. A `genTime` element that is not tagged GeneralizedTime is a DER defect and stays refused.
+  Until 0.5.0 every such token was refused. With anchors, the authority check of such a token cannot check validity
+  at genTime and is `failed` (**reading**).
+  - millisecond rule (66, 68): for "committed before", the criteria time is rounded **up** to the millisecond and the
+    reference time **down**, then compared with a strict `<`. A stated `accuracy` is added after rounding
+    (**reading**: the text does not order rounding and widening). `CRITERIA_TIME_MISMATCH` keeps its 1.2.1 rule
+    (the token time truncated to `committed_at`'s own precision; 66 states "compared to the second").
+- **R5 stated times** (76). `committed_at` and `issued_utc` must be `YYYY-MM-DDTHH:MM:SS[.fff]Z` with real calendar
+  fields; **reading:** `.fff` is exactly three digits. A string in another form is no longer refused: it gives the new
+  problem code `RECEIPT_TIME_UNREADABLE` and `criteria_committed_before_check` `no`, never
+  `CRITERIA_COMMITTED_AFTER_CHECK`. `issued_utc` is always used by step 5; `committed_at` only when no usable
+  criteria token supplies the time; with one, a `committed_at` in another form is `CRITERIA_TIME_MISMATCH` and the
+  token decides "committed before" (cb7e8f1 vector 88, clarification of 2026-10-27; as first written for 85a310d,
+  0.6.0 read it as `RECEIPT_TIME_UNREADABLE` also then, Q6). A value that is not a string is a type error (R8).
+- **R6 independence by key** (65, 69, 80-82, 87). Keys are compared as decoded bytes: two identifiers whose entries
+  decode to one public key are one key, `KEY_COLLISION` and derived `self-checked` (65, 87; already so in 0.5.0). A
+  party's `key_id` that is stated (present and not null) must be non-empty and listed exactly once with a canonical
+  entry, else independence is derived `self-checked`, and a stated `independent` is `INDEPENDENCE_INCONSISTENT` (80,
+  81). An empty or unlisted identifier raises no other code of this rule (as the checker's it is still
+  `CHECKER_NOT_SIGNER`, Q14); a repeated or non-canonical one is also `KEY_REJECTED` (R1, R3). A party's `key_id` may now be absent (82): absent and null both mean "not stated", and the producer then
+  rests on the party names.
+- **R7 checker is the signer** (64, 86). `CHECKER_NOT_SIGNER` compares `parties.checker.key_id` with the signed
+  `receipt.key_id` as identifiers; the envelope `signature.key_id` never enters it. Until 0.5.0 the comparison was by
+  public key (an identifier for the same key as the signer did not raise it); the envelope rule of step 2
+  (`SIGNATURE_INVALID`) is unchanged. Under `--key-id-source envelope` (`--profile 1.2.1`) the 0.5.0 comparison is kept.
+- **R8 types** (77). A member of the record or of the inputs whose type is not the one the specification gives
+  (object, array, string, integer, boolean) is refused with the step 1 outcome
+  `{"refused": true, "reason": "unknown schema, canonicalization or suite"}`; the path is in `reason_detail`. Other
+  refusals (missing or unknown members, values outside a stated set, non-DER tokens) keep their own reason.
+  **Reading:** the unsigned envelope `timestamp.digest_sha256` keeps the 0.5.0 rule even when its type is wrong (a
+  note, `X_TIMESTAMP_METADATA_MALFORMED`): step 6 says it "never decides the outcome", and R8 does not say which of
+  the two wins. The same holds for `receipt.payment`: the member itself, or any of its members, of another type is a
+  note and `unsupported` (bc5a138 vector 55, "a member outside it changes no outcome"), not a refusal (Q13). The
+  members of the envelope `timestamp` (`status`, `covers`, ...) are checked for type like the rest.
+- **R9 unsigned attributes** (83). `unsignedAttrs` of a token's SignerInfo are not read and are no ground for refusal
+  (already so in 0.5.0: the `[1]` member after the signature is skipped).
+- **R10 vectors 84 and 85** (RFC 8785 exponent numbers, a member name outside the Basic Multilingual Plane) needed
+  no change of the canonicalization. They carry two new members of `receipt.tools` whose outcome the vectors fix (no
+  problems): `numbers_exponent_form`, an array of numbers (84), and `keys_utf16_order`, an object whose values are
+  strings (85). As for `numbers_for_canonicalization` (52, 57) each is listed in `notes` and not interpreted; any
+  other member of `receipt.tools` is still an unknown member. The vector member `test_key_seeds` (84-87) is read as
+  vector metadata, not as an input.
 
 ## Usage
 
@@ -188,9 +282,11 @@ before this guard with 39.0.2: the chain step failed silently and 31, 32 and 34 
 `cryptography` package is the Ed25519 arithmetic engine and the X.509 parser for the TSA checks.
 Canonicalisation and the DER, CMS and TSTInfo parsers are written here.
 
-## Switches: profile 1.4.1 by default, the 1.2.1 readings kept
+## Switches: profile 1.4.2 by default, the 1.2.1 readings kept
 
-Defaults follow profile 1.4.1 (its steps 1-8 are those of 1.3). `--profile 1.2.1` selects every reading this verifier gave to 1.2.1 (the rows marked
+Defaults follow profile 1.4.2 (its steps 1-8 are those of 1.3, with the step 10 rules of 1.4.2). The 1.4.2 rules have
+no switch of their own: under `--key-rule refuse` a repeated or non-canonical key entry is refused as before, and
+under `--key-id-source envelope` `CHECKER_NOT_SIGNER` keeps the 0.5.0 comparison by key (README, R7). `--profile 1.2.1` selects every reading this verifier gave to 1.2.1 (the rows marked
 "1.2.1"); a switch given explicitly overrides it.
 
 | switch | default | alternative | sentence |
@@ -237,7 +333,11 @@ Other decisions taken from the text:
 - No problem code exists for a delivered file whose hash differs (step 3). This verifier reports `files` and
   `X_REMEDIATED_FILE_HASH_MISMATCH` and leaves the profile fields unchanged.
 - With no required criterion, property 4 gives `pass` (vacuous). `X_NO_REQUIRED_CRITERION` is raised.
-- Leap seconds (`:60`) are refused in both time grammars.
+- Second 60 (`:60`, a leap second) is read as not a real calendar field in both time grammars (reading Q7): a
+  token `genTime` with it gives no usable time (R4, omega-41) and a stated time with it is `RECEIPT_TIME_UNREADABLE`
+  (R5). Until 0.5.0 both were refused.
+- Years are read as the four digits of RFC 3339 `date-fullyear`, 0000 included (`0000-01-01T00:00:00Z` and a `genTime`
+  `00000101000000Z` are real dates here); no vector or sentence of the profile fixes year 0000.
 
 Readings of 1.3 that no published vector pins (each has its own vector in `vectors/` or a test):
 - the key rule applies to the key named by `receipt.key_id`; a bad entry that signs nothing does not change the
@@ -257,6 +357,32 @@ Only these files; their URLs and SHA-256 values are in `SOURCES.json`, or given 
 but are not kept. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- for 0.6.0, on 2026-10-28: `fonti/upstream_cb7e8f1/` (the README at cb7e8f1, committed 2026-10-27T23:42:17Z, and
+  vectors 88-90; SHA-256 in `SOURCES.json`; `tools/fetch_sources.py --check` verifies 405/405 with them). Read: the
+  diff of the README 85a310d..cb7e8f1 (step 10 "Canonical base64" and "Stated times", the three vector rows, the
+  changelog's clarification note), and every member of 88-90 except `inputs`. `verifier/`, `interop/` and
+  `composition/` at cb7e8f1 were not opened. The upstream head c3e9bf1 (2026-10-28T03:57Z, checked with a bare
+  clone on 2026-10-28) changes only the implementations table of the README and `composition/`, and the next head,
+  7cd4546 (2026-10-28T14:13:48Z, compared with c3e9bf1 through the GitHub API), one row of that table: the profile
+  text is that of cb7e8f1. The profile author's answers on x402-foundation/tsc#4 (comment 6460276466, 2026-10-28T03:57Z;
+  a non-canonical token: no bytes, `not_evaluated` without anchors, `failed` with them; a covering record token
+  without a usable `genTime`: no token time, `issued_utc` is the reference) were read on the issue on 2026-10-28;
+  they are answers, not the profile text, and are marked so in the readings table (Q3, Q10);
+- for 0.6.0 (2026-10-27): `fonti/upstream_85a310d/` (profile 1.4.2 README and vectors 01-87,
+  maximusrufus/work-acceptance-record@85a310d, committed 2026-10-27T09:47:47-07:00). The files were taken with
+  `git show` from a clone of that commit made outside this repository, and are pinned in `SOURCES.json` with their
+  raw.githubusercontent.com URLs; `tools/fetch_sources.py --check` verifies them (401/401 at that date; 405/405 with the cb7e8f1 files), and the README and vector 77
+  were also downloaded from those URLs once and have the same SHA-256. Read: the whole README (step 10 "Profile 1.4.2
+  rules", the changelog entry "Profile 1.4.2 (2026-10-27 ...)", steps 1-9, the vector table and the
+  "Implementations" table); every member of vectors 58-87 except `inputs` (`description`, `expected`, `contributed_by`,
+  `test_key_seeds`, `title`, `vector`, `spec`, `license`, `warning`), and the `inputs` of 84 and 85 (`receipt.tools`) where an outcome needed them; the commit subjects
+  of bc5a138..85a310d (`git log`; one of them names the reference verifier's 1.4.2 rules, its diff was not read).
+  **Not opened:** `verifier/` (the reference verifier and `check_payment.py` at 85a310d), `interop/` and
+  `composition/`. Where step 10 leaves a case open, the reading taken here is marked **reading** in "Profile 1.4.2
+  rules" and listed in "Readings not fixed by the vectors" as a question, not taken from the reference code. Also
+  read: the brief of the project owner with this verifier's 0.5.0 outcomes on the 85a310d vectors (a bench outside
+  this repository, run on 7c96866). RFC 4648 section 4 and 3.5 (canonical base64, pad bits) was applied from its known
+  rules and not re-read;
 - for 0.5.0 (2026-10-24): `fonti/upstream_bc5a138/` (profile 1.4.1 README and vectors 01-57,
   maximusrufus/work-acceptance-record@bc5a138) and `fonti/upstream_48ab8c9/` (vectors 01-59, the head of open PR #1),
   both fetched through `tools/fetch_sources.py` and checked by SHA-256; the README diff d79a737..bc5a138 was read in
@@ -350,17 +476,75 @@ and the default `Array.prototype.sort`, which orders member names by UTF-16 code
 | reading | outcome here | decided by |
 |---|---|---|
 | exponent forms with more than one significant digit (`1.5e-7`, `1.25e+22`) | serialized as ECMAScript does; the signed receipt passes; a signature over `1.5e-07` is `SIGNATURE_INVALID` | RFC 8785 3.2.2.3 |
-| a member name outside the BMP | no receipt object has such a member: refused; under `--unknown-fields report`, ordered by UTF-16 code units (`"\U0001F600"` before `"\uFF61"`), and a signature over code-point order is `SIGNATURE_INVALID` | RFC 8785 3.2.3 |
+| a member name outside the BMP | ordered by UTF-16 code units (`"\U0001F600"` before `"\uFF61"`), and a signature over code-point order is `SIGNATURE_INVALID`; from 0.6.0 the member `keys_utf16_order` of `receipt.tools` carries such names (85a310d vector 85, passes); elsewhere a receipt object has no such member: refused (a note under `--unknown-fields report`) | RFC 8785 3.2.3; 1.4.2 vector 85 |
 | envelope `signature.key_id` other than the signed `receipt.key_id` | `SIGNATURE_INVALID` | step 2 |
 | producer and checker naming the same `key_id`, or one public key listed under two ids with the producer named by the second | `KEY_COLLISION` and `INDEPENDENCE_INCONSISTENT` in both cases (the keys are compared, not the ids) | property 3, "The checker key must not equal the producer key" |
-| fractional seconds in `issued_utc` | read as RFC 3339 allows | profile silent; RFC 3339 5.6 |
-| base64 outside the alphabet, without padding, or base64url | refused | profile silent; this verifier reads canonical padded base64 only |
-| upper-case hexadecimal in a hash field | refused | profile silent; this verifier reads lower-case hexadecimal only |
+| fractional seconds in `issued_utc` | until 0.5.0 read as RFC 3339 allows; from 0.6.0 exactly three digits, any other count `RECEIPT_TIME_UNREADABLE` (**reading** of `[.fff]`) | 1.4.2 R5 (76) |
+| base64 outside the alphabet, without padding, or base64url | until 0.5.0 refused; from 0.6.0 `SIGNATURE_INVALID` for the signature value, `KEY_REJECTED` for a key entry, "matches nothing" for a token or file | 1.4.2 R1 (60-63, 69) |
+| upper-case hexadecimal in a hash field | until 0.5.0 refused; from 0.6.0 it matches no digest (`CRITERIA_HASH_MISMATCH`, `CRITERIA_TIMESTAMP_MISMATCH` for `criteria.sha256`) | 1.4.2 R2 (67) |
 | `imprint_match` with no issue time (a receipt without `issued_utc`, record token matching) | refused: `issued_utc` is a member of every published receipt | profile silent; step 5 names `issued_utc` |
+
+### Profile 1.4.2: readings not fixed by the text (questions for the profile author)
+
+Each is pinned in `tests/test_profile142.py`; none was taken from the reference verifier, which was not opened.
+
+| # | case | reading taken here | why it is open |
+|---|---|---|---|
+| Q1 | a non-canonical `public_key_base64` in an entry no party names and not the signer's | `KEY_REJECTED` | R1 "a non-canonical public key is `KEY_REJECTED`" has no restriction; the step 2 point rule is restricted to the signing key (28), R3 is not (79); no vector |
+| Q2 | `criteria_tsr_base64` not canonical | `CRITERIA_TIMESTAMP_MISMATCH` and fallback with `CRITERIA_COMMITMENT_UNVERIFIED`, no `tsa_signature.criteria` | R1 "matches nothing": a token over other bytes, or no token at all (then no problem code)? **Closed at cb7e8f1 (2026-10-27): vector 90 fixes this reading (89 for the criteria file)** |
+| Q3 | `tsa_signature` for a token that is not canonical base64 | `not_evaluated` without anchors, `failed` with anchors (as first written for 85a310d: member absent even with anchors) | step 9 has no value for a token that cannot be read. **Answered by the profile author on x402-foundation/tsc#4, comment 6460276466 of 2026-10-28 ("Without anchors, `tsa_signature` is `not_evaluated`; with anchors it is `failed`, as for any malformed token"), followed here; not yet in the profile text or a vector** |
+| Q4 | a record digest that is not upper case but still not 64 lower-case hex digits (wrong length, other characters) | refused | R2 names upper case only |
+| Q5 | `.fff` in `YYYY-MM-DDTHH:MM:SS[.fff]Z` | exactly three digits; `.5` is `RECEIPT_TIME_UNREADABLE` | RFC 3339 allows any number of digits; the pattern shows three |
+| Q6 | an unreadable `committed_at` when a usable criteria token is present | `CRITERIA_TIME_MISMATCH`, the token decides "before" (as first written for 85a310d: `RECEIPT_TIME_UNREADABLE`, `no`) | R5 "a present time in another form that step 5 uses": step 5 uses `committed_at` for `CRITERIA_TIME_MISMATCH` too; 76 has no token. **Closed at cb7e8f1 (2026-10-27): vector 88 fixes the other reading ("step 5 uses `committed_at` only when no usable criteria token supplies the time"), followed here** |
+| Q7 | second 60 (`...235960Z`, `T23:59:60Z`) | not a real calendar field: no usable time / unreadable | R4 and R5 say "real calendar fields"; leap seconds exist in UTC |
+| Q8 | rounding and `accuracy` together | round to the millisecond first, then add (criteria) or subtract (reference) the accuracy | R4 does not order the two; equal results unless the accuracy has microseconds |
+| Q9 | `CRITERIA_TIME_MISMATCH` and the millisecond rule | unchanged: token time truncated to `committed_at`'s precision | R4 speaks of "before"; 66 says `committed_at` is "compared to the second" |
+| Q10 | a record token whose `genTime` is not usable | `receipt_timestamp` still from the imprint (`imprint_match`), the token is no reference time | R4 "the token is treated as giving none" is about time; step 6 is about the imprint. **Confirmed by the profile author on x402-foundation/tsc#4, comment 6460276466 of 2026-10-28 ("there is no token time, and `issued_utc` is the reference time in step 5"); not yet in the profile text or a vector** |
+| Q11 | authority check of a token whose `genTime` is not usable, with anchors | `failed` (validity at genTime cannot be shown) | step 9 has no value for it |
+| Q12 | `CHECKER_NOT_SIGNER` when the checker's `key_id` names another identifier for the signer's key | raised (identifiers compared) | R7 compares `key_id`s; property 3 compares keys for independence; until 0.5.0 not raised |
+| Q13 | an envelope `timestamp.digest_sha256`, or `receipt.payment` or one of its members, of the wrong type | a note, as in 0.5.0 | step 6 "never decides the outcome" and vector 55 "changes no outcome" against R8 "refused" |
+| Q14 | a stated checker `key_id` that is empty or not listed | derived `self-checked` (and `CHECKER_NOT_SIGNER`) | R6 says "a party's `key_id`"; 80-81 test the producer only |
+| Q15 | an empty string as the signed `receipt.key_id` or the envelope `signature.key_id` | refused (`receipt.key_id is empty`, `signature.key_id is empty`), as until 0.5.0; a non-empty identifier listed by no entry stays `SIGNATURE_INVALID` | step 2 names no code for an identifier that names no key; R6 reads an empty `key_id` as a value for a party only (80); no vector |
 
 The same test file pins two rules that are not among those readings: the unsigned envelope `timestamp.digest_sha256`
 (step 6, a record token whose imprint matches and a `digest_sha256` outside its form: `imprint_match`,
 `X_TIMESTAMP_METADATA_MALFORMED`; refused until 0.4.1) and the member of `receipt.tools` of vectors 52 and 57.
+
+## Results, profile 1.4.2 at 85a310d (measured 2026-10-27, version 0.6.0)
+
+Defaults: the 87 vectors of 85a310d and the live record (`tools/score.py`, `results/score_default.txt`): 88/88
+documents, 803/803 fields. Vectors 88-90 of the clarification at cb7e8f1 (2026-10-27T23:42Z): 3/3 documents, 27/27
+fields (`tests/test_profile142.py`, `test_cb7e8f1_88_to_90`); as first written for 85a310d, 0.6.0 refused 88 for the
+vector member `proposed_by` and, with that member read as metadata, disagreed with it on two fields
+(`RECEIPT_TIME_UNREADABLE` and `no`, expected `CRITERIA_TIME_MISMATCH` and `yes`: Q6). The 1.4.1 sets are unchanged: bc5a138 58/58 and 537/537 (`--set bc5a138`,
+`results/score_set_bc5a138.txt`), 48ab8c9 60/60 and 557/557, 06d3b94 48/48 and 441/441, 1.4 37/37 and 332/332,
+1.3 28/28 and 245/245; the 1.2.1 round gives 24/26 with the defaults (old 12 and old 20, as in 0.5.0) and 25/26 with
+`--profile 1.2.1` (22, as in 0.1.0). No old set changes outcome under 1.4.2, so no old set needs an option of its own;
+the inputs and `expected` objects of 01-57 at 85a310d are those of bc5a138 (`tests/test_profile142.py`). Version 0.5.0
+(7c96866) on the 85a310d vectors: 63/87 documents, 609/794 fields (84-87 refused for the vector member
+`test_key_seeds`, each counted 0/9, as `tools/score.py` counts a refused document whose `expected` has nine fields);
+with that member read as metadata, 65/87 and 627/794 (both measured on a copy of 7c96866 with the 0.6.0
+`tools/score.py`, the refusal of a vector member caught outside it).
+
+Our own vectors (`vectors/`, 52): 52/52. One changes its expectation because of 1.4.2: `omega-41` (criteria token
+`genTime` with second 60) was refused until 0.5.0 and now gives no usable time (R4; its `reading` member says so).
+
+Each other value of each switch on the 88 documents (`results/score_*.txt`):
+
+| switch | documents agreeing | disagreeing vectors |
+|---|---|---|
+| `--reference-time covering-token` | 87/88 | 22 |
+| `--accuracy ignore` | 87/88 | 29 |
+| `--accuracy interval` | 41/88 | 47 vectors: `undetermined` where the tokens state no `accuracy` |
+| `--key-rule all-keys` | 87/88 | 28 |
+| `--key-rule refuse` | 82/88 | 26, 27, 28, 69, 75, 79 |
+| `--independence-rule stated-independent` | 85/88 | 20, 80, 81 |
+| `--key-id-source envelope` | 86/88 | 75, 86 |
+| `--key-id-agreement require` and `ignore` | 86/88 each | 64, 86 |
+| `--time-agreement exact` | 86/88 | 66, 68 |
+| `--tsa-precedence evaluability-first` | 85/88 | 44, 45, 46 |
+| `--profile 1.2.1` | 75/88 | 20, 22, 26, 27, 28, 29, 64, 69, 75, 79, 80, 81, 86 |
+| `--name-compare normalized`, `--correspondence strict`, `--ed25519 rfc8032`, `--unknown-fields report` | 88/88 each | none |
 
 ## Results, profile 1.4.1 at bc5a138 (measured 2026-10-24, version 0.5.0)
 
@@ -602,12 +786,13 @@ The "strict" column is the signature primitive (`ed25519_verify`); the key rule 
 
 ### Generative attack (`tools/fuzz.py`, `results/fuzz.txt`)
 
-597 generated cases in 10 families, each with an expectation written from the text (profile 1.3; at 1.3 five
+599 generated cases in 10 families, each with an expectation written from the text (profile 1.3; at 1.3 five
 expectations and one case's `issued_utc` changed and one case was added, each with the sentence in `tools/fuzz.py`;
 at 0.5.0 the 6 wrong-type cases at the unsigned envelope `timestamp.digest_sha256` expect the outcome of the
-unaltered record, see "Closed by construction"). This verifier meets all 597. The deliberately lax verifier
-`tools/lax_verify.py` is the positive control: it fails 554, and wrongly reports 410 as accepted as stated (560 and
-416 before those 6 expectations changed).
+unaltered record, see "Closed by construction"; at 0.6.0 the `genTime` and stated-time expectations follow R4 and R5,
+and the time family gains two cases). This verifier meets all 599. The deliberately lax verifier
+`tools/lax_verify.py` is the positive control: it fails 556, and wrongly reports 411 as accepted as stated (554 and
+410 at 0.5.0; 560 and 416 before the 6 envelope expectations changed).
 
 | family | cases | lax verifier fails |
 |---|---|---|
@@ -619,7 +804,7 @@ unaltered record, see "Closed by construction"). This verifier meets all 597. Th
 | DER / TSTInfo (lengths, trailing bytes, all same-length hash OID swaps, params, nonce/extension smuggling, GeneralizedTime grammar, ordering FALSE, status) | 41 | 36 |
 | Ed25519 | 5 | 3 |
 | key_id confusion across envelope, receipt and parties | 7 | 4 |
-| time ties and grammar | 10 | 5 |
+| time ties and grammar | 12 | 7 |
 | criteria file bytes (BOM, CRLF, NFC/NFD, trailing newline) | 10 | 1 |
 
 ### Composition with a counterparty acceptance (`tools/compose.py`, `results/compose.txt`)
@@ -648,9 +833,22 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 164 tests
+python3 -B -m unittest discover -s tests          # 205 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
+
+Measured on 2026-10-28 (0.6.0): 205/205 pass on Python 3.9.25, 3.11.2 and 3.13.15, each with `cryptography`
+50.0.1; on Python 3.11.2 with `cryptography` 40.0.0, 205/205 pass; with 39.0.2, 43 of the 205 fail by design (35 failures and 8 errors: the check behind `cannot_run`, `Certificate.verify_directly_issued_by`, needs 40.0.0).
+The 41 tests of `tests/test_profile142.py` (profile 1.4.2): 32 fail on the 0.5.0 code (7c96866, with the 0.6.0 tests
+and tools copied in); the other 9 are controls or cases 0.5.0 already gave the same way (canonical signature,
+canonical alias collision, `--key-rule refuse`, 01-57 unchanged, usable `genTime` forms, readable stated times,
+envelope `key_id`, `--profile 1.2.1`, reading Q8 at whole milliseconds). `tools/mutate142.py`: 40 targeted mutants, 40/40 killed, of the 0.6.0 lines (R1-R10, the cb7e8f1 rule of vector 88 and its vector member `proposed_by`, the `tsa_signature` of a non-canonical token, measured 2026-10-28 on Python 3.11.2), each caught by at
+least one test, after a control run of the unmutated copy through the same driver; one first written,
+"R1 b64 length not checked", was removed as equivalent (`b64decode(validate=True)` and the re-encoding comparison
+already refuse every other length; over 2,675,076 strings, 0 differences, while a control without the re-encoding
+comparison differs on 168). `tools/mutate14.py` (the 68 mutants of 0.3.0-0.5.0) had three patterns moved by 0.6.0
+edits (same mutants, new text): 68/68 killed (2026-10-27, Python 3.11.2). The fuzz bench (`tools/fuzz.py`): 599/599, with the genTime and stated-time
+expectations rewritten from R4 and R5 (until 0.5.0: refused).
 
 Measured on 2026-10-24 (0.5.0): 164/164 pass on Python 3.9.25 and 3.13.15 with `cryptography` 50.0.2, on 3.11.2 with
 50.0.1, and on 3.11.2 with `cryptography` 40.0.0. With 39.0.2, 41 of 164 fail by design and the other 123 pass: each failing test

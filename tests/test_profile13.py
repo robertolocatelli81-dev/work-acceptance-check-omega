@@ -140,15 +140,20 @@ class Step5(unittest.TestCase):
         i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120000.002Z", (None, 1, None), (None, 1, None))
         self.assertEqual(self.before(i), "no")
         self.assertEqual(self.before(i, {"accuracy": "ignore"}), "yes")
+        # Profile 1.4.2 R4 (0.6.0): the reference time is rounded down to the millisecond, so .002001 reads .002 and the
+        # microsecond margins of 0.5.0 are gone ("yes" until 0.5.0, "no" now); one millisecond more restores "yes".
         i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120000.002001Z", (None, 1, None),
                        (None, 1, None))
+        self.assertEqual(self.before(i), "no")
+        i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120000.003Z", (None, 1, None),
+                       (None, 1, None))
         self.assertEqual(self.before(i), "yes")
-        i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120000.002001Z", (None, 2, 1),
+        i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120000.003Z", (None, 2, 1),
                        (None, None, None))
-        self.assertEqual(self.before(i), "no")                       # 2.001 ms on the criteria token alone: equal
-        i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120000.002001Z", (None, 2, None),
+        self.assertEqual(self.before(i), "yes")                      # 2.001 ms against 3 ms
+        i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120000.002999Z", (None, 2, None),
                        (None, None, None))
-        self.assertEqual(self.before(i), "yes")                      # 2 ms: 1 microsecond earlier
+        self.assertEqual(self.before(i), "no")                       # .002999 reads .002: equal, not earlier
 
     def test_accuracy_on_one_side_only(self):
         i = self.timed("2026-06-01T12:00:05Z", "20260601120000Z", "20260601120001Z", (1, None, None), None)
