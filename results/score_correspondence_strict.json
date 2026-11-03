@@ -1,7 +1,7 @@
 {
- "agree": 88,
- "fields": 803,
- "fields_agree": 803,
+ "agree": 108,
+ "fields": 986,
+ "fields_agree": 986,
  "options": {
   "correspondence": "strict"
  },
@@ -633,9 +633,149 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
+   "file": "fonti/upstream_cb7e8f1/vectors/88-committed-at-malformed-with-token.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_cb7e8f1/vectors/89-criteria-file-base64-noncanonical.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_cb7e8f1/vectors/90-criteria-token-base64-noncanonical.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/91-unlisted-key-noncanonical-ignored.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_6bb7d0b/vectors/92-record-token-noncanonical-with-anchors.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/93-record-token-noncanonical-no-anchors.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/94-criteria-sha256-wrong-length.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/95-issued-utc-fraction-one-digit.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/96-issued-utc-fraction-four-digits.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/97-issued-utc-second-60.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/98-genTime-rounds-before-accuracy.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/99-committed-at-compared-to-the-second.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/100-checker-key-id-alias-of-signer.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/101-envelope-digest-wrong-type.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/102-payment-wrong-type.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/103-checker-key-id-empty.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/104-signed-key-id-empty.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_6bb7d0b/vectors/105-gentime-fraction-not-digits.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6bb7d0b/vectors/106-signed-and-checker-key-id-empty.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 10,
+   "fields_agree": 10,
+   "file": "fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "85a310d",
- "total": 88
+ "set": "6bb7d0b",
+ "total": 108
 }

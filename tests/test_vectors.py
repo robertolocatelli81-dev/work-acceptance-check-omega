@@ -128,7 +128,7 @@ class Vectors141(unittest.TestCase):
                          ["31", "32", "33", "34", "35", "37", "38", "39", "40", "41", "42", "44", "45", "46",
                           "48", "49", "50", "51", "53", "54"])
         # 85a310d adds 58, 59 and 83
-        self.assertEqual(short(score.score(verify_fn=stripped)),
+        self.assertEqual(short(score.score(verify_fn=stripped, which="85a310d")),
                          ["31", "32", "33", "34", "35", "37", "38", "39", "40", "41", "42", "44", "45", "46",
                           "48", "49", "50", "51", "53", "54", "58", "59", "83"])
 

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.2 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.3 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@85a310d (profile 1.4.2, step 10 and its
-changelog entry; 1.4.1 at bc5a138, 06d3b94 and d79a737 before it; 1.4 at eb0f30b, 1.3 at 42b4ed0 and 1.2.1 at
+Written from the profile README at maximusrufus/work-acceptance-record@6bb7d0b (profile 1.4.3, step 11 and its
+changelog entry; for 0.7.0 the reference verifier/ and interop/ of 6bb7d0b were not opened, of composition/ only the
+cb7e8f1..6bb7d0b diff of COMPOSITION.md was seen), at
+85a310d (profile 1.4.2, step 10 and its changelog entry; 1.4.1 at bc5a138, 06d3b94 and d79a737 before it; 1.4 at eb0f30b, 1.3 at 42b4ed0 and 1.2.1 at
 f7d8984), the test vectors listed in README.md ("What was read"), and the RFCs it names. For 0.6.0 the reference
 verifier/, interop/ and composition/ of 85a310d were not opened. An issue comment quoting parts of the reference verifier was read before 0.4.0, and a
 probe description before 0.4.1. For 0.5.0 the payment form was taken from the function _in_form of the reference
 verifier/check_payment.py (opened), and the reference verifier/war_verify.py was searched once with grep and run as a
 black box (README.md, "What was read"); no other implementation of this profile was opened. The 1.2.1 readings of version 0.1.0 are selectable with
---profile 1.2.1.
+--profile 1.2.1, the 1.4.2 readings of version 0.6.0 with --profile 1.4.2.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason, except where profile 1.4.1 (bc5a138) or 1.4.2 (85a310d) fixes the outcome; each such case is listed in "notes" (README.md,
@@ -42,7 +44,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.6.0"
+VERSION = "war_verify 0.7.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -87,8 +89,10 @@ DEFAULT_OPTIONS = {
     # Step 5 (1.3) "the **earlier** of `issued_utc` and the genTime of the record's own token when a token covering
     # the record is supplied, else `issued_utc`"; covering-token = the 1.2.1 text.
     "reference_time": "earlier",
-    # README step 5 "a criteria.committed_at that disagrees": truncate = equal at committed_at's own precision.
-    "time_agreement": "truncate",
+    # README step 5 "a criteria.committed_at that disagrees". second = profile 1.4.3 step 11 (vector 99): agrees only
+    # when committed_at has no fraction and equals genTime to the second (genTime fraction dropped); truncate = 0.6.0
+    # (genTime truncated to committed_at's own precision); exact = equal instants.
+    "time_agreement": "second",
     # Step 5 (1.3) "A token's stated `accuracy` widens its time against 'committed before'; a token stating none is
     # taken at its genTime; `ordering` is ignored" = widen. ignore = 1.2.1 (accuracy not used); interval = RFC 3161
     # 2.4.2 ordering rule with 'undetermined' when the order is not provable.
@@ -118,20 +122,41 @@ DEFAULT_OPTIONS = {
     # Profile 1.4 step 9 lists the `tsa_signature` values without an order; failed-first = a check that ran and failed
     # decides; evaluability-first = no_signer, then unsupported, before failed.
     "tsa_precedence": "failed-first",
+    # Profile 1.4.3 step 11 "Keys" (vector 91): the canonical-base64 key rule applies to the signer's entry and to the
+    # entries a stated party names = used; all-entries = 0.6.0 reading of 1.4.2 (any entry, Q1).
+    "key_scope": "used",
+    # Profile 1.4.3 step 11 (vector 104): an empty signed or envelope key_id names no key = signature-invalid;
+    # refuse = 0.6.0 (Q15).
+    "empty_key_id": "signature-invalid",
+    # Profile 1.4.3 step 11 "Digests" (vector 94): a digest string that is not 64 hex digits matches nothing =
+    # mismatch; refuse = 0.6.0 (Q4).
+    "digest_form": "mismatch",
+    # Profile 1.4.3 step 11 "Times" (vectors 95, 96): a stated-time fraction has one to three digits = 1-3;
+    # three = 0.6.0 (exactly three, Q5).
+    "stated_fraction": "1-3",
 }
 OPTION_VALUES = {
     "key_id_source": ("envelope", "receipt"), "reference_time": ("covering-token", "earlier"),
-    "time_agreement": ("truncate", "exact"), "accuracy": ("widen", "ignore", "interval"),
+    "time_agreement": ("second", "truncate", "exact"), "accuracy": ("widen", "ignore", "interval"),
     "tokens": ("structural", "pkix"),
     "name_compare": ("exact", "normalized"), "unknown_fields": ("refuse", "report"), "ed25519": ("strict", "rfc8032"),
     "correspondence": ("ids-required", "strict"),
     "key_id_agreement": ("signature-invalid", "require", "ignore"), "key_rule": ("signer", "all-keys", "refuse"),
     "independence_rule": ("derived", "stated-independent"),
     "tsa_precedence": ("failed-first", "evaluability-first"),
+    "key_scope": ("used", "all-entries"), "empty_key_id": ("signature-invalid", "refuse"),
+    "digest_form": ("mismatch", "refuse"), "stated_fraction": ("1-3", "three"),
 }
-# The profile 1.2.1 readings of this verifier (version 0.1.0), selectable together with --profile 1.2.1.
-PROFILE_1_2_1 = {"key_id_source": "envelope", "reference_time": "covering-token", "accuracy": "ignore",
-                 "key_id_agreement": "require", "key_rule": "refuse", "independence_rule": "stated-independent"}
+# The readings version 0.6.0 gave to profile 1.4.2 where 1.4.3 (6bb7d0b) fixes them otherwise (README, S1-S5),
+# selectable together with --profile 1.4.2.
+PROFILE_1_4_2 = {"key_scope": "all-entries", "empty_key_id": "refuse", "digest_form": "refuse",
+                 "stated_fraction": "three", "time_agreement": "truncate"}
+# The profile 1.2.1 readings of this verifier (version 0.1.0), selectable together with --profile 1.2.1; the 1.4.2
+# readings of 0.6.0 come with them, so --profile 1.2.1 gives what it gave in 0.6.0.
+PROFILE_1_2_1 = dict(PROFILE_1_4_2, **{"key_id_source": "envelope", "reference_time": "covering-token",
+                                       "accuracy": "ignore", "key_id_agreement": "require", "key_rule": "refuse",
+                                       "independence_rule": "stated-independent"})
+PROFILES = {"1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
 
 
 class Refusal(Exception):
@@ -401,13 +426,15 @@ def parse_rfc3339z(v, what):
     return {"instant": _to_instant(y, mo, d, h, mi, s, frac), "digits": len(frac), "text": v}
 
 
-_STATED = re.compile(r"\A([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.([0-9]{3}))?Z\Z")
+_STATED = {"three": re.compile(r"\A([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.([0-9]{3}))?Z\Z"),
+           "1-3": re.compile(r"\A([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.([0-9]{1,3}))?Z\Z")}
 
 
-def parse_stated_time(v):
-    """Profile 1.4.2 R5: committed_at / issued_utc as YYYY-MM-DDTHH:MM:SS[.fff]Z (reading: exactly three fraction
-    digits) with real calendar fields -> parsed dict, or None when the string is in another form."""
-    m = _STATED.match(v)
+def parse_stated_time(v, fraction="1-3"):
+    """Profile 1.4.2 R5: committed_at / issued_utc as YYYY-MM-DDTHH:MM:SS[.fff]Z with real calendar fields -> parsed
+    dict, or None when the string is in another form. Fraction: one to three ASCII digits (1.4.3 step 11, vectors 95,
+    96: README S4); three = exactly three, the 0.6.0 reading (Q5). [0-9] in a str pattern matches ASCII digits only."""
+    m = _STATED[fraction].match(v)
     if not m:
         return None
     y, mo, d, h, mi, s = (int(m.group(i)) for i in range(1, 7))
@@ -1102,6 +1129,12 @@ def verify_tsa(token, roots):
     def bad(cls, msg):
         res["reasons"].append(msg)
         res["classes"].append(cls)
+    # Profile 1.4.3 step 11 (vectors 105, 107; README S7): a genTime not usable for step 5 makes the authority check
+    # failed, "because validity at genTime cannot be established". The check runs first, so a token without a signer
+    # is failed too (step 9: failed before no_signer); until 0.6.0 it returned no_signer before reaching it.
+    gen_unusable = token["tst"]["gen"] is None
+    if gen_unusable:
+        bad("failed", "genTime is not a usable time (profile 1.4.3): validity at genTime cannot be checked")
     sis = token["signer_infos"]
     if not sis:
         res["status"] = "unsigned"
@@ -1261,9 +1294,7 @@ def verify_tsa(token, roots):
             bad("unsupported", "TSA signature check: %s %s" % (UNSUPPORTED_SUFFIX, e))
         except Exception as e:  # malformed signature values, key/algorithm mismatches
             bad("failed", "TSA signature check failed: %s" % e)
-    if token["tst"]["gen"] is None:
-        # Profile 1.4.2 R4: no usable genTime, so validity at genTime cannot be shown (reading: failed).
-        bad("failed", "genTime is not a usable time (profile 1.4.2): validity at genTime cannot be checked")
+    if gen_unusable:                             # already failed above (README S7): nothing to check validity at
         return res
     gen = token["tst"]["gen"]["instant"]
     # leaf: EKU (RFC 3161 2.3)
@@ -1475,10 +1506,15 @@ _HEX64_ANYCASE = re.compile(r"\A[0-9a-fA-F]{64}\Z")
 
 def _digest64(ctx, v, path):
     """Profile 1.4.2 R2 (vector 67): a SHA-256 digest in a record is 64 lower-case hex digits; upper case matches no
-    digest (never lower-cased). Reading: any other string is still refused (the profile names upper case only)."""
+    digest (never lower-cased). Profile 1.4.3 step 11 (vector 94, README S3): any other string matches nothing, not
+    a refusal (digest_form mismatch); digest_form refuse = the 0.6.0 reading (Q4). Not a string: a type error (R8)."""
     _str(v, path)
     if not _HEX64_ANYCASE.match(v):
-        raise Refusal("%s is not 64 hexadecimal digits" % path)
+        if ctx.opts["digest_form"] == "refuse":
+            raise Refusal("%s is not 64 hexadecimal digits" % path)
+        ctx.notes.append("X_DIGEST_MALFORMED: %s is not 64 hexadecimal digits: matches nothing (profile 1.4.3, "
+                         "vector 94)" % path)
+        return v
     if not _HEX64.match(v):
         ctx.notes.append("X_DIGEST_NOT_LOWERCASE: %s has upper-case hex digits: matches no digest (profile 1.4.2, "
                          "vector 67)" % path)
@@ -1551,7 +1587,9 @@ def check_receipt_grammar(ctx, r):
     ctx.members(r, "receipt", RECEIPT_REQUIRED, RECEIPT_OPTIONAL)
     for m in ("client_ref", "issuer", "notice", "receipt_id"):
         _str(r[m], "receipt." + m)
-    _str(r["key_id"], "receipt.key_id", nonempty=True)
+    # Profile 1.4.3 step 11 (vector 104, README S2): an empty signed key_id names no key, SIGNATURE_INVALID in step 2;
+    # empty_key_id refuse = the 0.6.0 reading (Q15).
+    _str(r["key_id"], "receipt.key_id", nonempty=ctx.opts["empty_key_id"] == "refuse")
     c = r["criteria"]
     ctx.members(c, "receipt.criteria", CRITERIA_MEMBERS)
     _str(c["commitment"], "receipt.criteria.commitment")
@@ -1740,7 +1778,11 @@ def verify(inputs, options=None, keys_override=None):
     if sig["alg"] != "Ed25519":
         raise Refusal(STEP1_REASON, "signature.alg %r" % (sig["alg"],))
     _str(sig["alg"], "signature.alg")
-    _str(sig["key_id"], "signature.key_id", nonempty=True)
+    _str(sig["key_id"], "signature.key_id", nonempty=opts["empty_key_id"] == "refuse")      # README S2
+    for nm, kv in (("receipt.key_id", r["key_id"]), ("signature.key_id", sig["key_id"])):
+        if kv == "":
+            ctx.notes.append("X_KEY_ID_EMPTY: %s is empty: names no key, SIGNATURE_INVALID (profile 1.4.3, vector 104)"
+                             % nm)
     # Profile 1.4.2 R1 (vectors 60-63): a non-canonical signature value is SIGNATURE_INVALID, not a refusal.
     sig_bytes = b64_canonical(_str(sig["value"], "signature.value"))
     if sig_bytes is None:
@@ -1839,11 +1881,24 @@ def verify(inputs, options=None, keys_override=None):
     key_rejected = False
     if opts["key_rule"] == "all-keys" and rejected_keys:
         problems.add("KEY_REJECTED")
-    # Profile 1.4.2 R1/R3 (vectors 69, 75, 79): a repeated identifier or a non-canonical entry anywhere in the key
-    # list is KEY_REJECTED (reading for a non-canonical entry named by no party: README, R1).
-    if any(v.get("dup") or v.get("noncanonical") for v in keytable.values()):
+    # Profile 1.4.2 R1/R3 (vectors 69, 75, 79): a repeated identifier anywhere in the key list is KEY_REJECTED.
+    # A non-canonical entry is KEY_REJECTED when a verification uses it: the signer's, or one a stated party names
+    # (profile 1.4.3 step 11, vector 91, README S1); key_scope all-entries = 0.6.0, any entry (Q1).
+    ck0, pk0 = r["parties"]["checker"].get("key_id"), r["parties"]["producer"].get("key_id")
+    used_ids = {k for k in (used_kid, ck0, pk0) if k is not None}
+    # A repeated identifier is KEY_REJECTED whether read or not (79): never listed as "not read: no KEY_REJECTED".
+    unread_noncanon = sorted(k for k, v in keytable.items()
+                             if v.get("noncanonical") and not v.get("dup") and k not in used_ids)
+    if any(v.get("dup") for v in keytable.values()) or any(
+            v.get("noncanonical") and (opts["key_scope"] == "all-entries" or k in used_ids)
+            for k, v in keytable.items()):
         problems.add("KEY_REJECTED")
-    if entry is None:
+    if unread_noncanon and opts["key_scope"] == "used":
+        ext.add("X_UNUSED_KEY_REJECTED")
+        ctx.notes.append("X_UNUSED_KEY_REJECTED: entr%s %s not canonical base64 and not read (no party names it and it "
+                         "did not sign): no KEY_REJECTED (profile 1.4.3, vector 91)"
+                         % ("y" if len(unread_noncanon) == 1 else "ies", ", ".join(repr(k) for k in unread_noncanon)))
+    if entry is None:            # an empty key_id too: the key file has no empty key_id (refused), README S2
         sig_ok, why = False, "key_id %r not in the key file" % used_kid
     elif entry.get("rejected"):                 # 1.3 step 2: "no signature check is run"
         sig_ok, why, key_rejected = False, "KEY_REJECTED: key %r is %s" % (used_kid, entry["rejected"]), True
@@ -1981,8 +2036,8 @@ def verify(inputs, options=None, keys_override=None):
 
     # ---- step 5: criteria commitment
     # Profile 1.4.2 R5 (vector 76): a stated time in another form is RECEIPT_TIME_UNREADABLE, not a refusal.
-    issued = parse_stated_time(r["issued_utc"])
-    committed_at = parse_stated_time(r["criteria"]["committed_at"])
+    issued = parse_stated_time(r["issued_utc"], opts["stated_fraction"])
+    committed_at = parse_stated_time(r["criteria"]["committed_at"], opts["stated_fraction"])
     crit_sha = r["criteria"]["sha256"]
     crit_digest = bytes.fromhex(crit_sha) if _HEX64.match(crit_sha) else None    # 1.4.2 R2: upper case, no digest
     commit_time, commit_acc, commit_tst = None, None, None
@@ -2112,7 +2167,10 @@ def verify(inputs, options=None, keys_override=None):
         problems.add("CHECKER_NOT_SIGNER")
     if r["key_id"] != used_kid and (keytable.get(r["key_id"], {}).get("pub") != signer_pub):
         ext.add("X_RECEIPT_KEY_ID_NOT_SIGNER")
-    collision = pk is not None and (pk == ck or pk == used_kid or (pk_pub is not None and any(
+    # Profile 1.4.3 step 11 (README S2, reading Q17): an empty identifier names no key, so equal empty identifiers are
+    # no collision; empty_key_id refuse keeps the 0.6.0 comparison of identifiers.
+    same_id = (lambda a, b: a == b and (a != "" or opts["empty_key_id"] == "refuse"))
+    collision = pk is not None and (same_id(pk, ck) or same_id(pk, used_kid) or (pk_pub is not None and any(
         q is not None and ed_same_key(pk_pub, q) for q in (ck_pub, signer_pub))))
     if collision:
         problems.add("KEY_COLLISION")
@@ -2186,6 +2244,10 @@ def verify(inputs, options=None, keys_override=None):
 def _times_agree(claim, gen, mode):
     if mode == "exact":
         return claim["instant"] == gen["instant"]
+    if mode == "second":
+        # Profile 1.4.3 step 11 (vector 99, README S5): "raised unless committed_at equals the genTime date and time to
+        # the second, written without a fraction; a genTime fraction is dropped for this comparison".
+        return claim["digits"] == 0 and claim["instant"] == gen["instant"] // 1
     q = Fraction(1, 10 ** claim["digits"])
     g = gen["instant"]
     return claim["instant"] == (g // q) * q
@@ -2346,14 +2408,17 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  defaults follow profile 1.4.2 (maximusrufus/work-acceptance-record@85a310d, clarification cb7e8f1; steps 1-8 as
-                               in 1.3, step 10 rules of 1.4.2)
+  defaults follow profile 1.4.3 (maximusrufus/work-acceptance-record@6bb7d0b; steps 1-8 as in 1.3, step 10 rules
+                               of 1.4.2, step 11 clarifications of 1.4.3)
+  --profile 1.4.2              the readings 0.6.0 gave to 1.4.2 where 1.4.3 fixes them otherwise (key-scope
+                               all-entries, empty-key-id refuse, digest-form refuse, stated-fraction three,
+                               time-agreement truncate); a switch given explicitly overrides it
   --profile 1.2.1              this verifier's profile 1.2.1 readings (key-id-source envelope, reference-time
                                covering-token, accuracy ignore, key-id-agreement require, key-rule refuse,
-                               independence-rule stated-independent); a switch given explicitly overrides it
+                               independence-rule stated-independent) with those of --profile 1.4.2
   --key-id-source receipt|envelope   (default receipt)
   --reference-time earlier|covering-token   (default earlier)
-  --time-agreement truncate|exact     (default truncate)
+  --time-agreement second|truncate|exact   (default second)
   --accuracy widen|ignore|interval    (default widen)
   --tokens structural|pkix            (default structural)
   --tsa-roots DIR_OR_FILE             relying-party anchors for `tsa_signature` (1.4 step 9), replacing a vector's
@@ -2366,6 +2431,10 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --key-id-agreement signature-invalid|require|ignore   (default signature-invalid)
   --key-rule signer|all-keys|refuse   (default signer)
   --independence-rule derived|stated-independent   (default derived)
+  --key-scope used|all-entries        (default used)
+  --empty-key-id signature-invalid|refuse   (default signature-invalid)
+  --digest-form mismatch|refuse       (default mismatch)
+  --stated-fraction 1-3|three         (default 1-3)
   exit 0 needs: accepted as stated, --keys, no test key, no rejected key in the key file, tokens authenticated
   (--tokens pkix) when their time is used, supplied files matching, receipt.key_id == signature.key_id (unless
   --key-id-agreement ignore); otherwise 1 with "local_blocks" listed
@@ -2383,15 +2452,17 @@ def main(argv):
                "--tsa-roots": "tsa_roots", "--name-compare": "name_compare", "--unknown-fields": "unknown_fields",
                "--ed25519": "ed25519", "--correspondence": "correspondence",
                "--key-id-agreement": "key_id_agreement", "--key-rule": "key_rule",
-               "--independence-rule": "independence_rule", "--tsa-precedence": "tsa_precedence"}
+               "--independence-rule": "independence_rule", "--tsa-precedence": "tsa_precedence",
+               "--key-scope": "key_scope", "--empty-key-id": "empty_key_id", "--digest-form": "digest_form",
+               "--stated-fraction": "stated_fraction"}
     profile = None
     while args:
         a = args.pop(0)
         if a == "--vector":
             vector_mode = True
         elif a == "--profile" and args:
-            if profile is not None or args[0] != "1.2.1":
-                sys.stderr.write("--profile takes 1.2.1, once\n")
+            if profile is not None or args[0] not in PROFILES:
+                sys.stderr.write("--profile takes 1.4.2 or 1.2.1, once\n")
                 return 64
             profile = args.pop(0)
         elif a == "--keys" and args:
@@ -2419,8 +2490,8 @@ def main(argv):
         if k != "tsa_roots" and v not in OPTION_VALUES[k]:
             sys.stderr.write("bad value %r for %s\n" % (v, k))
             return 64
-    if profile == "1.2.1":
-        opts = dict(PROFILE_1_2_1, **opts)
+    if profile is not None:
+        opts = dict(PROFILES[profile], **opts)
     if opts.get("tokens") == "pkix" and not opts.get("tsa_roots"):
         sys.stderr.write("--tokens pkix needs --tsa-roots\n")
         return 64

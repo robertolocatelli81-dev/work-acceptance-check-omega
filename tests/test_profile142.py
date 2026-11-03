@@ -184,8 +184,10 @@ class R1R3KeyList(unittest.TestCase):
             # the signer's (and checker's) entry: no signature check
             rep = run(self.with_keys([entry("omega-test-1", bad), entry("omega-test-2", self.k2)], None, "self-checked"))
             self.assertEqual((rep["signature_valid"], rep["problem_codes"]), (False, ["KEY_REJECTED"]), bad)
-            # an entry no party names (reading, README R1): KEY_REJECTED, independence untouched
-            rep = run(self.with_keys([entry("omega-test-1", self.k1), entry("x", bad)], None, "independent"))
+            # an entry no party names (0.6.0 reading, README R1, Q1; from 0.7.0 under --profile 1.4.2 only):
+            # KEY_REJECTED, independence untouched
+            rep = run(self.with_keys([entry("omega-test-1", self.k1), entry("x", bad)], None, "independent"),
+                      dict(wv.PROFILE_1_4_2))
             self.assertEqual((rep["signature_valid"], rep["problem_codes"], rep["warning_codes"]),
                              (True, ["KEY_REJECTED"], []), bad)
             self.assertNotIn("X_UNUSED_KEY_REJECTED", rep["extension_codes"], bad)   # the profile code, not the local block
@@ -250,10 +252,11 @@ class R2LowerCaseDigests(unittest.TestCase):
         self.assertGreater(n, 0)
 
     def test_other_forms_still_refused_and_wrong_type_is_step1(self):
+        # 0.6.0 reading (Q4); from 0.7.0 under --profile 1.4.2 only (1.4.3 vector 94: tests/test_profile143.py)
         i = fixture()
         h = i["receipt"]["receipt"]["criteria"]["sha256"]
         for v in (h[:-1], h + "0", "g" * 64, " " + h[1:], h[:-1] + "\n", h + "\n", h.upper() + "\n"):
-            rep = run(edit(copy.deepcopy(i), lambda r: r["criteria"].__setitem__("sha256", v)))
+            rep = run(edit(copy.deepcopy(i), lambda r: r["criteria"].__setitem__("sha256", v)), dict(wv.PROFILE_1_4_2))
             self.assertTrue(rep.get("refused"), v)
             self.assertNotEqual(rep["reason"], STEP1)
         for v in (None, 1, [h], {"h": h}):
@@ -421,6 +424,7 @@ class R4Milliseconds(unittest.TestCase):
                          "no")
 
 
+STATED_BAD_142_ONLY = ("2026-06-01T12:00:00.1Z", "2026-06-01T12:00:00.12Z")
 STATED_OK = ["2026-06-01T12:00:00Z", "2026-06-01T12:00:00.123Z", "2026-06-01T12:00:00.000Z", "2028-02-29T00:00:00Z"]
 STATED_BAD = ["2026-06-01T12:00:00.1Z", "2026-06-01T12:00:00.12Z", "2026-06-01T12:00:00.1234Z",
               "2026-06-01t12:00:00Z", "2026-06-01T12:00:00z", "2026-06-01T12:00:00+00:00", "2026-06-01T12:00:00-00:00",
@@ -437,7 +441,7 @@ class R5StatedTimes(unittest.TestCase):
     Clarified at cb7e8f1 (vector 88): step 5 uses committed_at only without a usable criteria token; with one, an
     unreadable committed_at is CRITERIA_TIME_MISMATCH and the token decides "committed before"."""
 
-    def rep(self, member, value, token=False, other_bytes=False):
+    def rep(self, member, value, token=False, other_bytes=False, opts=None):
         i = fixture()
         if not token:
             i["criteria_tsr_base64"] = None
@@ -449,7 +453,7 @@ class R5StatedTimes(unittest.TestCase):
                 r["issued_utc"] = value
             else:
                 r["criteria"]["committed_at"] = value
-        return run(edit(i, f))
+        return run(edit(i, f), opts)
 
     def test_readable(self):
         for v in STATED_OK:
@@ -463,7 +467,8 @@ class R5StatedTimes(unittest.TestCase):
     def test_unreadable_in_every_form(self):
         for member, token in (("issued_utc", False), ("committed_at", False), ("issued_utc", True)):
             for v in STATED_BAD:
-                rep = self.rep(member, v, token)
+                # one or two fraction digits: unreadable in the 0.6.0 reading (Q5), readable under 1.4.3 (vector 95)
+                rep = self.rep(member, v, token, opts=dict(wv.PROFILE_1_4_2) if v in STATED_BAD_142_ONLY else None)
                 self.assertFalse(rep.get("refused"), (member, v, rep))
                 self.assertEqual(rep["problem_codes"], ["RECEIPT_TIME_UNREADABLE"], (member, v, token))
                 self.assertEqual(rep["criteria_committed_before_check"], "no", (member, v))
@@ -475,7 +480,8 @@ class R5StatedTimes(unittest.TestCase):
             self.assertEqual((rep["problem_codes"], rep["criteria_committed_before_check"], rep["warning_codes"]),
                              (["CRITERIA_TIME_MISMATCH"], "yes", []), v)
             # a token over other bytes gives no time: committed_at is used, so it is unreadable (R5, 76)
-            rep = self.rep("committed_at", v, token=True, other_bytes=True)
+            rep = self.rep("committed_at", v, token=True, other_bytes=True,
+                           opts=dict(wv.PROFILE_1_4_2) if v in STATED_BAD_142_ONLY else None)
             self.assertEqual((sorted(rep["problem_codes"]), rep["criteria_committed_before_check"], rep["warning_codes"]),
                              (["CRITERIA_TIMESTAMP_MISMATCH", "RECEIPT_TIME_UNREADABLE"], "no", [UNVERIFIED]), v)
 
@@ -554,13 +560,14 @@ class R7CheckerIsTheSigner(unittest.TestCase):
             i["receipt"]["signature"]["key_id"] = other
             rep = run(i)
             self.assertEqual((rep["signature_valid"], rep["problem_codes"]), (False, ["SIGNATURE_INVALID"]), other)
-        # reading Q15: an empty signing identifier is refused (not SIGNATURE_INVALID), as until 0.5.0
+        # reading Q15 of 0.6.0: an empty signing identifier is refused (not SIGNATURE_INVALID), as until 0.5.0; from
+        # 0.7.0 under --profile 1.4.2 only (1.4.3 vector 104: tests/test_profile143.py)
         for where in ("signature", "receipt"):
             i = fixture()
             i["receipt"][where]["key_id"] = ""
             if where == "receipt":
                 build.sign(i, sign_with="omega-test-1")
-            rep = run(i)
+            rep = run(i, dict(wv.PROFILE_1_4_2))
             self.assertEqual((rep.get("refused"), rep.get("reason")), (True, "%s.key_id is empty" % where), where)
 
     def test_profile_1_2_1_keeps_the_key_comparison(self):

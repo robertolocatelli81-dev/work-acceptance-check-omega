@@ -9634,7 +9634,9 @@
   "lax_ok": true,
   "ours": {
    "criteria_committed_before_check": "yes",
-   "problem_codes": [],
+   "problem_codes": [
+    "CRITERIA_TIME_MISMATCH"
+   ],
    "reason": null,
    "refused": null,
    "signature_valid": true,
@@ -9653,7 +9655,8 @@
   "ours": {
    "criteria_committed_before_check": "no",
    "problem_codes": [
-    "CRITERIA_COMMITTED_AFTER_CHECK"
+    "CRITERIA_COMMITTED_AFTER_CHECK",
+    "CRITERIA_TIME_MISMATCH"
    ],
    "reason": null,
    "refused": null,
@@ -9673,7 +9676,8 @@
   "ours": {
    "criteria_committed_before_check": "no",
    "problem_codes": [
-    "CRITERIA_COMMITTED_AFTER_CHECK"
+    "CRITERIA_COMMITTED_AFTER_CHECK",
+    "CRITERIA_TIME_MISMATCH"
    ],
    "reason": null,
    "refused": null,

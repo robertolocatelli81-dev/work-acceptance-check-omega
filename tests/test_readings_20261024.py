@@ -125,13 +125,19 @@ class Keys(unittest.TestCase):
 class Times(unittest.TestCase):
     def test_fractional_seconds_in_issued_utc_are_read(self):
         # profile 1.4.2 R5: YYYY-MM-DDTHH:MM:SS[.fff]Z. Reading (README, R5): exactly three digits; until 0.5.0 one to
-        # nine digits were read, from 0.6.0 ".5Z" is RECEIPT_TIME_UNREADABLE.
+        # nine digits were read, in 0.6.0 ".5Z" was RECEIPT_TIME_UNREADABLE (kept by --profile 1.4.2); profile 1.4.3
+        # (6bb7d0b, vectors 95, 96): one to three digits.
         rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".500Z"))))
         self.assertFalse(rep.get("refused"), rep)
         self.assertEqual(rep["problem_codes"], [])
-        rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".5Z"))))
+        rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".5Z"))),
+                     dict(wv.PROFILE_1_4_2))
         self.assertEqual(rep["problem_codes"], ["RECEIPT_TIME_UNREADABLE"])
         self.assertEqual(rep["criteria_committed_before_check"], "no")
+        rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".5Z"))))
+        self.assertEqual(rep["problem_codes"], [])
+        rep = verify(doc(lambda r: r.__setitem__("issued_utc", r["issued_utc"].replace("Z", ".5000Z"))))
+        self.assertEqual(rep["problem_codes"], ["RECEIPT_TIME_UNREADABLE"])
 
 
 class Times2(unittest.TestCase):

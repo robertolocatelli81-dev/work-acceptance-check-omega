@@ -13,7 +13,8 @@ M = [
  # of length 0-3 over the 65 characters, all of length 4-7 over "AQgw/+=Z"), 0 differences; control (re-encoding
  # comparison removed) 168 differences over the lengths 0-7 of the small alphabet.
  ("R1 lax signature decode", '    sig_bytes = b64_canonical(_str(sig["value"], "signature.value"))', '    sig_bytes = base64.b64decode(_str(sig["value"], "signature.value") + "==")'),
- ("R1 non-canonical key not KEY_REJECTED", 'if any(v.get("dup") or v.get("noncanonical") for v in keytable.values()):', 'if any(v.get("dup") for v in keytable.values()):'),
+ # 0.7.0: the KEY_REJECTED line now holds the 1.4.3 key scope (README S1); the same two mutants on its new text
+ ("R1 non-canonical key not KEY_REJECTED", 'v.get("noncanonical") and (opts["key_scope"] == "all-entries" or k in used_ids)', 'False'),
  ("R1 non-canonical key compared", '                table[kid] = {"pub": None, "status": k["status"], "rejected": "public_key_base64 not canonical base64",', '                table[kid] = {"pub": base64.b64decode(k["public_key_base64"] + "=="), "status": k["status"], "rejected": "public_key_base64 not canonical base64",'),
  ("R1 criteria token noncanonical ignored", '    if "criteria_tsr_base64" in noncanon:', '    if False:'),
  ("R1 record token noncanonical none", '        rec_ts = "imprint_mismatch"', '        rec_ts = "none"'),
@@ -22,11 +23,12 @@ M = [
  # R3 repeated key id
  ("R3 duplicate not rejected", '            table[kid].update({"pub": None, "rejected": "key_id listed more than once", "dup": True})', '            pass'),
  ("R3 duplicate keeps first key", '            table[kid].update({"pub": None, "rejected": "key_id listed more than once", "dup": True})', '            table[kid].update({"rejected": "key_id listed more than once", "dup": True})'),
- ("R3 unrelated duplicate not KEY_REJECTED", 'if any(v.get("dup") or v.get("noncanonical") for v in keytable.values()):', 'if any(v.get("noncanonical") for v in keytable.values()):'),
+ ("R3 unrelated duplicate not KEY_REJECTED", 'if any(v.get("dup") for v in keytable.values()) or any(', 'if any('),
  # R2 digests
  ("R2 upper case lower-cased for the token", 'bytes.fromhex(crit_sha) if _HEX64.match(crit_sha) else None', 'bytes.fromhex(crit_sha)'),
  ("R2 upper case refused", '    if not _HEX64_ANYCASE.match(v):', '    if not _HEX64.match(v):'),
- ("R2 any string accepted", '    if not _HEX64_ANYCASE.match(v):\n        raise', '    if False:\n        raise'),
+ # 0.7.0: under 1.4.3 any other string matches nothing (README S3); the 0.6.0 refusal is --digest-form refuse
+ ("R2 any string accepted", '    if not _HEX64_ANYCASE.match(v):\n        if ctx.opts["digest_form"] == "refuse":', '    if False:\n        if ctx.opts["digest_form"] == "refuse":'),
  # R4 genTime
  ("R4 unusable genTime refused", '    except Refusal as e:\n        # Profile 1.4.2 R4', '    except ZeroDivisionError as e:\n        # Profile 1.4.2 R4'),
  ("R4 unusable criteria time used", '        elif crit_tok is not None and cgen is not None:', '        elif crit_tok is not None:'),
@@ -37,7 +39,7 @@ M = [
  ("R4 not strict", '        before = "yes" if commit_hi < ref_lo else "no"', '        before = "yes" if commit_hi <= ref_lo else "no"'),
  ("R4 covering token not rounded", '            lo_tok = floor_ms(covering["gen"]["instant"]) - acc_r', '            lo_tok = covering["gen"]["instant"] - acc_r'),
  # R5 stated times
- ("R5 one to nine digits", '(?:\\.([0-9]{3}))?Z\\Z")\n\n\ndef parse_stated_time', '(?:\\.([0-9]{1,9}))?Z\\Z")\n\n\ndef parse_stated_time'),
+ ("R5 one to nine digits", '(?:\\.([0-9]{3}))?Z\\Z"),', '(?:\\.([0-9]{1,9}))?Z\\Z"),'),   # the "three" form (0.6.0, --stated-fraction three)
  ("R5 calendar not checked", '    if _valid_date(y, mo, d, h, mi, s):\n        return None', '    if False:\n        return None'),
  ("R5 no RECEIPT_TIME_UNREADABLE", '        problems.add("RECEIPT_TIME_UNREADABLE")', '        pass'),
  ("R5 unreadable committed_at ignored with any token supplied", '                  if v is None and (n == "issued_utc" or commit_tst is None)]', '                  if v is None and (n == "issued_utc" or crit_tsr is None)]'),

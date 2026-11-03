@@ -88,5 +88,28 @@ fonti/upstream_85a310d/vectors/85-receipt-key-outside-bmp.json              AGRE
 fonti/upstream_85a310d/vectors/86-envelope-key-id-differs-from-signed.json  DISAGREE 8/9
       problem_codes: expected ["SIGNATURE_INVALID"], ours ["CHECKER_NOT_SIGNER", "SIGNATURE_INVALID"]
 fonti/upstream_85a310d/vectors/87-same-key-under-two-ids.json               AGREE    9/9
+fonti/upstream_cb7e8f1/vectors/88-committed-at-malformed-with-token.json    AGREE    9/9
+fonti/upstream_cb7e8f1/vectors/89-criteria-file-base64-noncanonical.json    AGREE    9/9
+fonti/upstream_cb7e8f1/vectors/90-criteria-token-base64-noncanonical.json   AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/91-unlisted-key-noncanonical-ignored.json    AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/92-record-token-noncanonical-with-anchors.json AGREE    10/10
+fonti/upstream_6bb7d0b/vectors/93-record-token-noncanonical-no-anchors.json AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/94-criteria-sha256-wrong-length.json         AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/95-issued-utc-fraction-one-digit.json        AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/96-issued-utc-fraction-four-digits.json      AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/97-issued-utc-second-60.json                 AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/98-genTime-rounds-before-accuracy.json       AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/99-committed-at-compared-to-the-second.json  AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/100-checker-key-id-alias-of-signer.json      DISAGREE 8/9
+      problem_codes: expected ["CHECKER_NOT_SIGNER"], ours []
+fonti/upstream_6bb7d0b/vectors/101-envelope-digest-wrong-type.json          AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/102-payment-wrong-type.json                  AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/103-checker-key-id-empty.json                AGREE    9/9
+fonti/upstream_6bb7d0b/vectors/104-signed-key-id-empty.json                 DISAGREE 8/9
+      problem_codes: expected ["CHECKER_NOT_SIGNER", "SIGNATURE_INVALID"], ours ["SIGNATURE_INVALID"]
+fonti/upstream_6bb7d0b/vectors/105-gentime-fraction-not-digits.json         AGREE    10/10
+fonti/upstream_6bb7d0b/vectors/106-signed-and-checker-key-id-empty.json     DISAGREE 8/9
+      problem_codes: expected ["INDEPENDENCE_INCONSISTENT", "SIGNATURE_INVALID"], ours ["CHECKER_NOT_SIGNER", "INDEPENDENCE_INCONSISTENT", "SIGNATURE_INVALID"]
+fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json                   AGREE    10/10
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 85a310d: documents 86/88 agree; fields 801/803; options {'key_id_source': 'envelope'}
+TOTAL set 6bb7d0b: documents 103/108 agree; fields 981/986; options {'key_id_source': 'envelope'}

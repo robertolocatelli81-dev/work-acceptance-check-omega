@@ -3,15 +3,18 @@
 set -e
 PY="${PY:-python3}"
 mkdir -p results
-# defaults = profile 1.4.2 at 85a310d (87 vectors + live record); each switch's other value; this verifier's 1.2.1 readings
+# defaults = profile 1.4.3 at 6bb7d0b (107 vectors + live record); each switch's other value; this verifier's 1.2.1 readings
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_default.json > results/score_default.txt
 for o in key_id_source=envelope reference_time=covering-token accuracy=ignore accuracy=interval \
          key_id_agreement=require key_id_agreement=ignore key_rule=all-keys key_rule=refuse \
-         independence_rule=stated-independent time_agreement=exact name_compare=normalized correspondence=strict \
-         ed25519=rfc8032 unknown_fields=report; do
+         independence_rule=stated-independent time_agreement=exact time_agreement=truncate name_compare=normalized \
+         correspondence=strict ed25519=rfc8032 unknown_fields=report key_scope=all-entries empty_key_id=refuse \
+         digest_form=refuse stated_fraction=three; do
   env -u PYTHONPATH $PY -B tools/score.py --json "results/score_${o%%=*}_${o#*=}.json" "$o" > "results/score_${o%%=*}_${o#*=}.txt"
 done
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_2_1.json --profile 1.2.1 > results/score_profile_1_2_1.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_4_2.json --profile 1.4.2 > results/score_profile_1_4_2.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_85a310d.json --set 85a310d > results/score_set_85a310d.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_bc5a138.json --set bc5a138 > results/score_set_bc5a138.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_48ab8c9.json --set 48ab8c9 > results/score_set_48ab8c9.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_1_4_1_06d3b94.json --set 1.4.1 > results/score_set_1_4_1_06d3b94.txt

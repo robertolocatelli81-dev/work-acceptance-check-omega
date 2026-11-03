@@ -4,11 +4,16 @@
  "fields_agree": 225,
  "options": {
   "accuracy": "ignore",
+  "digest_form": "refuse",
+  "empty_key_id": "refuse",
   "independence_rule": "stated-independent",
   "key_id_agreement": "require",
   "key_id_source": "envelope",
   "key_rule": "refuse",
-  "reference_time": "covering-token"
+  "key_scope": "all-entries",
+  "reference_time": "covering-token",
+  "stated_fraction": "three",
+  "time_agreement": "truncate"
  },
  "rows": [
   {
