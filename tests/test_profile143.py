@@ -19,6 +19,7 @@ from test_profile142 import GEN_BAD, entry, trailing_bit_variants
 UNVERIFIED = "CRITERIA_COMMITMENT_UNVERIFIED"
 STEP1 = wv.STEP1_REASON
 P142 = wv.PROFILE_1_4_2
+P143 = wv.PROFILE_1_4_3
 
 
 def run(inp, opts=None):
@@ -45,16 +46,16 @@ def short(rows):
 
 class Vectors6bb7d0b(unittest.TestCase):
     def test_108_of_108(self):
-        rows = score.score()
+        rows = score.score(which="6bb7d0b")
         self.assertEqual(len(rows), 108)                    # 01-107 and the live record
         self.assertEqual(short(rows), [])
         self.assertEqual(sum(r["fields"] for r in rows), 986)
-        self.assertEqual([os.path.basename(f).split("-")[0] for f in score.vector_files()[:-1]],
+        self.assertEqual([os.path.basename(f).split("-")[0] for f in score.vector_files("6bb7d0b")[:-1]],
                          ["%02d" % n for n in range(1, 108)])
 
     def test_profile_1_4_2_differs_only_where_the_readings_differ(self):
         # S1 (91), S3 (94), S4 (95), S2 (104, 106): the 0.6.0 readings; 105 and 107 (S7) agree under both
-        self.assertEqual(short(score.score(dict(P142))), ["91", "94", "95", "104", "106"])
+        self.assertEqual(short(score.score(dict(P142), which="6bb7d0b")), ["91", "94", "95", "104", "106"])
 
     def test_positive_control_corrupted_expectation_is_caught(self):
         def corrupt(doc):
@@ -166,7 +167,7 @@ class S2EmptyKeyId(unittest.TestCase):
             ((K, K, "", "self-checked"), ["CHECKER_NOT_SIGNER"]),
         ]
         for (signed, envelope, checker, ind), want in table:
-            rep = self.case(signed, envelope, checker, independence=ind)
+            rep = self.case(signed, envelope, checker, independence=ind, opts={"key_claim": "always"})   # README T5
             self.assertFalse(rep.get("refused"), (signed, envelope, checker, rep))
             self.assertEqual(sorted(rep["problem_codes"]), want, (signed, envelope, checker, ind))
             self.assertIs(rep["signature_valid"], signed == K and envelope == K, (signed, envelope))
@@ -178,6 +179,8 @@ class S2EmptyKeyId(unittest.TestCase):
             for ind in ("independent", "self-checked"):
                 rep = self.case(signed, signed, checker, producer="", independence=ind)
                 self.assertNotIn("KEY_COLLISION", rep["problem_codes"], (signed, checker))
+                self.assertIn("INDEPENDENCE_INCONSISTENT", rep["problem_codes"])          # README T5, both claims
+                rep = self.case(signed, signed, checker, producer="", independence=ind, opts={"key_claim": "always"})
                 self.assertEqual("INDEPENDENCE_INCONSISTENT" in rep["problem_codes"], ind == "independent")
         # control: the same non-empty identifier for producer and checker is still a collision
         rep = self.case("omega-test-1", "omega-test-1", "omega-test-1", producer="omega-test-1")
@@ -401,15 +404,15 @@ class CLI143(unittest.TestCase):
             self.assertEqual(self.run_cli(*(switch + switch + (self.vec(n),))), 64, n)
             self.assertEqual(self.run_cli(switch[0], "bogus", self.vec(n)), 64, n)
         self.assertEqual(self.run_cli("--vector", "--profile", "1.2.1", self.vec("95")), 3)
-        self.assertEqual(self.run_cli("--profile", "1.4.3", self.vec("95")), 64)
+        self.assertEqual(self.run_cli("--profile", "1.4.4", self.vec("95")), 64)
         self.assertEqual(self.run_cli("--profile", "1.4.2", "--profile", "1.2.1", self.vec("95")), 64)
         self.assertEqual(self.run_cli("--vector", "--time-agreement", "second", self.vec("99")), 0)
 
     def test_profile_1_2_1_carries_the_1_4_2_readings(self):
         for k, v in wv.PROFILE_1_4_2.items():
             self.assertEqual(wv.PROFILE_1_2_1[k], v, k)
-        self.assertEqual(set(wv.PROFILE_1_4_2), {"key_scope", "empty_key_id", "digest_form", "stated_fraction",
-                                                  "time_agreement"})
+        self.assertEqual(set(wv.PROFILE_1_4_2) - set(P143), {"key_scope", "empty_key_id", "digest_form",
+                                                             "stated_fraction", "time_agreement"})
         for k, v in wv.PROFILE_1_4_2.items():
             self.assertNotEqual(wv.DEFAULT_OPTIONS[k], v, k)
             self.assertIn(v, wv.OPTION_VALUES[k], k)

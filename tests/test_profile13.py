@@ -208,8 +208,8 @@ class Independence(unittest.TestCase):
                 ("independent", "Example Checker", None, "self-checked", True),
                 ("independent", None, None, "undeclared", True),
                 ("independent", "  ", None, "undeclared", True),
-                ("independent", None, "omega-test-1", "self-checked", True),
-                ("independent", None, "omega-test-2", "independent", False),
+                ("independent", None, "omega-test-1", "undeclared", True),     # 1.4.4 step 8: the name alone (README T2)
+                ("independent", None, "omega-test-2", "undeclared", True),
                 ("self-checked", "Example Checker", None, "self-checked", False),
                 ("self-checked", "Example Vendor", None, "independent", True),
                 ("self-checked", None, None, "undeclared", True)):

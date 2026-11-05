@@ -111,5 +111,7 @@ fonti/upstream_6bb7d0b/vectors/105-gentime-fraction-not-digits.json         AGRE
 fonti/upstream_6bb7d0b/vectors/106-signed-and-checker-key-id-empty.json     DISAGREE 8/9
       problem_codes: expected ["INDEPENDENCE_INCONSISTENT", "SIGNATURE_INVALID"], ours ["CHECKER_NOT_SIGNER", "INDEPENDENCE_INCONSISTENT", "SIGNATURE_INVALID"]
 fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json                   AGREE    10/10
+fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json AGREE    9/9
+fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 6bb7d0b: documents 103/108 agree; fields 981/986; options {'key_id_source': 'envelope'}
+TOTAL set 1b81ec9: documents 105/110 agree; fields 999/1004; options {'key_id_source': 'envelope'}

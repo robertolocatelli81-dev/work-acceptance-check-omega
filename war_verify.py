@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.3 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.4 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@6bb7d0b (profile 1.4.3, step 11 and its
-changelog entry; for 0.7.0 the reference verifier/ and interop/ of 6bb7d0b were not opened, of composition/ only the
+Written from the profile README at maximusrufus/work-acceptance-record@1b81ec9 (profile 1.4.4, step 8, property 3,
+the two new rows of the vector table and the changelog entry; for 0.8.0 the reference verifier/ and interop/ of
+1b81ec9 were not opened), at 6bb7d0b (profile 1.4.3, step 11 and its changelog entry; for 0.7.0 the reference verifier/ and interop/ of 6bb7d0b were not opened, of composition/ only the
 cb7e8f1..6bb7d0b diff of COMPOSITION.md was seen), at
 85a310d (profile 1.4.2, step 10 and its changelog entry; 1.4.1 at bc5a138, 06d3b94 and d79a737 before it; 1.4 at eb0f30b, 1.3 at 42b4ed0 and 1.2.1 at
 f7d8984), the test vectors listed in README.md ("What was read"), and the RFCs it names. For 0.6.0 the reference
@@ -10,7 +11,8 @@ verifier/, interop/ and composition/ of 85a310d were not opened. An issue commen
 probe description before 0.4.1. For 0.5.0 the payment form was taken from the function _in_form of the reference
 verifier/check_payment.py (opened), and the reference verifier/war_verify.py was searched once with grep and run as a
 black box (README.md, "What was read"); no other implementation of this profile was opened. The 1.2.1 readings of version 0.1.0 are selectable with
---profile 1.2.1, the 1.4.2 readings of version 0.6.0 with --profile 1.4.2.
+--profile 1.2.1, the 1.4.2 readings of version 0.6.0 with --profile 1.4.2, the 1.4.3 readings of version 0.7.0 with
+--profile 1.4.3.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason, except where profile 1.4.1 (bc5a138) or 1.4.2 (85a310d) fixes the outcome; each such case is listed in "notes" (README.md,
@@ -44,7 +46,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.7.0"
+VERSION = "war_verify 0.8.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -100,8 +102,10 @@ DEFAULT_OPTIONS = {
     # structural = imprint and genTime only (profile text); pkix = full RFC 3161/5652/5280 TSA validation.
     "tokens": "structural",
     "tsa_roots": None,
-    # INDEPENDENCE_INCONSISTENT name comparison: exact bytes, or NFKC+casefold+whitespace-collapsed.
-    "name_compare": "exact",
+    # Profile 1.4.4 step 8 "names are compared after removing leading and trailing white space and Unicode
+    # lower-casing" = trim-lower (README T1, reading Q22); exact = 0.7.0, bytes; normalized = NFKC+casefold+collapsed
+    # whitespace.
+    "name_compare": "trim-lower",
     # members the profile does not define: refuse (closed) or report (listed in notes, otherwise ignored).
     "unknown_fields": "refuse",
     # strict = canonical A and R, A of prime order, R not of small order, S < L; rfc8032 = RFC 8032 5.1.7 only.
@@ -134,29 +138,47 @@ DEFAULT_OPTIONS = {
     # Profile 1.4.3 step 11 "Times" (vectors 95, 96): a stated-time fraction has one to three digits = 1-3;
     # three = 0.6.0 (exactly three, Q5).
     "stated_fraction": "1-3",
+    # Profile 1.4.4 step 8: "undeclared when there is no parties.producer or its name is absent, null, empty,
+    # unspecified or unknown" = step8 (README T2); no-key = 0.7.0, a null or blank name and no key_id.
+    "undeclared": "step8",
+    # Profile 1.4.4 step 8 (vector 109): parties.producer and its name may be absent = optional (README T3);
+    # required = 0.7.0, refused.
+    "producer_presence": "optional",
+    # Profile 1.4.4 step 8: "any other value that is not a string counts as declared" = step8; refuse = the Types rule
+    # of step 10 (vector 77), as in 0.7.0. README T4, reading Q19: the two sentences give two outcomes.
+    "name_type": "step8",
+    # Profile 1.4.4 step 8: "only when the record claims independent, a stated key_id that is empty or not listed once"
+    # = claim (README T5, reading Q23); always = 0.7.0, whatever the record claims.
+    "key_claim": "claim",
 }
 OPTION_VALUES = {
     "key_id_source": ("envelope", "receipt"), "reference_time": ("covering-token", "earlier"),
     "time_agreement": ("second", "truncate", "exact"), "accuracy": ("widen", "ignore", "interval"),
     "tokens": ("structural", "pkix"),
-    "name_compare": ("exact", "normalized"), "unknown_fields": ("refuse", "report"), "ed25519": ("strict", "rfc8032"),
+    "name_compare": ("trim-lower", "exact", "normalized"), "unknown_fields": ("refuse", "report"), "ed25519": ("strict", "rfc8032"),
     "correspondence": ("ids-required", "strict"),
     "key_id_agreement": ("signature-invalid", "require", "ignore"), "key_rule": ("signer", "all-keys", "refuse"),
     "independence_rule": ("derived", "stated-independent"),
     "tsa_precedence": ("failed-first", "evaluability-first"),
     "key_scope": ("used", "all-entries"), "empty_key_id": ("signature-invalid", "refuse"),
     "digest_form": ("mismatch", "refuse"), "stated_fraction": ("1-3", "three"),
+    "undeclared": ("step8", "no-key"), "producer_presence": ("optional", "required"),
+    "name_type": ("step8", "refuse"), "key_claim": ("claim", "always"),
 }
+# The readings version 0.7.0 gave to profile 1.4.3 where 1.4.4 (1b81ec9) fixes them otherwise (README, T1-T5),
+# selectable together with --profile 1.4.3.
+PROFILE_1_4_3 = {"name_compare": "exact", "undeclared": "no-key", "producer_presence": "required",
+                 "name_type": "refuse", "key_claim": "always"}
 # The readings version 0.6.0 gave to profile 1.4.2 where 1.4.3 (6bb7d0b) fixes them otherwise (README, S1-S5),
-# selectable together with --profile 1.4.2.
-PROFILE_1_4_2 = {"key_scope": "all-entries", "empty_key_id": "refuse", "digest_form": "refuse",
-                 "stated_fraction": "three", "time_agreement": "truncate"}
+# selectable together with --profile 1.4.2; the 0.7.0 readings come with them, so it gives what it gave in 0.7.0.
+PROFILE_1_4_2 = dict(PROFILE_1_4_3, **{"key_scope": "all-entries", "empty_key_id": "refuse", "digest_form": "refuse",
+                                       "stated_fraction": "three", "time_agreement": "truncate"})
 # The profile 1.2.1 readings of this verifier (version 0.1.0), selectable together with --profile 1.2.1; the 1.4.2
 # readings of 0.6.0 come with them, so --profile 1.2.1 gives what it gave in 0.6.0.
 PROFILE_1_2_1 = dict(PROFILE_1_4_2, **{"key_id_source": "envelope", "reference_time": "covering-token",
                                        "accuracy": "ignore", "key_id_agreement": "require", "key_rule": "refuse",
                                        "independence_rule": "stated-independent"})
-PROFILES = {"1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
+PROFILES = {"1.4.3": PROFILE_1_4_3, "1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
 
 
 class Refusal(Exception):
@@ -1620,12 +1642,25 @@ def check_receipt_grammar(ctx, r):
         raise Refusal("receipt.independence %r is neither independent nor self-checked" % (r["independence"],))
     _str(r["issued_utc"], "receipt.issued_utc")               # form: profile 1.4.2 R5, read in step 5
     p = r["parties"]
-    ctx.members(p, "receipt.parties", {"checker", "producer"})
+    # Profile 1.4.4 step 8 (vector 109, README T3): no parties.producer, or no name in it, is a producer not named.
+    bare_producer = ctx.opts["producer_presence"] == "optional"
+    ctx.members(p, "receipt.parties", {"checker"} if bare_producer else {"checker", "producer"},
+                {"producer"} if bare_producer else ())
     for role in ("checker", "producer"):
+        if role not in p:
+            continue
         # Profile 1.4.2 R6 (vector 82): a party's key_id may be absent ("states no key_id"); absent reads as null.
-        ctx.members(p[role], "receipt.parties." + role, {"name"}, {"key_id"})
+        if role == "producer" and bare_producer:
+            ctx.members(p[role], "receipt.parties.producer", (), {"key_id", "name"})
+        else:
+            ctx.members(p[role], "receipt.parties." + role, {"name"}, {"key_id"})
         _str(p[role].get("key_id"), "receipt.parties.%s.key_id" % role, nullable=True)
-        _str(p[role]["name"], "receipt.parties.%s.name" % role, nullable=True)
+        name = p[role].get("name")
+        if ctx.opts["name_type"] == "refuse":
+            _str(name, "receipt.parties.%s.name" % role, nullable=True)
+        elif name is not None and not isinstance(name, str):      # README T4, reading Q19
+            ctx.notes.append("X_NAME_NOT_STRING: receipt.parties.%s.name is not a string: read by step 8 (profile 1.4.4)"
+                             % role)
     if not isinstance(r["results"], list):
         raise TypeRefusal("receipt.results is not a list")
     for i, res in enumerate(r["results"]):
@@ -1735,12 +1770,33 @@ def check_step1(r):
         raise Refusal(STEP1_REASON, "suite %r" % (suite,))
 
 
+# The Unicode White_Space property (PropList.txt); str.strip() with no argument also removes U+001C-U+001F (README Q22).
+_WHITE_SPACE = ("\t\n\x0b\x0c\r \x85\xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a"
+                "\u2028\u2029\u202f\u205f\u3000")
+
+
 def _norm_name(s, mode):
     if s is None:
         return None
     if mode == "exact":
         return s
+    if mode == "trim-lower":                     # profile 1.4.4 step 8, README T1
+        return s.strip(_WHITE_SPACE).lower()
     return " ".join(unicodedata.normalize("NFKC", s).casefold().split())
+
+
+def _name_key(v, mode):
+    """What step 8 compares for a party name: the name as _norm_name gives it; a value that is not a string (README
+    T4) by its RFC 8785 form, bytes, so it never equals a string (README T7, reading Q21)."""
+    return _norm_name(v, mode) if v is None or isinstance(v, str) else jcs(v)
+
+
+def _producer_undeclared(name):
+    """Profile 1.4.4 step 8 (README T2): null, false, a number equal to zero, an empty string, array or object count as
+    absent, and "unspecified" and "unknown" name no one. Any other value is declared, a non-string one included."""
+    if isinstance(name, str):
+        return _norm_name(name, "trim-lower") in ("", "unspecified", "unknown")
+    return not name             # JSON values that are false in Python: null, false, 0, 0.0, -0.0, [] and {}, no other
 
 
 def recompute_verdict(results):
@@ -1884,7 +1940,7 @@ def verify(inputs, options=None, keys_override=None):
     # Profile 1.4.2 R1/R3 (vectors 69, 75, 79): a repeated identifier anywhere in the key list is KEY_REJECTED.
     # A non-canonical entry is KEY_REJECTED when a verification uses it: the signer's, or one a stated party names
     # (profile 1.4.3 step 11, vector 91, README S1); key_scope all-entries = 0.6.0, any entry (Q1).
-    ck0, pk0 = r["parties"]["checker"].get("key_id"), r["parties"]["producer"].get("key_id")
+    ck0, pk0 = r["parties"]["checker"].get("key_id"), r["parties"].get("producer", {}).get("key_id")
     used_ids = {k for k in (used_kid, ck0, pk0) if k is not None}
     # A repeated identifier is KEY_REJECTED whether read or not (79): never listed as "not read: no KEY_REJECTED".
     unread_noncanon = sorted(k for k, v in keytable.items()
@@ -2153,7 +2209,8 @@ def verify(inputs, options=None, keys_override=None):
 
     # ---- independence (property 3, step 8)
     parties = r["parties"]
-    ck, pk = parties["checker"].get("key_id"), parties["producer"].get("key_id")   # absent = null (1.4.2, 82)
+    producer = parties.get("producer", {})                  # README T3: absent, its members read as null
+    ck, pk = parties["checker"].get("key_id"), producer.get("key_id")   # absent = null (1.4.2, 82)
     signer_pub = entry["pub"] if entry else None
     # a repeated or non-canonical entry has pub None: it is compared with no key (1.4.2 R1, R3; vector 69)
     ck_pub = keytable.get(ck, {}).get("pub") if ck else None
@@ -2176,11 +2233,14 @@ def verify(inputs, options=None, keys_override=None):
         problems.add("KEY_COLLISION")
     if r["independence"] == "self-checked":
         warnings.add("SELF_CHECKED")
-    cn = _norm_name(parties["checker"]["name"], opts["name_compare"])
-    pn = _norm_name(parties["producer"]["name"], opts["name_compare"])
+    pname = producer.get("name")
+    cn = _name_key(parties["checker"]["name"], opts["name_compare"])
+    pn = _name_key(pname, opts["name_compare"])
     same_name = cn is not None and pn is not None and cn == pn
-    pname = parties["producer"]["name"]
-    undeclared = (pname is None or pname.strip() == "") and pk is None
+    if opts["undeclared"] == "step8":
+        undeclared = _producer_undeclared(pname)
+    else:                                   # 0.7.0 (--undeclared no-key)
+        undeclared = (pname is None or (isinstance(pname, str) and pname.strip() == "")) and pk is None
     # Profile 1.4.2 R6 (80, 81; R1/R3 for 69, 75): a stated party key_id that is empty, not listed, listed more than
     # once or not canonical base64 cannot carry independence: derived self-checked.
     unresolved = [role for role, kid in (("checker", ck), ("producer", pk))
@@ -2188,7 +2248,11 @@ def verify(inputs, options=None, keys_override=None):
                                           keytable[kid].get("noncanonical"))]
     if unresolved:
         details["party_key_unresolved"] = unresolved
-    by_key = unresolved if opts["independence_rule"] == "derived" else []
+    # Profile 1.4.4 step 8 (README T5, reading Q23): an identifier that is empty or listed by no entry counts only when
+    # the record claims independent; an entry that cannot be read, a repeated one included (75), under either claim.
+    unreadable = [role for role, kid in (("checker", ck), ("producer", pk)) if role in unresolved and kid in keytable]
+    by_claim = opts["key_claim"] == "always" or r["independence"] == "independent"
+    by_key = (unresolved if by_claim else unreadable) if opts["independence_rule"] == "derived" else []
     derived = "undeclared" if undeclared else ("self-checked" if (same_name or collision or by_key)
                                                else "independent")
     details["independence_derived"] = derived
@@ -2198,7 +2262,7 @@ def verify(inputs, options=None, keys_override=None):
             problems.add("INDEPENDENCE_INCONSISTENT")
     elif r["independence"] == "independent" and (same_name or collision):
         problems.add("INDEPENDENCE_INCONSISTENT")
-    if opts["name_compare"] == "exact" and not same_name and cn is not None and pn is not None and \
+    if opts["name_compare"] != "normalized" and not same_name and isinstance(cn, str) and isinstance(pn, str) and \
             _norm_name(cn, "normalized") == _norm_name(pn, "normalized"):
         ext.add("X_NAMES_EQUAL_AFTER_NORMALIZATION")
     if undeclared:                     # 1.3: "follows the parties block (no producer named), whatever the record states"
@@ -2408,11 +2472,15 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  defaults follow profile 1.4.3 (maximusrufus/work-acceptance-record@6bb7d0b; steps 1-8 as in 1.3, step 10 rules
-                               of 1.4.2, step 11 clarifications of 1.4.3)
+  defaults follow profile 1.4.4 (maximusrufus/work-acceptance-record@1b81ec9; step 8 of 1.4.4, the other steps as in
+                               1.3, step 10 rules of 1.4.2, step 11 clarifications of 1.4.3)
+  --profile 1.4.3              the readings 0.7.0 gave to 1.4.3 where 1.4.4 fixes them otherwise (name-compare exact,
+                               undeclared no-key, producer-presence required, name-type refuse, key-claim always);
+                               a switch given explicitly overrides it
   --profile 1.4.2              the readings 0.6.0 gave to 1.4.2 where 1.4.3 fixes them otherwise (key-scope
                                all-entries, empty-key-id refuse, digest-form refuse, stated-fraction three,
-                               time-agreement truncate); a switch given explicitly overrides it
+                               time-agreement truncate) with those of --profile 1.4.3; a switch given explicitly
+                               overrides it
   --profile 1.2.1              this verifier's profile 1.2.1 readings (key-id-source envelope, reference-time
                                covering-token, accuracy ignore, key-id-agreement require, key-rule refuse,
                                independence-rule stated-independent) with those of --profile 1.4.2
@@ -2424,7 +2492,7 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --tsa-roots DIR_OR_FILE             relying-party anchors for `tsa_signature` (1.4 step 9), replacing a vector's
                                       inputs.tsa_roots_base64; required with --tokens pkix
   --tsa-precedence failed-first|evaluability-first   (default failed-first)
-  --name-compare exact|normalized     (default exact)
+  --name-compare trim-lower|exact|normalized   (default trim-lower)
   --unknown-fields refuse|report      (default refuse)
   --ed25519 strict|rfc8032            (default strict)
   --correspondence ids-required|strict  (default ids-required)
@@ -2435,6 +2503,10 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --empty-key-id signature-invalid|refuse   (default signature-invalid)
   --digest-form mismatch|refuse       (default mismatch)
   --stated-fraction 1-3|three         (default 1-3)
+  --undeclared step8|no-key           (default step8)
+  --producer-presence optional|required   (default optional)
+  --name-type step8|refuse            (default step8)
+  --key-claim claim|always            (default claim)
   exit 0 needs: accepted as stated, --keys, no test key, no rejected key in the key file, tokens authenticated
   (--tokens pkix) when their time is used, supplied files matching, receipt.key_id == signature.key_id (unless
   --key-id-agreement ignore); otherwise 1 with "local_blocks" listed
@@ -2454,7 +2526,8 @@ def main(argv):
                "--key-id-agreement": "key_id_agreement", "--key-rule": "key_rule",
                "--independence-rule": "independence_rule", "--tsa-precedence": "tsa_precedence",
                "--key-scope": "key_scope", "--empty-key-id": "empty_key_id", "--digest-form": "digest_form",
-               "--stated-fraction": "stated_fraction"}
+               "--stated-fraction": "stated_fraction", "--undeclared": "undeclared",
+               "--producer-presence": "producer_presence", "--name-type": "name_type", "--key-claim": "key_claim"}
     profile = None
     while args:
         a = args.pop(0)
@@ -2462,7 +2535,7 @@ def main(argv):
             vector_mode = True
         elif a == "--profile" and args:
             if profile is not None or args[0] not in PROFILES:
-                sys.stderr.write("--profile takes 1.4.2 or 1.2.1, once\n")
+                sys.stderr.write("--profile takes 1.4.3, 1.4.2 or 1.2.1, once\n")
                 return 64
             profile = args.pop(0)
         elif a == "--keys" and args:

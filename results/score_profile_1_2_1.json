@@ -1,19 +1,24 @@
 {
  "agree": 88,
- "fields": 986,
- "fields_agree": 882,
+ "fields": 1004,
+ "fields_agree": 890,
  "options": {
   "accuracy": "ignore",
   "digest_form": "refuse",
   "empty_key_id": "refuse",
   "independence_rule": "stated-independent",
+  "key_claim": "always",
   "key_id_agreement": "require",
   "key_id_source": "envelope",
   "key_rule": "refuse",
   "key_scope": "all-entries",
+  "name_compare": "exact",
+  "name_type": "refuse",
+  "producer_presence": "required",
   "reference_time": "covering-token",
   "stated_fraction": "three",
-  "time_agreement": "truncate"
+  "time_agreement": "truncate",
+  "undeclared": "no-key"
  },
  "rows": [
   {
@@ -1465,6 +1470,88 @@
    "file": "fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json"
   },
   {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": [
+      "INDEPENDENCE_INCONSISTENT"
+     ],
+     "field": "problem_codes",
+     "ours": []
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "match",
+     "field": "criteria_hash",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "independent",
+     "field": "independence",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [
+      "INDEPENDENCE_INCONSISTENT"
+     ],
+     "field": "problem_codes",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "none",
+     "field": "receipt_timestamp",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": true,
+     "field": "signature_valid",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_recomputed",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_stated",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [
+      "PRODUCER_UNDECLARED"
+     ],
+     "field": "warning_codes",
+     "ours": "<absent>"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 0,
+   "file": "fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json"
+  },
+  {
    "agree": true,
    "disagreements": [],
    "fields": 9,
@@ -1472,6 +1559,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "6bb7d0b",
- "total": 108
+ "set": "1b81ec9",
+ "total": 110
 }

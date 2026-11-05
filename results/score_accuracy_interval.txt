@@ -169,5 +169,9 @@ fonti/upstream_6bb7d0b/vectors/106-signed-and-checker-key-id-empty.json     DISA
       criteria_committed_before_check: expected "yes", ours "undetermined"
 fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json                   DISAGREE 9/10
       criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 6bb7d0b: documents 46/108 agree; fields 923/986; options {'accuracy': 'interval'}
+TOTAL set 1b81ec9: documents 46/110 agree; fields 939/1004; options {'accuracy': 'interval'}

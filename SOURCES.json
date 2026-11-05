@@ -2113,5 +2113,20 @@
   "path": "fonti/upstream_6bb7d0b/vectors/99-committed-at-compared-to-the-second.json",
   "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/6bb7d0b9246c3c535aba9c294d26181496d00614/vectors/99-committed-at-compared-to-the-second.json",
   "sha256": "e51fb4c57422bb76ce987365c2802e86fdbf9533b5d837f0e103a0b500419cb4"
+ },
+ {
+  "path": "fonti/upstream_1b81ec9/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/1b81ec98b5997ab27180cb03cf84f878f3abe337/README.md",
+  "sha256": "34269ba9be993a3810dbb2c9e77117288f77bf146cfe7157ae560708bcd65dc9"
+ },
+ {
+  "path": "fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/1b81ec98b5997ab27180cb03cf84f878f3abe337/vectors/108-stated-self-checked-derived-independent.json",
+  "sha256": "8a62f893c0c4048313a613cd5715a2aa8eb2484c0827db6eb367efb47a9f8ba2"
+ },
+ {
+  "path": "fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/1b81ec98b5997ab27180cb03cf84f878f3abe337/vectors/109-independent-claim-no-producer-object.json",
+  "sha256": "c68e315b12221c35638639330cbf9d836f14a87dd8d13a2f4579e180c85e5e69"
  }
 ]

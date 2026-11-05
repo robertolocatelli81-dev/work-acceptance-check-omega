@@ -1,5 +1,457 @@
 [
  {
+  "case": "no producer",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer without members",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer with a key_id only",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer named unknown",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer named unspecified",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer named by case and spaces",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is None",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is 0",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is 1",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is True",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is False",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is 'x'",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is []",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "producer is [{}]",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "checker is None",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "checker is 0",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "checker is True",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "checker is 'x'",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "checker is []",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "checker is {}",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "receipt.parties.checker lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "no checker",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": false,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "receipt.parties lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "checker without a name member",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "receipt.parties.checker lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "unknown member beside no producer",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown member(s) in receipt.parties",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "unknown member in a bare producer",
+  "expected": "refused",
+  "family": "parties",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown member(s) in receipt.parties.producer",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
   "case": "unknown member at /",
   "expected": "refused",
   "family": "unknown member",
@@ -3889,81 +4341,101 @@
  },
  {
   "case": "type str -> int at /receipt/receipt/parties/checker/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> bool at /receipt/receipt/parties/checker/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> list at /receipt/receipt/parties/checker/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> dict at /receipt/receipt/parties/checker/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> float at /receipt/receipt/parties/checker/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
@@ -4049,81 +4521,125 @@
  },
  {
   "case": "type str -> int at /receipt/receipt/parties/producer/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
   "lax_ok": false,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
   },
   "ours_ok": true
  },
  {
   "case": "type str -> bool at /receipt/receipt/parties/producer/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },
  {
   "case": "type str -> list at /receipt/receipt/parties/producer/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
   "lax_ok": false,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
   },
   "ours_ok": true
  },
  {
   "case": "type str -> dict at /receipt/receipt/parties/producer/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
   "lax_ok": false,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": [
+    "PRODUCER_UNDECLARED"
+   ]
   },
   "ours_ok": true
  },
  {
   "case": "type str -> float at /receipt/receipt/parties/producer/name",
-  "expected": "refused",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
   "family": "wrong type",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
-   "criteria_committed_before_check": null,
-   "problem_codes": null,
-   "reason": "unknown schema, canonicalization or suite",
-   "refused": true,
-   "signature_valid": null,
-   "warning_codes": null
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  },

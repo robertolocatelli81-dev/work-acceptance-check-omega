@@ -46,7 +46,7 @@ M = [
  ("R5/88 unreadable committed_at not CRITERIA_TIME_MISMATCH with a usable token", '        if committed_at is None or not _times_agree(committed_at, commit_tst["gen"], opts["time_agreement"]):', '        if committed_at is not None and not _times_agree(committed_at, commit_tst["gen"], opts["time_agreement"]):'),
  # R6 independence by key
  ("R6 unlisted key_id not unresolved", '                  if kid is not None and (kid not in keytable or keytable[kid].get("dup") or', '                  if kid is not None and (keytable.get(kid, {}).get("dup") or'),
- ("R6 unresolved ignored", '    by_key = unresolved if opts["independence_rule"] == "derived" else []', '    by_key = []'),
+ ("R6 unresolved ignored", '    by_key = (unresolved if by_claim else unreadable) if opts["independence_rule"] == "derived" else []', '    by_key = []'),
  ("R6 key_id required again", '        ctx.members(p[role], "receipt.parties." + role, {"name"}, {"key_id"})', '        ctx.members(p[role], "receipt.parties." + role, {"name", "key_id"})'),
  # R7 checker is the signer
  ("R7 envelope key_id", '        if ck != r["key_id"]:', '        if ck != sig["key_id"]:'),

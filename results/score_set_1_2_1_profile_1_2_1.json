@@ -7,13 +7,18 @@
   "digest_form": "refuse",
   "empty_key_id": "refuse",
   "independence_rule": "stated-independent",
+  "key_claim": "always",
   "key_id_agreement": "require",
   "key_id_source": "envelope",
   "key_rule": "refuse",
   "key_scope": "all-entries",
+  "name_compare": "exact",
+  "name_type": "refuse",
+  "producer_presence": "required",
   "reference_time": "covering-token",
   "stated_fraction": "three",
-  "time_agreement": "truncate"
+  "time_agreement": "truncate",
+  "undeclared": "no-key"
  },
  "rows": [
   {

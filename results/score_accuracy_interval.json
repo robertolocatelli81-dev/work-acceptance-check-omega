@@ -1,7 +1,7 @@
 {
  "agree": 46,
- "fields": 986,
- "fields_agree": 923,
+ "fields": 1004,
+ "fields_agree": 939,
  "options": {
   "accuracy": "interval"
  },
@@ -1217,6 +1217,34 @@
    "file": "fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json"
   },
   {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "undetermined"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "undetermined"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json"
+  },
+  {
    "agree": true,
    "disagreements": [],
    "fields": 9,
@@ -1224,6 +1252,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "6bb7d0b",
- "total": 108
+ "set": "1b81ec9",
+ "total": 110
 }

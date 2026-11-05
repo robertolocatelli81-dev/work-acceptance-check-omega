@@ -27,9 +27,19 @@ OK_EXPECT = {"problem_codes": [], "warning_codes": [], "signature_valid": True}
 ENVELOPE_TS_EXPECT = dict(OK_EXPECT, receipt_timestamp="imprint_match")
 
 
-def _exp_for(path):
+# Profile 1.4.4 step 8: "a name that is null, `false`, a number equal to zero, or an empty string, array or object
+# counts as absent, and any other value that is not a string counts as declared" (README T2, T4, reading Q19).
+UNDECLARED_EXPECT = {"problem_codes": ["INDEPENDENCE_INCONSISTENT"], "warning_codes": ["PRODUCER_UNDECLARED"],
+                     "signature_valid": True}
+
+
+def _exp_for(path, value=None):
     if tuple(path) == ("receipt", "timestamp", "digest_sha256"):
         return ENVELOPE_TS_EXPECT
+    if tuple(path) == ("receipt", "receipt", "parties", "checker", "name"):
+        return OK_EXPECT
+    if tuple(path) == ("receipt", "receipt", "parties", "producer", "name"):
+        return UNDECLARED_EXPECT if value in (0, [], {}) and value is not True else OK_EXPECT
     return REF
 
 
@@ -128,7 +138,7 @@ def fam_wrong_type(base):
             inp = copy.deepcopy(base)
             put(inp, path, a)
             yield "type %s -> %s at /%s" % (type(v).__name__, type(a).__name__, "/".join(map(str, path))), \
-                {"inputs": finish(inp, path)}, _exp_for(path)
+                {"inputs": finish(inp, path)}, _exp_for(path, a)
 
 
 def fam_surrogate(base):
@@ -153,6 +163,31 @@ def fam_numbers(base):
             put(inp, p, "__NUM__")
             text = enc({"inputs": inp}).replace('"__NUM__"', tok)
             yield "number %s at /%s" % (tok, "/".join(p)), text, exp
+
+
+def fam_parties(base):
+    """Profile 1.4.4 step 8 and vector 109: what may be absent from parties, and what stays refused (README T3, Q20)."""
+    def case(fn):
+        inp = copy.deepcopy(base)
+        fn(inp["receipt"]["receipt"]["parties"])
+        build.refresh(inp)
+        return {"inputs": inp}
+    for name, fn in (("no producer", lambda p: p.pop("producer")),
+                     ("producer without members", lambda p: p.__setitem__("producer", {})),
+                     ("producer with a key_id only", lambda p: p.__setitem__("producer", {"key_id": "omega-test-2"})),
+                     ("producer named unknown", lambda p: p["producer"].__setitem__("name", " UNKNOWN ")),
+                     ("producer named unspecified", lambda p: p["producer"].__setitem__("name", "Unspecified"))):
+        yield name, case(fn), UNDECLARED_EXPECT
+    yield "producer named by case and spaces", case(lambda p: p["producer"].__setitem__("name", " example CHECKER\n")), \
+        {"problem_codes": ["INDEPENDENCE_INCONSISTENT"], "warning_codes": [], "signature_valid": True}
+    for v in (None, 0, 1, True, False, "x", [], [{}]):
+        yield "producer is %r" % (v,), case(lambda p: p.__setitem__("producer", v)), REF
+    for v in (None, 0, True, "x", [], {}):
+        yield "checker is %r" % (v,), case(lambda p: p.__setitem__("checker", v)), REF
+    yield "no checker", case(lambda p: p.pop("checker")), REF
+    yield "checker without a name member", case(lambda p: p["checker"].pop("name")), REF
+    yield "unknown member beside no producer", case(lambda p: (p.pop("producer"), p.__setitem__("third", {}))), REF
+    yield "unknown member in a bare producer", case(lambda p: p.__setitem__("producer", {"role": "x"})), REF
 
 
 def _crit_tsr(inp, raw):
@@ -342,7 +377,7 @@ def fam_criteria_bytes(base):
         yield "criteria file %s, record re-hashed to it" % name, {"inputs": inp}, exp
 
 
-FAMILIES = [("unknown member", fam_unknown_member), ("duplicate member", fam_duplicate_member),
+FAMILIES = [("parties", fam_parties), ("unknown member", fam_unknown_member), ("duplicate member", fam_duplicate_member),
             ("wrong type", fam_wrong_type), ("lone surrogate", fam_surrogate), ("numbers", fam_numbers),
             ("DER / TSTInfo", fam_der), ("Ed25519", fam_ed25519), ("key_id confusion", fam_keyid),
             ("time ties and grammar", fam_time), ("criteria bytes", fam_criteria_bytes)]

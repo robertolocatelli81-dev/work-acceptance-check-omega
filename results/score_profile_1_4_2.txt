@@ -136,5 +136,16 @@ fonti/upstream_6bb7d0b/vectors/106-signed-and-checker-key-id-empty.json     DISA
       verdict_stated: expected "pass", ours "<absent>"
       warning_codes: expected [], ours "<absent>"
 fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json                   AGREE    10/10
+fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json AGREE    9/9
+fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json DISAGREE 0/9
+      criteria_committed_before_check: expected "yes", ours "<absent>"
+      criteria_hash: expected "match", ours "<absent>"
+      independence: expected "independent", ours "<absent>"
+      problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours "<absent>"
+      receipt_timestamp: expected "none", ours "<absent>"
+      signature_valid: expected true, ours "<absent>"
+      verdict_recomputed: expected "pass", ours "<absent>"
+      verdict_stated: expected "pass", ours "<absent>"
+      warning_codes: expected ["PRODUCER_UNDECLARED"], ours "<absent>"
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 6bb7d0b: documents 103/108 agree; fields 956/986; options {'key_scope': 'all-entries', 'empty_key_id': 'refuse', 'digest_form': 'refuse', 'stated_fraction': 'three', 'time_agreement': 'truncate'}
+TOTAL set 1b81ec9: documents 104/110 agree; fields 965/1004; options {'name_compare': 'exact', 'undeclared': 'no-key', 'producer_presence': 'required', 'name_type': 'refuse', 'key_claim': 'always', 'key_scope': 'all-entries', 'empty_key_id': 'refuse', 'digest_form': 'refuse', 'stated_fraction': 'three', 'time_agreement': 'truncate'}

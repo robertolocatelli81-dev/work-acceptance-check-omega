@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(repo, "tools")); sys.path.insert(0, repo)
 import war_verify as w7, fuzz, build
 spec = importlib.util.spec_from_file_location("w6", os.path.join(d060, "war_verify.py"))
 w6 = importlib.util.module_from_spec(spec); spec.loader.exec_module(w6)
-assert w6.VERSION.endswith("0.6.0") and w7.VERSION.endswith("0.7.0")
+assert w6.VERSION.endswith("0.6.0") and w7.VERSION.endswith(("0.7.0", "0.8.0"))
 KEYS = ("refused", "reason", "problem_codes", "warning_codes", "signature_valid", "criteria_committed_before_check",
         "criteria_hash", "independence", "receipt_timestamp", "verdict_recomputed", "tsa_signature", "files")
 def out(mod, doc, opts):

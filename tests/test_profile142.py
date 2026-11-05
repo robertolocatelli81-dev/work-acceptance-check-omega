@@ -514,8 +514,9 @@ class R6Independence(unittest.TestCase):
                                     ("OMEGA-TEST-2", "independent", ["INDEPENDENCE_INCONSISTENT"]),
                                     ("omega-test-2", "independent", []),
                                     (None, "independent", []),
-                                    ("", "self-checked", []),
-                                    ("unknown", "self-checked", []),
+                                    # 1.4.4 step 8: counted only under an independent claim (README T5)
+                                    ("", "self-checked", ["INDEPENDENCE_INCONSISTENT"]),
+                                    ("unknown", "self-checked", ["INDEPENDENCE_INCONSISTENT"]),
                                     ("omega-test-2", "self-checked", ["INDEPENDENCE_INCONSISTENT"])):
             rep = self.rep(producer, ind)
             self.assertEqual(rep["problem_codes"], want, (producer, ind))
@@ -531,11 +532,19 @@ class R6Independence(unittest.TestCase):
             self.assertEqual((rep["problem_codes"], rep["independence"], rep["details"]["independence_derived"]),
                              ([], "independent", "independent"), producer)
 
+    def test_key_id_member_may_be_absent_under_every_presence_rule(self):
+        """R6 (82): absent reads as null, for the producer under the 0.7.0 presence rule and for the checker always."""
+        for opts in (None, {"producer_presence": "required"}):
+            rep = run(edit(fixture(), lambda r: r["parties"]["producer"].pop("key_id")), opts)
+            self.assertEqual((rep.get("refused"), rep["problem_codes"]), (None, []), opts)
+            rep = run(edit(fixture(), lambda r: r["parties"]["checker"].pop("key_id")), opts)
+            self.assertEqual((rep.get("refused"), rep["problem_codes"]), (None, ["CHECKER_NOT_SIGNER"]), opts)
+
     def test_checker_key_id_unlisted(self):
         rep = self.rep("omega-test-2", checker="ghost")
         self.assertEqual(sorted(rep["problem_codes"]), ["CHECKER_NOT_SIGNER", "INDEPENDENCE_INCONSISTENT"])
-        rep = self.rep("omega-test-2", "self-checked", checker="ghost")
-        self.assertEqual(rep["problem_codes"], ["CHECKER_NOT_SIGNER"])
+        rep = self.rep("omega-test-2", "self-checked", checker="ghost")         # 1.4.4 step 8 (README T5)
+        self.assertEqual(sorted(rep["problem_codes"]), ["CHECKER_NOT_SIGNER", "INDEPENDENCE_INCONSISTENT"])
 
     def test_party_key_id_wrong_type_is_step1(self):
         for v in (1, True, [], {}, ["omega-test-2"]):
@@ -631,7 +640,8 @@ class R8Types(unittest.TestCase):
                     continue
                 j = copy.deepcopy(i)
                 _set(j, path, copy.deepcopy(s))
-                rep = run(j)
+                # a party's name: the Types rule holds under --name-type refuse; the default is step 8 (README T4, Q19)
+                rep = run(j, {"name_type": "refuse"} if path[-1] == "name" else None)
                 n += 1
                 self.assertTrue(rep.get("refused"), (path, t, rep))
                 self.assertEqual(rep["reason"], STEP1, (path, t, rep))

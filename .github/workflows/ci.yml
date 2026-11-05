@@ -24,12 +24,12 @@ jobs:
         run: |
           openssl version
           python -c "import shutil, sys; p = shutil.which('openssl'); print(p); sys.exit(0 if p else 1)"
-      - name: The whole suite (228 tests, as the README states, none skipped)
+      - name: The whole suite (265 tests, as the README states, none skipped)
         run: |
           set -e
           out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
           echo "$out" | tail -3
-          echo "$out" | grep -qx "Ran 228 tests in [0-9.]*s" || { echo "::error::discovery did not run 228 tests"; exit 1; }
+          echo "$out" | grep -qx "Ran 265 tests in [0-9.]*s" || { echo "::error::discovery did not run 265 tests"; exit 1; }
           [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
   cryptography-versions:
     runs-on: ubuntu-latest
@@ -40,15 +40,15 @@ jobs:
           python-version: "3.11"
       - name: Third-party inputs
         run: python tools/fetch_sources.py
-      # 0.7.0, measured locally on 2026-11-03 (Python 3.11.2): 40.0.0 228/228; 39.0.2 39 failures + 8 errors = 47 of 228.
-      - name: "cryptography 40.0.0: 228/228 pass (README)"
+      # 0.8.0, measured locally on 2026-11-05 (Python 3.11.2): 40.0.0 265/265; 39.0.2 44 failures + 8 errors = 52 of 265.
+      - name: "cryptography 40.0.0: 265/265 pass (README)"
         run: |
           set -e
           python -m pip install "cryptography==40.0.0"
           out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
-          echo "$out" | grep -qx "Ran 228 tests in [0-9.]*s" || { echo "::error::did not run 228 tests"; exit 1; }
+          echo "$out" | grep -qx "Ran 265 tests in [0-9.]*s" || { echo "::error::did not run 265 tests"; exit 1; }
           [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
-      - name: "cryptography 39.0.2: 47 of 228 fail by design, 181 pass (README); any other count, or a skip, is red"
+      - name: "cryptography 39.0.2: 52 of 265 fail by design, 213 pass (README); any other count, or a skip, is red"
         run: |
           set -e
           python -m pip install "cryptography==39.0.2"
@@ -56,10 +56,10 @@ jobs:
           echo "$out" | tail -3
           n=$(echo "$out" | sed -n 's/^Ran \([0-9]*\) test.*/\1/p')
           fl=$(echo "$out" | sed -n 's/^FAILED (.*failures=\([0-9]*\).*/\1/p'); er=$(echo "$out" | sed -n 's/^FAILED (.*errors=\([0-9]*\).*/\1/p')
-          bad=$(( ${fl:-0} + ${er:-0} ))   # unittest splits the 47 into failures and errors
+          bad=$(( ${fl:-0} + ${er:-0} ))   # unittest splits the 52 into failures and errors
           echo "ran $n, exit $rc, failures ${fl:-0} + errors ${er:-0} = $bad"
           case "$(echo "$out" | tail -1)" in *skipped=*) echo "::error::a test was skipped"; exit 1;; esac
-          [ "$n" = 228 ] && [ "$rc" = 1 ] && [ "$bad" = 47 ] || { echo "::error::expected 228 run and 47 not passing"; exit 1; }
+          [ "$n" = 265 ] && [ "$rc" = 1 ] && [ "$bad" = 52 ] || { echo "::error::expected 265 run and 52 not passing"; exit 1; }
   mutants:
     # the 68 targeted mutants of the README (tools/mutate14.py): about 14 minutes, so a job of its own
     runs-on: ubuntu-latest
@@ -90,3 +90,9 @@ jobs:
           out=$(python -B tools/mutate143.py "$(python -c 'import sys; print(sys.executable)')" 2>&1) || { echo "$out" | tail -40; exit 1; }
           echo "$out" | tail -5
           echo "$out" | grep -qx "killed 32/32" || { echo "::error::expected the line 'killed 32/32'"; exit 1; }
+      - name: "54 targeted mutants of the 0.8.0 (profile 1.4.4) lines, after a control run of the unmutated copy (README)"
+        run: |
+          set -e
+          out=$(python -B tools/mutate144.py "$(python -c 'import sys; print(sys.executable)')" 2>&1) || { echo "$out" | tail -40; exit 1; }
+          echo "$out" | tail -5
+          echo "$out" | grep -qx "killed 54/54" || { echo "::error::expected the line 'killed 54/54'"; exit 1; }

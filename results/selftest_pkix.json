@@ -133,16 +133,20 @@
    "ed25519": "strict",
    "empty_key_id": "signature-invalid",
    "independence_rule": "derived",
+   "key_claim": "claim",
    "key_id_agreement": "signature-invalid",
    "key_id_source": "receipt",
    "key_rule": "signer",
    "key_scope": "used",
-   "name_compare": "exact",
+   "name_compare": "trim-lower",
+   "name_type": "step8",
+   "producer_presence": "optional",
    "reference_time": "earlier",
    "stated_fraction": "1-3",
    "time_agreement": "second",
    "tokens": "pkix",
    "tsa_precedence": "failed-first",
+   "undeclared": "step8",
    "unknown_fields": "refuse"
   },
   "problem_codes": [],
@@ -157,5 +161,5 @@
   "verdict_stated": "pass",
   "warning_codes": []
  },
- "verifier": "war_verify 0.7.0"
+ "verifier": "war_verify 0.8.0"
 }

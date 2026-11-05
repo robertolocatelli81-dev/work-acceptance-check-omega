@@ -1,7 +1,7 @@
 {
- "agree": 106,
- "fields": 986,
- "fields_agree": 982,
+ "agree": 108,
+ "fields": 1004,
+ "fields_agree": 1000,
  "options": {
   "key_id_agreement": "ignore"
  },
@@ -803,9 +803,23 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
+   "file": "fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "6bb7d0b",
- "total": 108
+ "set": "1b81ec9",
+ "total": 110
 }
