@@ -1,7 +1,7 @@
 {
  "agree": 46,
- "fields": 1004,
- "fields_agree": 939,
+ "fields": 1022,
+ "fields_agree": 955,
  "options": {
   "accuracy": "interval"
  },
@@ -1245,6 +1245,34 @@
    "file": "fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json"
   },
   {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "undetermined"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "undetermined"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json"
+  },
+  {
    "agree": true,
    "disagreements": [],
    "fields": 9,
@@ -1252,6 +1280,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "1b81ec9",
- "total": 110
+ "set": "c4b4bd4",
+ "total": 112
 }

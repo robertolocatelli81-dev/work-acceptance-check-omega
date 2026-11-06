@@ -1,0 +1,9 @@
+table: 2240 records as an object, 2240 as a bare list
+defaults: 0 of 2240 refused as an object, 2240 of 2240 as a bare list
+--rp-form bare-list: 2240 of 2240 records differ; c4b4bd4 set 112/112
+--rp-empty absent: 2 of 2240 records differ; c4b4bd4 set 112/112
+--rp-empty refuse: 140 of 2240 records differ; c4b4bd4 set 112/112
+--rp-repeated bytes: 6 of 2240 records differ; c4b4bd4 set 112/112
+--rp-entry-defect key-rejected: 980 of 2240 records differ; c4b4bd4 set 112/112
+--rp-lookup both: 2 of 2240 records differ; c4b4bd4 set 112/112
+Q29: 357 records with an undeclared producer and a key not held; 357 have INDEPENDENCE_INCONSISTENT and PRODUCER_UNDECLARED

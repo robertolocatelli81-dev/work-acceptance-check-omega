@@ -2128,5 +2128,20 @@
   "path": "fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json",
   "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/1b81ec98b5997ab27180cb03cf84f878f3abe337/vectors/109-independent-claim-no-producer-object.json",
   "sha256": "c68e315b12221c35638639330cbf9d836f14a87dd8d13a2f4579e180c85e5e69"
+ },
+ {
+  "path": "fonti/upstream_c4b4bd4/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/c4b4bd4030fc1a52f1fd23f7c3493f56167c0361/README.md",
+  "sha256": "8e9e2df6df5efd46f8ca9a10e8777483418e4e36cb4c10c7c8f00ffad1256457"
+ },
+ {
+  "path": "fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/c4b4bd4030fc1a52f1fd23f7c3493f56167c0361/vectors/110-producer-key-only-in-issuer-keys.json",
+  "sha256": "ff0890ec311e5d5945dc685da793b74a2b35d8f12223c755d8217307ef9ae957"
+ },
+ {
+  "path": "fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/c4b4bd4030fc1a52f1fd23f7c3493f56167c0361/vectors/111-producer-key-also-in-relying-party-keys.json",
+  "sha256": "f8fab2bf0a5450f256e94ce771011985abfda63ca3009deceb11655998313cc0"
  }
 ]

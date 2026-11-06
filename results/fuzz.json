@@ -10605,5 +10605,517 @@
    "warning_codes": []
   },
   "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: absent",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: holds the key",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: another identifier, same bytes",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: the key file itself",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: empty list",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: another key",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: not canonical base64",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value None",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value True",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value 0",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value 1",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value 'x'",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value []",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value [{'alg': 'Ed25519', 'key_id': 'p', 'public_key_base64': '5G7HMnCCy+VTUdt2xlROaIo1tfVUwEcLeoRpbCfGvlQ=', 'status': 'test'}]",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: value {}",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry without alg",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys.keys[0] lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry with null alg",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry without key_id",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys.keys[0] lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry with null key_id",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry without public_key_base64",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys.keys[0] lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry with null public_key_base64",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry without status",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys.keys[0] lacks required member(s)",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry with null status",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown schema, canonicalization or suite",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: unknown member",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown member(s) in relying_party_keys",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: unknown member of an entry",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "unknown member(s) in relying_party_keys.keys[0]",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry of another algorithm",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys.keys[0].alg is not Ed25519",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: entry of another status",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys.keys[0].status 'revoked' is not one of ('active', 'test')",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "relying_party_keys: empty key_id",
+  "expected": "refused",
+  "family": "relying party keys",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": null,
+   "problem_codes": null,
+   "reason": "relying_party_keys.keys[0].key_id is empty",
+   "refused": true,
+   "signature_valid": null,
+   "warning_codes": null
+  },
+  "ours_ok": true
  }
 ]

@@ -115,5 +115,8 @@ fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json 
       problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours []
 fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json DISAGREE 8/9
       problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours []
+fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json    DISAGREE 8/9
+      problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours []
+fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 1b81ec9: documents 103/110 agree; fields 997/1004; options {'independence_rule': 'stated-independent'}
+TOTAL set c4b4bd4: documents 104/112 agree; fields 1014/1022; options {'independence_rule': 'stated-independent'}

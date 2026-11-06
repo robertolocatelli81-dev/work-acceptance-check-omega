@@ -1,10 +1,10 @@
-"""Differential: war-verify 0.7.0 (349a041) against 0.8.0 with --profile 1.4.3 (README, "Results, profile 1.4.4"), on the
+"""Differential: war-verify 0.7.0 (349a041) against the current version with --profile 1.4.3 (README, "Results, profile 1.4.4"), on the
 fuzz cases (tools/fuzz.py), every vector file under fonti/ and vectors/, and the generated cases of the 1.4.4 name and
 presence space (tests/test_profile144.py, NAMES and KEYS), under four option sets. Compares the profile fields, refusal
 and reason, tsa_signature, files and the extension codes, all of them: X_NAME_NOT_STRING cannot arise under --profile
 1.4.3, where such a name is refused.
 Usage: python3 -B tools/differential_070.py . DIR070 [control]   (DIR070: a checkout of 349a041). With `control`, the
-positive control: 0.8.0 with its defaults instead of --profile 1.4.3, so the bench must report differences."""
+positive control: the current version with its defaults instead of --profile 1.4.3, so the bench must report differences."""
 import sys, os, json, glob, copy, importlib.util, itertools
 repo, d070 = sys.argv[1], sys.argv[2]
 sys.path.insert(0, os.path.join(repo, "tools")); sys.path.insert(0, os.path.join(repo, "tests")); sys.path.insert(0, repo)
@@ -12,7 +12,7 @@ import war_verify as w8, fuzz, build
 import test_profile144 as t
 spec = importlib.util.spec_from_file_location("w7", os.path.join(d070, "war_verify.py"))
 w7 = importlib.util.module_from_spec(spec); spec.loader.exec_module(w7)
-assert w7.VERSION.endswith("0.7.0") and w8.VERSION.endswith("0.8.0")
+assert w7.VERSION.endswith("0.7.0") and w8.VERSION.endswith(("0.8.0", "0.9.0"))
 KEYS = ("refused", "reason", "problem_codes", "warning_codes", "signature_valid", "criteria_committed_before_check",
         "criteria_hash", "independence", "receipt_timestamp", "verdict_recomputed", "tsa_signature", "files",
         "extension_codes")

@@ -404,7 +404,7 @@ class CLI143(unittest.TestCase):
             self.assertEqual(self.run_cli(*(switch + switch + (self.vec(n),))), 64, n)
             self.assertEqual(self.run_cli(switch[0], "bogus", self.vec(n)), 64, n)
         self.assertEqual(self.run_cli("--vector", "--profile", "1.2.1", self.vec("95")), 3)
-        self.assertEqual(self.run_cli("--profile", "1.4.4", self.vec("95")), 64)
+        self.assertEqual(self.run_cli("--profile", "9.9.9", self.vec("95")), 64)
         self.assertEqual(self.run_cli("--profile", "1.4.2", "--profile", "1.2.1", self.vec("95")), 64)
         self.assertEqual(self.run_cli("--vector", "--time-agreement", "second", self.vec("99")), 0)
 

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.4 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.5 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@1b81ec9 (profile 1.4.4, step 8, property 3,
-the two new rows of the vector table and the changelog entry; for 0.8.0 the reference verifier/ and interop/ of
-1b81ec9 were not opened), at 6bb7d0b (profile 1.4.3, step 11 and its changelog entry; for 0.7.0 the reference verifier/ and interop/ of 6bb7d0b were not opened, of composition/ only the
+Written from the profile README at maximusrufus/work-acceptance-record@c4b4bd4 (profile 1.4.5, step 12, the two new rows
+of the vector table and the changelog entry; the agent that wrote 0.9.0 opened no file of verifier/, interop/ or
+composition/, at any commit), at 1b81ec9 (profile 1.4.4, step 8, property 3, the two new rows of the vector table and the changelog entry;
+the agent that wrote 0.8.0 did not open verifier/ and interop/ of 1b81ec9; README.md, "What was read", states what a
+review and an audit under the same coordinator opened), at 6bb7d0b (profile 1.4.3, step 11 and its changelog entry; for 0.7.0 the reference verifier/ and interop/ of 6bb7d0b were not opened, of composition/ only the
 cb7e8f1..6bb7d0b diff of COMPOSITION.md was seen), at
 85a310d (profile 1.4.2, step 10 and its changelog entry; 1.4.1 at bc5a138, 06d3b94 and d79a737 before it; 1.4 at eb0f30b, 1.3 at 42b4ed0 and 1.2.1 at
 f7d8984), the test vectors listed in README.md ("What was read"), and the RFCs it names. For 0.6.0 the reference
@@ -12,7 +14,7 @@ probe description before 0.4.1. For 0.5.0 the payment form was taken from the fu
 verifier/check_payment.py (opened), and the reference verifier/war_verify.py was searched once with grep and run as a
 black box (README.md, "What was read"); no other implementation of this profile was opened. The 1.2.1 readings of version 0.1.0 are selectable with
 --profile 1.2.1, the 1.4.2 readings of version 0.6.0 with --profile 1.4.2, the 1.4.3 readings of version 0.7.0 with
---profile 1.4.3.
+--profile 1.4.3, the 1.4.4 reading of version 0.8.0 with --profile 1.4.4.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason, except where profile 1.4.1 (bc5a138) or 1.4.2 (85a310d) fixes the outcome; each such case is listed in "notes" (README.md,
@@ -26,9 +28,10 @@ Standard library + `cryptography` (Ed25519 arithmetic engine, X.509 certificate 
 Exit codes:  0  the record is accepted as stated (signature valid, no problem codes, commitment order decided)
                 AND no local block applies (report field "local_blocks"): the key file came from --keys, the
                 signing key is not a test key, every time-stamp token whose time was used was authenticated
-                (--tokens pkix), supplied files match the record, no key in the key file is rejected, and
+                (--tokens pkix), supplied files match the record, no key in the key file is rejected,
                 receipt.key_id agrees with signature.key_id (a profile code under 1.3, a local block under
-                --key-id-agreement require, not required under --key-id-agreement ignore)
+                --key-id-agreement require, not required under --key-id-agreement ignore), and a relying party's
+                key list came from --relying-party-keys, not from the document, with no defective entry
              1  verified, but not accepted as stated (problem codes, invalid signature, order undetermined under
                 --accuracy interval) or a local block applies; the profile fields are still the profile's
              2  the input was refused (outside the grammar, unknown schema/canonicalization/suite, ...)
@@ -46,7 +49,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.8.0"
+VERSION = "war_verify 0.9.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -150,6 +153,20 @@ DEFAULT_OPTIONS = {
     # Profile 1.4.4 step 8: "only when the record claims independent, a stated key_id that is empty or not listed once"
     # = claim (README T5, reading Q23); always = 0.7.0, whatever the record claims.
     "key_claim": "claim",
+    # Profile 1.4.5 step 12 (vectors 110, 111): the optional input `relying_party_keys` = step12 (README U1);
+    # unknown = 0.8.0, an unknown member of the inputs, and a --keys file that holds null read as no file.
+    "rp_input": "step12",
+    # README Q24: the object of 110 and 111 = object; bare-list reads a list of entries too.
+    "rp_form": "object",
+    # README Q25: an empty list is supplied and holds no key = holds-nothing; absent = as an empty anchor list (step 9);
+    # refuse = as keys.keys.
+    "rp_empty": "holds-nothing",
+    # README Q26: an entry whose key_id the list repeats holds no key = no-key; bytes = compared by its bytes all the same.
+    "rp_repeated": "no-key",
+    # README Q27: a defective entry of the list is a local block = note; key-rejected adds KEY_REJECTED.
+    "rp_entry_defect": "note",
+    # README Q28: the producer's key_id is resolved in the key list in use = keys; both = also in relying_party_keys.
+    "rp_lookup": "keys",
 }
 OPTION_VALUES = {
     "key_id_source": ("envelope", "receipt"), "reference_time": ("covering-token", "earlier"),
@@ -164,11 +181,17 @@ OPTION_VALUES = {
     "digest_form": ("mismatch", "refuse"), "stated_fraction": ("1-3", "three"),
     "undeclared": ("step8", "no-key"), "producer_presence": ("optional", "required"),
     "name_type": ("step8", "refuse"), "key_claim": ("claim", "always"),
+    "rp_input": ("step12", "unknown"), "rp_form": ("object", "bare-list"),
+    "rp_empty": ("holds-nothing", "absent", "refuse"), "rp_repeated": ("no-key", "bytes"),
+    "rp_entry_defect": ("note", "key-rejected"), "rp_lookup": ("keys", "both"),
 }
+# The reading version 0.8.0 gave to profile 1.4.4 where 1.4.5 (c4b4bd4) fixes it otherwise (README, U1), selectable
+# with --profile 1.4.4.
+PROFILE_1_4_4 = {"rp_input": "unknown"}
 # The readings version 0.7.0 gave to profile 1.4.3 where 1.4.4 (1b81ec9) fixes them otherwise (README, T1-T5),
-# selectable together with --profile 1.4.3.
-PROFILE_1_4_3 = {"name_compare": "exact", "undeclared": "no-key", "producer_presence": "required",
-                 "name_type": "refuse", "key_claim": "always"}
+# selectable together with --profile 1.4.3; the 0.8.0 reading comes with them, so it gives what it gave in 0.8.0.
+PROFILE_1_4_3 = dict(PROFILE_1_4_4, **{"name_compare": "exact", "undeclared": "no-key", "producer_presence": "required",
+                                       "name_type": "refuse", "key_claim": "always"})
 # The readings version 0.6.0 gave to profile 1.4.2 where 1.4.3 (6bb7d0b) fixes them otherwise (README, S1-S5),
 # selectable together with --profile 1.4.2; the 0.7.0 readings come with them, so it gives what it gave in 0.7.0.
 PROFILE_1_4_2 = dict(PROFILE_1_4_3, **{"key_scope": "all-entries", "empty_key_id": "refuse", "digest_form": "refuse",
@@ -178,7 +201,7 @@ PROFILE_1_4_2 = dict(PROFILE_1_4_3, **{"key_scope": "all-entries", "empty_key_id
 PROFILE_1_2_1 = dict(PROFILE_1_4_2, **{"key_id_source": "envelope", "reference_time": "covering-token",
                                        "accuracy": "ignore", "key_id_agreement": "require", "key_rule": "refuse",
                                        "independence_rule": "stated-independent"})
-PROFILES = {"1.4.3": PROFILE_1_4_3, "1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
+PROFILES = {"1.4.4": PROFILE_1_4_4, "1.4.3": PROFILE_1_4_3, "1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
 
 
 class Refusal(Exception):
@@ -1401,6 +1424,7 @@ def verify_tsa(token, roots):
 # ======================================================================================== input grammar
 INPUT_MEMBERS = {"criteria_file_base64", "criteria_tsr_base64", "keys", "receipt", "receipt_tsr_base64",
                  "delivered_file_base64", "original_file_base64", "tsa_roots_base64"}
+RP_INPUT = "relying_party_keys"                     # profile 1.4.5 step 12 (README U1): an input under --rp-input step12
 # Profile 1.4 step 9: "With anchors it is `verified` ..., `failed`, `untrusted`, `unsupported` ... or `no_signer`";
 # without relying-party anchors (none supplied, or an empty list) `not_evaluated`. Profile 1.4.1 settles several
 # defects: "`failed` if any check that can run fails; otherwise `no_signer`, then `unsupported`, then `untrusted`"
@@ -1603,6 +1627,71 @@ def check_keyfile(ctx, kf):
                 rejected = cls
         table[kid] = {"pub": pub, "status": k["status"], "rejected": rejected}
     return table
+
+
+def check_rp_keys(ctx, kf):
+    """Profile 1.4.5 step 12: `relying_party_keys` (README U2, U9). Returns None when an empty list is read as absent,
+    else {"held": the decoded keys the list holds, "ids": key_id -> key for the identifiers it lists once, "defects":
+    how many entries are defective}."""
+    opts = ctx.opts
+    if isinstance(kf, list) and opts["rp_form"] == "bare-list":              # Q24
+        entries = kf
+    else:
+        ctx.members(kf, RP_INPUT, {"keys"}, KEYFILE_MEMBERS - {"keys"})
+        for m in ("issuer", "version", "purpose"):
+            if m in kf:
+                _str(kf[m], "%s.%s" % (RP_INPUT, m))
+        if "also_published" in kf:
+            if not isinstance(kf["also_published"], list) or not all(isinstance(x, str) for x in kf["also_published"]):
+                raise TypeRefusal("%s.also_published is not a list of strings" % RP_INPUT)
+        if not isinstance(kf["keys"], list):
+            raise TypeRefusal("%s.keys is not a list" % RP_INPUT)
+        entries = kf["keys"]
+    if not entries:                                                          # Q25
+        if opts["rp_empty"] == "refuse":
+            raise Refusal("%s.keys is an empty list" % RP_INPUT)
+        ctx.notes.append("X_RP_KEYS_EMPTY: %s holds no entry: %s (reading Q25)" % (
+            RP_INPUT, "read as absent" if opts["rp_empty"] == "absent" else "supplied, and it holds no key"))
+        if opts["rp_empty"] == "absent":
+            return None
+    listed = {}
+    for i, k in enumerate(entries):
+        p = "%s.keys[%d]" % (RP_INPUT, i)
+        ctx.members(k, p, {"alg", "key_id", "public_key_base64", "status"}, {"since"})
+        _str(k["alg"], p + ".alg")
+        if k["alg"] != "Ed25519":
+            raise Refusal("%s.alg is not Ed25519" % p)
+        kid = _str(k["key_id"], p + ".key_id", nonempty=True)
+        _str(k["status"], p + ".status")
+        if k["status"] not in KEY_STATUSES:
+            raise Refusal("%s.status %r is not one of %s" % (p, k["status"], KEY_STATUSES))
+        if "since" in k:
+            _str(k["since"], p + ".since")
+        _str(k["public_key_base64"], p + ".public_key_base64")
+        listed[kid] = listed.get(kid, 0) + 1
+    held, ids, defects = set(), {}, 0
+    for i, k in enumerate(entries):
+        p = "%s.keys[%d]" % (RP_INPUT, i)
+        pub = b64_canonical(k["public_key_base64"])
+        repeated = listed[k["key_id"]] > 1
+        why = None
+        if pub is None:
+            why = "public_key_base64 is not canonical base64: holds no key (README U9)"
+        elif repeated:
+            why = "key_id %r is listed more than once: %s (README U9, reading Q26)" % (
+                k["key_id"], "holds no key" if opts["rp_repeated"] == "no-key" else "compared by its bytes")
+        else:
+            cls = ed_point_class(pub)
+            if cls != "prime-order":
+                why = "the key is %s: compared by its bytes (README U9)" % cls
+        if why:
+            defects += 1
+            ctx.notes.append("X_UNUSED_KEY_REJECTED: %s: %s" % (p, why))
+        if pub is not None and (not repeated or opts["rp_repeated"] == "bytes"):
+            held.add(pub)
+            if not repeated:
+                ids[k["key_id"]] = pub
+    return {"held": held, "ids": ids, "defects": defects}
 
 
 def check_receipt_grammar(ctx, r):
@@ -1809,7 +1898,10 @@ def recompute_verdict(results):
 
 
 # ============================================================================================ verification
-def verify(inputs, options=None, keys_override=None):
+NOT_GIVEN = object()                    # --relying-party-keys not used: a file may hold null, which is not "no file"
+
+
+def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
     """inputs: the vector's `inputs` object (already strictly parsed). Returns a report dict; raises Refusal."""
     opts = dict(DEFAULT_OPTIONS)
     opts.update(options or {})
@@ -1821,7 +1913,10 @@ def verify(inputs, options=None, keys_override=None):
     details = {}
     if not isinstance(inputs, dict):
         raise TypeRefusal("inputs is not a JSON object")
-    ctx.members(inputs, "inputs", {"keys", "receipt"}, INPUT_MEMBERS - {"keys", "receipt"})
+    if rp_override is not NOT_GIVEN and opts["rp_input"] != "step12":
+        raise ValueError("a relying-party key list needs rp_input=step12")
+    ctx.members(inputs, "inputs", {"keys", "receipt"},
+                (INPUT_MEMBERS | ({RP_INPUT} if opts["rp_input"] == "step12" else set())) - {"keys", "receipt"})
     env = inputs["receipt"]
     if not isinstance(env, dict):
         raise TypeRefusal("inputs.receipt is not a JSON object")
@@ -1859,6 +1954,23 @@ def verify(inputs, options=None, keys_override=None):
         ctx.notes.append("inputs.keys not used: the key file was supplied with --keys")
     else:
         keytable = check_keyfile(ctx, inputs["keys"])
+    # Profile 1.4.5 step 12 (README U1, U2, U7, U8). A list in the document stays closed when --relying-party-keys
+    # replaces it, as inputs.tsa_roots_base64 under --tsa-roots.
+    rp = None
+    if opts["rp_input"] == "step12":
+        if rp_override is not NOT_GIVEN:
+            if RP_INPUT in inputs:
+                check_rp_keys(Ctx(opts), inputs[RP_INPUT])
+                ctx.notes.append("inputs.%s not used: the list was supplied with --relying-party-keys" % RP_INPUT)
+            rp = check_rp_keys(ctx, rp_override)
+        elif RP_INPUT in inputs:
+            rp = check_rp_keys(ctx, inputs[RP_INPUT])
+    if rp is not None:
+        details["relying_party_keys_source"] = (
+            "--relying-party-keys (supplied by the relying party)" if rp_override is not NOT_GIVEN
+            else "inputs.relying_party_keys (travels with the record: not a trust anchor)")
+        if rp_override is NOT_GIVEN:
+            ext.add("X_RP_KEYS_FROM_INPUT")
 
     noncanon = set()
 
@@ -2215,6 +2327,10 @@ def verify(inputs, options=None, keys_override=None):
     # a repeated or non-canonical entry has pub None: it is compared with no key (1.4.2 R1, R3; vector 69)
     ck_pub = keytable.get(ck, {}).get("pub") if ck else None
     pk_pub = keytable.get(pk, {}).get("pub") if pk else None
+    # README Q28, --rp-lookup both: a producer key_id that the key list in use does not list is resolved in the list.
+    rp_found = rp is not None and opts["rp_lookup"] == "both" and pk not in keytable and pk in rp["ids"]
+    if rp_found:
+        pk_pub = rp["ids"][pk]
     if opts["key_id_source"] == "receipt":
         # Profile 1.4.2 R7 (64, 86): the checker's key_id against the signed key_id, as identifiers; never the
         # unsigned envelope's. Until 0.5.0, by public key.
@@ -2246,6 +2362,8 @@ def verify(inputs, options=None, keys_override=None):
     unresolved = [role for role, kid in (("checker", ck), ("producer", pk))
                   if kid is not None and (kid not in keytable or keytable[kid].get("dup") or
                                           keytable[kid].get("noncanonical"))]
+    if rp_found:
+        unresolved.remove("producer")
     if unresolved:
         details["party_key_unresolved"] = unresolved
     # Profile 1.4.4 step 8 (README T5, reading Q23): an identifier that is empty or listed by no entry counts only when
@@ -2253,6 +2371,17 @@ def verify(inputs, options=None, keys_override=None):
     unreadable = [role for role, kid in (("checker", ck), ("producer", pk)) if role in unresolved and kid in keytable]
     by_claim = opts["key_claim"] == "always" or r["independence"] == "independent"
     by_key = (unresolved if by_claim else unreadable) if opts["independence_rule"] == "derived" else []
+    # Profile 1.4.5 step 12 (README U3-U6): a further condition on an independent claim with a stated producer key_id.
+    if rp is not None:
+        if rp["defects"] and opts["rp_entry_defect"] == "key-rejected":      # Q27
+            problems.add("KEY_REJECTED")
+        if r["independence"] != "independent" or pk is None or opts["independence_rule"] != "derived":
+            ctx.notes.append("X_RP_KEYS_NOT_APPLIED: step 12 needs an independent claim and a stated producer key_id%s"
+                             % ("" if opts["independence_rule"] == "derived" else ", under --independence-rule derived"))
+        elif pk_pub is None or pk_pub not in rp["held"]:                     # U4: bytes, never key_id or ed_same_key
+            ctx.notes.append("X_RP_PRODUCER_KEY_NOT_HELD: relying_party_keys does not hold the decoded key of the "
+                             "producer's key_id %r: derived self-checked (profile 1.4.5 step 12, vector 110)" % (pk,))
+            by_key = by_key or ["producer"]
     derived = "undeclared" if undeclared else ("self-checked" if (same_name or collision or by_key)
                                                else "independent")
     details["independence_derived"] = derived
@@ -2274,7 +2403,7 @@ def verify(inputs, options=None, keys_override=None):
     blocks = {"X_KEY_FROM_INPUT", "X_TEST_KEY", "X_TSA_NOT_VERIFIED", "X_FILE_NOT_IN_RECORD",
               "X_REMEDIATED_FILE_HASH_MISMATCH", "X_ORIGINAL_FILE_HASH_MISMATCH",
               "X_REMEDIATED_FILE_BYTES_MISMATCH", "X_ORIGINAL_FILE_BYTES_MISMATCH", "X_WEAK_KEY",
-              "X_UNUSED_KEY_REJECTED"}
+              "X_UNUSED_KEY_REJECTED", "X_RP_KEYS_FROM_INPUT"}
     if opts["key_id_agreement"] in ("require", "signature-invalid"):
         blocks |= {"X_KEY_ID_SPLIT", "X_RECEIPT_KEY_ID_NOT_SIGNER"}
     local_blocks = sorted(ext & blocks)
@@ -2386,7 +2515,7 @@ COMPARED = ("criteria_committed_before_check", "criteria_hash", "independence", 
             "receipt_timestamp", "signature_valid", "verdict_recomputed", "verdict_stated", "warning_codes")
 
 
-def run_vector(doc, options=None, keys_override=None):
+def run_vector(doc, options=None, keys_override=None, rp_override=NOT_GIVEN):
     """A vector-layout document -> (report, comparison or None)."""
     if not isinstance(doc, dict):
         raise Refusal("document is not a JSON object")
@@ -2398,7 +2527,7 @@ def run_vector(doc, options=None, keys_override=None):
     else:
         inputs = doc
     try:
-        rep = verify(inputs, options, keys_override)
+        rep = verify(inputs, options, keys_override, rp_override)
     except Refusal as e:
         rep = {"refused": True, "reason": e.reason, "reason_detail": e.detail}
     accepted = tsa_accepted(doc.get("tsa_signature_accepted")) if isinstance(doc, dict) and "inputs" in doc else {}
@@ -2415,7 +2544,7 @@ def run_vector(doc, options=None, keys_override=None):
     return rep, cmp_
 
 
-def run_vector_bytes(raw, options=None, keys_override=None, module_json=json):
+def run_vector_bytes(raw, options=None, keys_override=None, module_json=json, rp_override=NOT_GIVEN):
     """For a whole vector FILE: if the file itself is outside the grammar (duplicate member, lone surrogate, ...),
     the verdict is a refusal; `expected` is then read with the stdlib parser only to compare."""
     try:
@@ -2427,7 +2556,7 @@ def run_vector_bytes(raw, options=None, keys_override=None, module_json=json):
         except Exception:
             exp = None
         return rep, (compare(rep, exp) if isinstance(exp, dict) else None)
-    return run_vector(doc, options, keys_override)
+    return run_vector(doc, options, keys_override, rp_override)
 
 
 def tsa_accepted(v):
@@ -2472,11 +2601,15 @@ USAGE = """usage: war_verify.py [options] FILE.json
   FILE is a vector-layout document ({"inputs": {...}, "expected": {...}}) or a bare inputs object.
   --vector                     compare with the document's "expected" object (exit 0 agree, 3 disagree)
   --keys KEYFILE.json          use this key file instead of inputs.keys
-  defaults follow profile 1.4.4 (maximusrufus/work-acceptance-record@1b81ec9; step 8 of 1.4.4, the other steps as in
-                               1.3, step 10 rules of 1.4.2, step 11 clarifications of 1.4.3)
+  --relying-party-keys FILE    the relying party's own key list (profile 1.4.5 step 12), replacing
+                               inputs.relying_party_keys; a usage error under --rp-input unknown
+  defaults follow profile 1.4.5 (maximusrufus/work-acceptance-record@c4b4bd4; step 12 of 1.4.5, step 8 of 1.4.4, the
+                               other steps as in 1.3, step 10 rules of 1.4.2, step 11 clarifications of 1.4.3)
+  --profile 1.4.4              the reading 0.8.0 gave to 1.4.4 where 1.4.5 fixes it otherwise (rp-input unknown); a
+                               switch given explicitly overrides it
   --profile 1.4.3              the readings 0.7.0 gave to 1.4.3 where 1.4.4 fixes them otherwise (name-compare exact,
-                               undeclared no-key, producer-presence required, name-type refuse, key-claim always);
-                               a switch given explicitly overrides it
+                               undeclared no-key, producer-presence required, name-type refuse, key-claim always)
+                               with that of --profile 1.4.4; a switch given explicitly overrides it
   --profile 1.4.2              the readings 0.6.0 gave to 1.4.2 where 1.4.3 fixes them otherwise (key-scope
                                all-entries, empty-key-id refuse, digest-form refuse, stated-fraction three,
                                time-agreement truncate) with those of --profile 1.4.3; a switch given explicitly
@@ -2507,9 +2640,16 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --producer-presence optional|required   (default optional)
   --name-type step8|refuse            (default step8)
   --key-claim claim|always            (default claim)
-  exit 0 needs: accepted as stated, --keys, no test key, no rejected key in the key file, tokens authenticated
-  (--tokens pkix) when their time is used, supplied files matching, receipt.key_id == signature.key_id (unless
-  --key-id-agreement ignore); otherwise 1 with "local_blocks" listed
+  --rp-input step12|unknown           (default step12)
+  --rp-form object|bare-list          (default object)
+  --rp-empty holds-nothing|absent|refuse   (default holds-nothing)
+  --rp-repeated no-key|bytes          (default no-key)
+  --rp-entry-defect note|key-rejected   (default note)
+  --rp-lookup keys|both               (default keys)
+  exit 0 needs: accepted as stated, --keys, no test key, no rejected key in the key file or the relying party's list,
+  tokens authenticated (--tokens pkix) when their time is used, supplied files matching, receipt.key_id ==
+  signature.key_id (unless --key-id-agreement ignore), a relying party's list given with --relying-party-keys, not
+  carried by the document; otherwise 1 with "local_blocks" listed
 """
 
 
@@ -2518,6 +2658,7 @@ def main(argv):
     opts = {}
     vector_mode = False
     keyfile = None
+    rpfile = None
     path = None
     flagmap = {"--key-id-source": "key_id_source", "--reference-time": "reference_time",
                "--time-agreement": "time_agreement", "--accuracy": "accuracy", "--tokens": "tokens",
@@ -2527,7 +2668,9 @@ def main(argv):
                "--independence-rule": "independence_rule", "--tsa-precedence": "tsa_precedence",
                "--key-scope": "key_scope", "--empty-key-id": "empty_key_id", "--digest-form": "digest_form",
                "--stated-fraction": "stated_fraction", "--undeclared": "undeclared",
-               "--producer-presence": "producer_presence", "--name-type": "name_type", "--key-claim": "key_claim"}
+               "--producer-presence": "producer_presence", "--name-type": "name_type", "--key-claim": "key_claim",
+               "--rp-input": "rp_input", "--rp-form": "rp_form", "--rp-empty": "rp_empty",
+               "--rp-repeated": "rp_repeated", "--rp-entry-defect": "rp_entry_defect", "--rp-lookup": "rp_lookup"}
     profile = None
     while args:
         a = args.pop(0)
@@ -2535,7 +2678,7 @@ def main(argv):
             vector_mode = True
         elif a == "--profile" and args:
             if profile is not None or args[0] not in PROFILES:
-                sys.stderr.write("--profile takes 1.4.3, 1.4.2 or 1.2.1, once\n")
+                sys.stderr.write("--profile takes 1.4.4, 1.4.3, 1.4.2 or 1.2.1, once\n")
                 return 64
             profile = args.pop(0)
         elif a == "--keys" and args:
@@ -2543,6 +2686,11 @@ def main(argv):
                 sys.stderr.write("--keys given twice or empty\n")
                 return 64
             keyfile = args.pop(0)
+        elif a == "--relying-party-keys" and args:
+            if rpfile is not None or args[0] == "":           # README U7: never fall back silently
+                sys.stderr.write("--relying-party-keys given twice or empty\n")
+                return 64
+            rpfile = args.pop(0)
         elif a in flagmap and args:
             if flagmap[a] in opts or args[0] == "":           # R3: no silent last-wins
                 sys.stderr.write("%s given twice or empty\n" % a)
@@ -2568,6 +2716,9 @@ def main(argv):
     if opts.get("tokens") == "pkix" and not opts.get("tsa_roots"):
         sys.stderr.write("--tokens pkix needs --tsa-roots\n")
         return 64
+    if rpfile is not None and opts.get("rp_input") == "unknown":
+        sys.stderr.write("--relying-party-keys needs --rp-input step12 (--profile 1.4.4 and earlier read no such list)\n")
+        return 64
 
     def emit(obj):
         sys.stdout.write(json.dumps(obj, indent=1, sort_keys=True, default=str) + "\n")
@@ -2579,10 +2730,16 @@ def main(argv):
         if keyfile:
             with open(keyfile, "rb") as fh:
                 override = strict_json_loads(fh.read())
+            if override is None and opts.get("rp_input") != "unknown":       # 0.8.0 read it as no file (README U7)
+                raise TypeRefusal("the --keys file holds null")
+        rp_override = NOT_GIVEN
+        if rpfile is not None:
+            with open(rpfile, "rb") as fh:
+                rp_override = strict_json_loads(fh.read())
         if vector_mode:
-            rep, cmp_ = run_vector_bytes(raw, opts, override)
+            rep, cmp_ = run_vector_bytes(raw, opts, override, rp_override=rp_override)
         else:
-            rep, cmp_ = run_vector(strict_json_loads(raw), opts, override)
+            rep, cmp_ = run_vector(strict_json_loads(raw), opts, override, rp_override)
     except CannotRun as e:
         emit({"cannot_run": True, "reason": str(e), "verifier": VERSION, "python": sys.version.split()[0]})
         return 74

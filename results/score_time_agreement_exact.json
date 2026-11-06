@@ -1,7 +1,7 @@
 {
- "agree": 106,
- "fields": 1004,
- "fields_agree": 1000,
+ "agree": 108,
+ "fields": 1022,
+ "fields_agree": 1018,
  "options": {
   "time_agreement": "exact"
  },
@@ -829,9 +829,23 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
+   "file": "fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "1b81ec9",
- "total": 110
+ "set": "c4b4bd4",
+ "total": 112
 }

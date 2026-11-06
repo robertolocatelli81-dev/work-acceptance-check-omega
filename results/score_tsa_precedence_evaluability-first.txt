@@ -113,5 +113,7 @@ fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json                   DISA
       tsa_signature: expected {"criteria": "no_signer", "receipt": "failed"}, ours {"criteria": "no_signer", "receipt": "no_signer"}
 fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json AGREE    9/9
 fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json AGREE    9/9
+fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json    AGREE    9/9
+fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 1b81ec9: documents 105/110 agree; fields 999/1004; options {'tsa_precedence': 'evaluability-first'}
+TOTAL set c4b4bd4: documents 107/112 agree; fields 1017/1022; options {'tsa_precedence': 'evaluability-first'}

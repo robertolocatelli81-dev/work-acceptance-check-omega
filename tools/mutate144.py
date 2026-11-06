@@ -62,10 +62,10 @@ M = [
  ("T7 non-strings never equal", 'return _norm_name(v, mode) if v is None or isinstance(v, str) else jcs(v)', 'return _norm_name(v, mode) if v is None or isinstance(v, str) else id(v)'),
  ("T7 value equals its text", 'return _norm_name(v, mode) if v is None or isinstance(v, str) else jcs(v)', 'return _norm_name(v, mode) if v is None or isinstance(v, str) else jcs(v).decode()'),
  # profiles and CLI
- ("P profile 1.4.3 without name_compare", 'PROFILE_1_4_3 = {"name_compare": "exact", "undeclared"', 'PROFILE_1_4_3 = {"undeclared"'),
- ("P profile 1.4.3 without key_claim", '"name_type": "refuse", "key_claim": "always"}', '"name_type": "refuse"}'),
+ ("P profile 1.4.3 without name_compare", 'PROFILE_1_4_3 = dict(PROFILE_1_4_4, **{"name_compare": "exact", "undeclared"', 'PROFILE_1_4_3 = dict(PROFILE_1_4_4, **{"undeclared"'),
+ ("P profile 1.4.3 without key_claim", '"name_type": "refuse", "key_claim": "always"})', '"name_type": "refuse"})'),
  ("P profile 1.4.2 without 1.4.3", 'PROFILE_1_4_2 = dict(PROFILE_1_4_3, **{', 'PROFILE_1_4_2 = dict({}, **{'),
- ("P CLI --profile 1.4.3 unknown", 'PROFILES = {"1.4.3": PROFILE_1_4_3, "1.4.2"', 'PROFILES = {"1.4.2"'),
+ ("P CLI --profile 1.4.3 unknown", '"1.4.3": PROFILE_1_4_3, "1.4.2"', '"1.4.2"'),
  ("P CLI --undeclared unknown", '"--undeclared": "undeclared",', ''),
  ("P CLI --key-claim unknown", ', "--key-claim": "key_claim"', ''),
  ("P CLI --name-type unknown", '"--name-type": "name_type", ', ''),

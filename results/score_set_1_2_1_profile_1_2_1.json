@@ -16,6 +16,7 @@
   "name_type": "refuse",
   "producer_presence": "required",
   "reference_time": "covering-token",
+  "rp_input": "unknown",
   "stated_fraction": "three",
   "time_agreement": "truncate",
   "undeclared": "no-key"

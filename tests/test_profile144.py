@@ -129,15 +129,15 @@ class Base(unittest.TestCase):
 
 class Vectors1b81ec9(unittest.TestCase):
     def test_110_of_110(self):
-        rows = score.score()
+        rows = score.score(which="1b81ec9")
         self.assertEqual(len(rows), 110)                    # 01-109 and the live record
         self.assertEqual([r["file"] for r in rows if not r["agree"]], [])
         self.assertEqual(sum(r["fields"] for r in rows), 1004)
-        self.assertEqual([os.path.basename(f).split("-")[0] for f in score.vector_files()[:-1]],
+        self.assertEqual([os.path.basename(f).split("-")[0] for f in score.vector_files("1b81ec9")[:-1]],
                          ["%02d" % n for n in range(1, 110)])
 
     def test_profile_1_4_3_disagrees_on_109_only(self):
-        rows = score.score(dict(P143))
+        rows = score.score(dict(P143), which="1b81ec9")
         self.assertEqual([os.path.basename(r["file"]).split("-")[0] for r in rows if not r["agree"]], ["109"])
 
     def test_older_sets_unchanged(self):
@@ -148,7 +148,7 @@ class Vectors1b81ec9(unittest.TestCase):
                              (n, n, fields), which)
 
     def test_positive_control_corrupted_expectation_is_caught(self):
-        f = score.vector_files()[-2]                         # 109
+        f = score.vector_files("1b81ec9")[-2]                # 109
         v = json.load(open(f, encoding="utf-8"))
         self.assertTrue(wv.run_vector(copy.deepcopy(v))[1]["agree"])
         v["expected"]["warning_codes"] = []
@@ -507,7 +507,7 @@ class Profile143(unittest.TestCase):
             self.assertEqual(wv.PROFILE_1_2_1[k], v, k)
             self.assertNotEqual(wv.DEFAULT_OPTIONS[k], v, k)
             self.assertIn(v, wv.OPTION_VALUES[k], k)
-        self.assertEqual(set(P143), {"name_compare", "undeclared", "producer_presence", "name_type", "key_claim"})
+        self.assertEqual(set(P143), {"name_compare", "undeclared", "producer_presence", "name_type", "key_claim", "rp_input"})
 
 
 class CLI144(unittest.TestCase):
@@ -517,7 +517,7 @@ class CLI144(unittest.TestCase):
                               capture_output=True, text=True, env=env).returncode
 
     def test_switches(self):
-        v109 = score.vector_files()[-2]
+        v109 = score.vector_files("1b81ec9")[-2]
         self.assertEqual(self.cli("--vector", v109), 0)
         self.assertEqual(self.cli("--vector", "--profile", "1.4.3", v109), 3)
         self.assertEqual(self.cli("--vector", "--producer-presence", "required", v109), 3)
@@ -527,7 +527,7 @@ class CLI144(unittest.TestCase):
             self.assertEqual(self.cli(flag, "bogus", v109), 64, flag)
             self.assertEqual(self.cli(flag, value, flag, value, v109), 64, flag)
         self.assertEqual(self.cli("--vector", "--name-compare", "trim-lower", v109), 0)
-        err = subprocess.run([sys.executable, "-B", os.path.join(score.ROOT, "war_verify.py"), "--profile", "1.4.4", v109],
+        err = subprocess.run([sys.executable, "-B", os.path.join(score.ROOT, "war_verify.py"), "--profile", "9.9.9", v109],
                              capture_output=True, text=True).stderr
         for name in wv.PROFILES:                        # the message names every value the switch takes
             self.assertIn(name, err)

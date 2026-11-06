@@ -110,5 +110,7 @@ fonti/upstream_6bb7d0b/vectors/106-signed-and-checker-key-id-empty.json     AGRE
 fonti/upstream_6bb7d0b/vectors/107-gentime-without-z.json                   AGREE    10/10
 fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json AGREE    9/9
 fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json AGREE    9/9
+fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json    AGREE    9/9
+fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 1b81ec9: documents 108/110 agree; fields 1002/1004; options {'key_rule': 'all-keys'}
+TOTAL set c4b4bd4: documents 110/112 agree; fields 1020/1022; options {'key_rule': 'all-keys'}

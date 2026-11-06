@@ -117,5 +117,7 @@ fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json DIS
       verdict_recomputed: expected "pass", ours "<absent>"
       verdict_stated: expected "pass", ours "<absent>"
       warning_codes: expected ["PRODUCER_UNDECLARED"], ours "<absent>"
+fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json    AGREE    9/9
+fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 1b81ec9: documents 109/110 agree; fields 995/1004; options {'producer_presence': 'required'}
+TOTAL set c4b4bd4: documents 111/112 agree; fields 1013/1022; options {'producer_presence': 'required'}

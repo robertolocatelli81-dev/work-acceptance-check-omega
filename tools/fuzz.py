@@ -377,10 +377,47 @@ def fam_criteria_bytes(base):
         yield "criteria file %s, record re-hashed to it" % name, {"inputs": inp}, exp
 
 
+def fam_rp(base):
+    """Profile 1.4.5 step 12 (README U1-U9): expectations from the sentences, not from running the verifier."""
+    inp = copy.deepcopy(base)
+    inp["receipt"]["receipt"]["parties"]["producer"]["key_id"] = "omega-test-2"
+    build.refresh(inp)
+    k2 = build.pub_b64("omega-test-2")
+    k1 = build.pub_b64("omega-test-1")
+    entry = lambda kid, pub: {"alg": "Ed25519", "key_id": kid, "public_key_base64": pub, "status": "test"}  # noqa: E731
+    held = {"keys": [entry("p", k2)]}
+    not_held = {"problem_codes": ["INDEPENDENCE_INCONSISTENT"], "warning_codes": [], "signature_valid": True}
+
+    def case(name, value, exp):
+        return "relying_party_keys: %s" % name, {"inputs": dict(copy.deepcopy(inp), relying_party_keys=value)}, exp
+
+    yield "relying_party_keys: absent", {"inputs": copy.deepcopy(inp)}, OK_EXPECT
+    yield case("holds the key", held, OK_EXPECT)
+    yield case("another identifier, same bytes", {"keys": [entry("zz", k2), entry("omega-test-1", k1)]}, OK_EXPECT)
+    yield case("the key file itself", inp["keys"], OK_EXPECT)
+    yield case("empty list", {"keys": []}, not_held)
+    yield case("another key", {"keys": [entry("omega-test-2", k1)]}, not_held)
+    yield case("repeated identifier", {"keys": [entry("a", k2), entry("a", k2)]}, not_held)
+    yield case("not canonical base64", {"keys": [entry("p", k2[:-2] + "B=")]}, not_held)
+    for v in (None, True, 0, 1, "x", [], [held["keys"][0]], {}):
+        yield case("value %r" % (v,), v, REF)
+    for m in ("alg", "key_id", "public_key_base64", "status"):
+        e = dict(held["keys"][0])
+        del e[m]
+        yield case("entry without %s" % m, {"keys": [e]}, REF)
+        yield case("entry with null %s" % m, {"keys": [dict(held["keys"][0], **{m: None})]}, REF)
+    yield case("unknown member", dict(held, x_unknown_member="1"), REF)
+    yield case("unknown member of an entry", {"keys": [dict(held["keys"][0], x_unknown_member="1")]}, REF)
+    yield case("entry of another algorithm", {"keys": [dict(held["keys"][0], alg="RS256")]}, REF)
+    yield case("entry of another status", {"keys": [dict(held["keys"][0], status="revoked")]}, REF)
+    yield case("empty key_id", {"keys": [dict(held["keys"][0], key_id="")]}, REF)
+
+
 FAMILIES = [("parties", fam_parties), ("unknown member", fam_unknown_member), ("duplicate member", fam_duplicate_member),
             ("wrong type", fam_wrong_type), ("lone surrogate", fam_surrogate), ("numbers", fam_numbers),
             ("DER / TSTInfo", fam_der), ("Ed25519", fam_ed25519), ("key_id confusion", fam_keyid),
-            ("time ties and grammar", fam_time), ("criteria bytes", fam_criteria_bytes)]
+            ("time ties and grammar", fam_time), ("criteria bytes", fam_criteria_bytes),
+            ("relying party keys", fam_rp)]
 
 
 def _ours(case):
