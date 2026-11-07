@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.5 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.8 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@c4b4bd4 (profile 1.4.5, step 12, the two new rows
-of the vector table and the changelog entry; the agent that wrote 0.9.0 opened no file of verifier/, interop/ or
-composition/, at any commit), at 1b81ec9 (profile 1.4.4, step 8, property 3, the two new rows of the vector table and the changelog entry;
+Written from the profile README at maximusrufus/work-acceptance-record@3e53aac (profile 1.4.8, the sentences added to steps 2 and
+4, the code added to step 8, the three new rows of the vector table and the changelog entry; the agent that wrote 0.11.0 opened
+no file of verifier/, interop/ or composition/, at any commit; README.md, "What was read", states which inputs were not
+independent), at 6f7a075 (profile 1.4.7, the sentences added to step
+12, the four new rows of the vector table and the changelog entries; the agent that wrote 0.10.0 opened no file of verifier/,
+interop/ or composition/, at any commit; README.md, "What was read", states which inputs were not independent), at c4b4bd4
+(profile 1.4.5, step 12, the two new rows of the vector table and the changelog entry; the agent that wrote 0.9.0 opened no
+file of verifier/, interop/ or composition/, at any commit), at 1b81ec9 (profile 1.4.4, step 8, property 3, the two new rows of the vector table and the changelog entry;
 the agent that wrote 0.8.0 did not open verifier/ and interop/ of 1b81ec9; README.md, "What was read", states what a
 review and an audit under the same coordinator opened), at 6bb7d0b (profile 1.4.3, step 11 and its changelog entry; for 0.7.0 the reference verifier/ and interop/ of 6bb7d0b were not opened, of composition/ only the
 cb7e8f1..6bb7d0b diff of COMPOSITION.md was seen), at
@@ -14,7 +19,8 @@ probe description before 0.4.1. For 0.5.0 the payment form was taken from the fu
 verifier/check_payment.py (opened), and the reference verifier/war_verify.py was searched once with grep and run as a
 black box (README.md, "What was read"); no other implementation of this profile was opened. The 1.2.1 readings of version 0.1.0 are selectable with
 --profile 1.2.1, the 1.4.2 readings of version 0.6.0 with --profile 1.4.2, the 1.4.3 readings of version 0.7.0 with
---profile 1.4.3, the 1.4.4 reading of version 0.8.0 with --profile 1.4.4.
+--profile 1.4.3, the 1.4.4 reading of version 0.8.0 with --profile 1.4.4, the 1.4.5 readings of version 0.9.0 with
+--profile 1.4.5, the 1.4.7 readings of version 0.10.0 with --profile 1.4.7.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason, except where profile 1.4.1 (bc5a138) or 1.4.2 (85a310d) fixes the outcome; each such case is listed in "notes" (README.md,
@@ -49,7 +55,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.9.0"
+VERSION = "war_verify 0.11.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -66,8 +72,9 @@ SUITE = {"digest": "sha-256", "signature": "Ed25519"}
 VOCAB = ("pass", "fail", "not-evaluated", "error")                       # README property 4
 PROBLEM_CODES = frozenset((                                               # README step 8, closed list
     "SIGNATURE_INVALID", "KEY_REJECTED", "CHECKER_NOT_SIGNER", "KEY_COLLISION", "INDEPENDENCE_INCONSISTENT", "RESULT_VOCABULARY",
-    "VERDICT_MISMATCH", "CRITERIA_HASH_MISMATCH", "CRITERIA_RESULTS_MISMATCH", "CRITERIA_TIMESTAMP_MISMATCH",
-    "CRITERIA_TIME_MISMATCH", "CRITERIA_COMMITTED_AFTER_CHECK", "RECEIPT_TIME_UNREADABLE"))   # 1.4.2 adds the last
+    "VERDICT_MISMATCH", "CRITERIA_HASH_MISMATCH", "CRITERIA_RESULTS_MISMATCH", "CRITERIA_UNREADABLE",
+    "CRITERIA_TIMESTAMP_MISMATCH", "CRITERIA_TIME_MISMATCH", "CRITERIA_COMMITTED_AFTER_CHECK",
+    "RECEIPT_TIME_UNREADABLE"))   # 1.4.2 adds the last; 1.4.8 CRITERIA_UNREADABLE
 WARNING_CODES = frozenset(("SELF_CHECKED", "PRODUCER_UNDECLARED", "CRITERIA_COMMITMENT_UNVERIFIED"))
 STEP1_REASON = "unknown schema, canonicalization or suite"                # README step 1 wording
 COVERS = "sha256 of the canonical receipt object"
@@ -111,8 +118,11 @@ DEFAULT_OPTIONS = {
     "name_compare": "trim-lower",
     # members the profile does not define: refuse (closed) or report (listed in notes, otherwise ignored).
     "unknown_fields": "refuse",
-    # strict = canonical A and R, A of prime order, R not of small order, S < L; rfc8032 = RFC 8032 5.1.7 only.
+    # strict = canonical A and R, A of prime order, R as --sig-r says, S < L; rfc8032 = RFC 8032 5.1.7 only.
     "ed25519": "strict",
+    # Profile 1.4.8 step 2 (vector 116, README W1): under strict, R must be a point of prime order = prime-order;
+    # not-small = 0.10.0, R not of small order.
+    "sig_r": "prime-order",
     # CRITERIA_RESULTS_MISMATCH: ids-required = same ids, same `required`; strict = also the same titles.
     "correspondence": "ids-required",
     # Step 2 (1.3) "The envelope's `signature.key_id` must equal it, else `SIGNATURE_INVALID`" = signature-invalid.
@@ -161,12 +171,28 @@ DEFAULT_OPTIONS = {
     # README Q25: an empty list is supplied and holds no key = holds-nothing; absent = as an empty anchor list (step 9);
     # refuse = as keys.keys.
     "rp_empty": "holds-nothing",
-    # README Q26: an entry whose key_id the list repeats holds no key = no-key; bytes = compared by its bytes all the same.
-    "rp_repeated": "no-key",
+    # Profile 1.4.7 step 12 (vector 113, README V1, closes Q26): entries are matched by key, a repeated key_id changes
+    # nothing = bytes; no-key = 0.9.0, an entry whose key_id the list repeats holds no key and is a defect of the list.
+    "rp_repeated": "bytes",
     # README Q27: a defective entry of the list is a local block = note; key-rejected adds KEY_REJECTED.
     "rp_entry_defect": "note",
     # README Q28: the producer's key_id is resolved in the key list in use = keys; both = also in relying_party_keys.
     "rp_lookup": "keys",
+    # Profile 1.4.7 step 12 (vectors 114, 115, README V3, V4): the producer's key must pass the point rule of step 2, under
+    # the conditions of the rule of step 12 = step12; off = 0.9.0; always = reading Q31, with or without a list, either claim.
+    "rp_point": "step12",
+    # Profile 1.4.8 step 4 (vectors 117, 118, README W3-W7): a criteria document that cannot be read = step4;
+    # mismatch = 0.10.0, CRITERIA_RESULTS_MISMATCH.
+    "criteria_unreadable": "step4",
+    # README Q32: hash first, a document whose hash does not match is not read = matched; always = it is read too.
+    "criteria_read": "matched",
+    # README Q33: an absent member, or a document that is no object, is not wrongly typed = typed; absent = unreadable.
+    "criteria_shape": "typed",
+    # README Q34: the members with a type are those this verifier reads = read; known = also those of the published files.
+    "criteria_types": "read",
+    # README Q35: what only this parser refuses (BOM, integers past 2^53, numbers overflowing, depth over 64) = unreadable;
+    # readable = read past those limits.
+    "criteria_limits": "unreadable",
 }
 OPTION_VALUES = {
     "key_id_source": ("envelope", "receipt"), "reference_time": ("covering-token", "earlier"),
@@ -182,12 +208,22 @@ OPTION_VALUES = {
     "undeclared": ("step8", "no-key"), "producer_presence": ("optional", "required"),
     "name_type": ("step8", "refuse"), "key_claim": ("claim", "always"),
     "rp_input": ("step12", "unknown"), "rp_form": ("object", "bare-list"),
-    "rp_empty": ("holds-nothing", "absent", "refuse"), "rp_repeated": ("no-key", "bytes"),
+    "rp_empty": ("holds-nothing", "absent", "refuse"), "rp_repeated": ("bytes", "no-key"),
     "rp_entry_defect": ("note", "key-rejected"), "rp_lookup": ("keys", "both"),
+    "rp_point": ("step12", "off", "always"),
+    "sig_r": ("prime-order", "not-small"), "criteria_unreadable": ("step4", "mismatch"),
+    "criteria_read": ("matched", "always"), "criteria_shape": ("typed", "absent"), "criteria_types": ("read", "known"),
+    "criteria_limits": ("unreadable", "readable"),
 }
+# The readings version 0.10.0 gave to profile 1.4.7 where 1.4.8 (3e53aac) fixes them otherwise (README, W1, W3), selectable
+# with --profile 1.4.7.
+PROFILE_1_4_7 = {"sig_r": "not-small", "criteria_unreadable": "mismatch"}
+# The readings version 0.9.0 gave to profile 1.4.5 where 1.4.7 (6f7a075) fixes them otherwise (README, V1, V3), selectable
+# with --profile 1.4.5; the 0.10.0 readings come with them, so it gives what it gave in 0.10.0.
+PROFILE_1_4_5 = dict(PROFILE_1_4_7, **{"rp_repeated": "no-key", "rp_point": "off"})
 # The reading version 0.8.0 gave to profile 1.4.4 where 1.4.5 (c4b4bd4) fixes it otherwise (README, U1), selectable
-# with --profile 1.4.4.
-PROFILE_1_4_4 = {"rp_input": "unknown"}
+# with --profile 1.4.4; the 0.9.0 readings come with it, so it gives what it gave in 0.9.0.
+PROFILE_1_4_4 = dict(PROFILE_1_4_5, **{"rp_input": "unknown"})
 # The readings version 0.7.0 gave to profile 1.4.3 where 1.4.4 (1b81ec9) fixes them otherwise (README, T1-T5),
 # selectable together with --profile 1.4.3; the 0.8.0 reading comes with them, so it gives what it gave in 0.8.0.
 PROFILE_1_4_3 = dict(PROFILE_1_4_4, **{"name_compare": "exact", "undeclared": "no-key", "producer_presence": "required",
@@ -201,7 +237,7 @@ PROFILE_1_4_2 = dict(PROFILE_1_4_3, **{"key_scope": "all-entries", "empty_key_id
 PROFILE_1_2_1 = dict(PROFILE_1_4_2, **{"key_id_source": "envelope", "reference_time": "covering-token",
                                        "accuracy": "ignore", "key_id_agreement": "require", "key_rule": "refuse",
                                        "independence_rule": "stated-independent"})
-PROFILES = {"1.4.4": PROFILE_1_4_4, "1.4.3": PROFILE_1_4_3, "1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
+PROFILES = {"1.4.7": PROFILE_1_4_7, "1.4.5": PROFILE_1_4_5, "1.4.4": PROFILE_1_4_4, "1.4.3": PROFILE_1_4_3, "1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
 
 
 class Refusal(Exception):
@@ -263,26 +299,50 @@ def _check_values(obj, depth=0):
             _check_values(v, depth + 1)
 
 
-def strict_json_loads(data):
+def _check_strings(obj):
+    """Lone surrogates only, with no limit of depth: the walk of a criteria document under --criteria-limits readable."""
+    stack = [obj]
+    while stack:
+        v = stack.pop()
+        if isinstance(v, str):
+            _check_values(v)
+        elif isinstance(v, dict):
+            stack.extend(v)
+            stack.extend(v.values())
+        elif isinstance(v, list):
+            stack.extend(v)
+
+
+def strict_json_loads(data, limits=True):
     """bytes -> value. Refuses: BOM, invalid UTF-8, duplicate member names, NaN/Infinity, lone surrogates,
-    integers outside +-(2^53-1), nesting > 64, trailing garbage."""
+    integers outside +-(2^53-1), nesting > 64, trailing garbage. limits=False (README Q35) lifts the BOM, the number and
+    the depth rules, and reads every integer as zero, so that no Python limit on digits decides: the caller must not use
+    the value of a number."""
     if not isinstance(data, (bytes, bytearray)):
         raise TypeError("bytes expected")
     if data[:3] == b"\xef\xbb\xbf":
-        raise Refusal("JSON text starts with a byte order mark (RFC 8259 8.1)")
+        if limits:
+            raise Refusal("JSON text starts with a byte order mark (RFC 8259 8.1)")
+        data = data[3:]
     try:
         text = bytes(data).decode("utf-8", errors="strict")
     except UnicodeDecodeError as e:
         raise Refusal("JSON text is not valid UTF-8", str(e))
     try:
-        obj = json.loads(text, object_pairs_hook=_pairs, parse_constant=_no_constant)
+        if limits:
+            obj = json.loads(text, object_pairs_hook=_pairs, parse_constant=_no_constant)
+        else:
+            obj = json.loads(text, object_pairs_hook=_pairs, parse_constant=_no_constant, parse_int=lambda _s: 0)
     except _Dup as e:
         raise Refusal("duplicate JSON member name", repr(e.args[0]))
     except RecursionError:
         raise Refusal("JSON nesting too deep")
     except ValueError as e:
         raise Refusal("not JSON", str(e))
-    _check_values(obj)
+    if limits:
+        _check_values(obj)
+    else:
+        _check_strings(obj)
     return obj
 
 
@@ -659,7 +719,7 @@ def ed_verify_pure(pub, msg, sig):
     return _pequal(_pmul(S, _BASE), _padd(R, _pmul(k, A)))
 
 
-def ed25519_verify(pub, msg, sig, mode):
+def ed25519_verify(pub, msg, sig, mode, sig_r="prime-order"):
     """Returns (valid: bool, reason or None)."""
     if _CRYPTO_ERROR:
         raise CannotRun("cryptography is not importable (%s): Ed25519 cannot be checked" % _CRYPTO_ERROR)
@@ -676,6 +736,8 @@ def ed25519_verify(pub, msg, sig, mode):
     if mode == "strict":
         if _pequal(_pmul(8, R), _IDENT):
             return False, "R has small order (strict mode)"
+        if sig_r == "prime-order" and not _pequal(_pmul(_L, R), _IDENT):      # 1.4.8 step 2 (README W1)
+            return False, "R has mixed order (profile 1.4.8 step 2)"
         ca = ed_point_class(pub)
         if ca != "prime-order":
             return False, "public key is %s (strict mode)" % ca
@@ -1675,11 +1737,13 @@ def check_rp_keys(ctx, kf):
         pub = b64_canonical(k["public_key_base64"])
         repeated = listed[k["key_id"]] > 1
         why = None
+        if repeated and opts["rp_repeated"] == "bytes":                      # README V1, vector 113: not a defect
+            ctx.notes.append("X_RP_KEY_ID_REPEATED: %s: key_id %r is listed more than once: matched by key, compared by "
+                             "its bytes (profile 1.4.7 step 12, vector 113)" % (p, k["key_id"]))
         if pub is None:
             why = "public_key_base64 is not canonical base64: holds no key (README U9)"
-        elif repeated:
-            why = "key_id %r is listed more than once: %s (README U9, reading Q26)" % (
-                k["key_id"], "holds no key" if opts["rp_repeated"] == "no-key" else "compared by its bytes")
+        elif repeated and opts["rp_repeated"] == "no-key":
+            why = "key_id %r is listed more than once: holds no key (README U9, reading Q26)" % (k["key_id"],)
         else:
             cls = ed_point_class(pub)
             if cls != "prime-order":
@@ -2075,7 +2139,7 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
         sig_ok, why = False, "signature.value is not canonical base64 (profile 1.4.2 R1): no signature check"
     else:
         try:
-            sig_ok, why = ed25519_verify(entry["pub"], canon, sig_bytes, opts["ed25519"])
+            sig_ok, why = ed25519_verify(entry["pub"], canon, sig_bytes, opts["ed25519"], opts["sig_r"])
         except CannotRun as e:
             sig_ok, why = None, str(e)
             cannot.append("signature: %s" % e)
@@ -2122,8 +2186,16 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
             hashlib.sha256(crit_file).hexdigest() == r["criteria"]["sha256"] else "mismatch"
         if crit_hash == "mismatch":
             problems.add("CRITERIA_HASH_MISMATCH")
-        else:
-            mism = _correspondence(ctx, crit_file, r["results"], opts["correspondence"])
+        unreadable = None
+        if opts["criteria_unreadable"] == "step4" and crit_file is not None and (
+                crit_hash == "match" or opts["criteria_read"] == "always"):   # README W7, Q32
+            unreadable = _criteria_unreadable(crit_file, opts)
+        if unreadable is not None:
+            problems.add("CRITERIA_UNREADABLE")
+            details["criteria_unreadable"] = unreadable
+        elif crit_hash == "match":
+            mism = _correspondence(ctx, crit_file, r["results"], opts["correspondence"],
+                                   opts["criteria_unreadable"] == "mismatch" or opts["criteria_limits"] == "unreadable")
             if mism:
                 problems.add("CRITERIA_RESULTS_MISMATCH")
                 details["criteria_results_mismatch"] = mism
@@ -2382,6 +2454,16 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
             ctx.notes.append("X_RP_PRODUCER_KEY_NOT_HELD: relying_party_keys does not hold the decoded key of the "
                              "producer's key_id %r: derived self-checked (profile 1.4.5 step 12, vector 110)" % (pk,))
             by_key = by_key or ["producer"]
+    # Profile 1.4.7 step 12 (README V3, V4; vectors 114, 115): the key U4 compares must pass the point rule of step 2. Read
+    # on the bytes, so every class fails it, the key held or not. `always` is reading Q31.
+    if pk_pub is not None and opts["independence_rule"] == "derived" and (opts["rp_point"] == "always" or (
+            opts["rp_point"] == "step12" and rp is not None and r["independence"] == "independent")):
+        cls = ed_point_class(pk_pub)
+        if cls != "prime-order":
+            ctx.notes.append("X_RP_PRODUCER_KEY_POINT_RULE: the key of the producer's key_id %r is %s: it fails the point "
+                             "rule of step 2 and establishes no producer (profile 1.4.7 step 12, "
+                             "vectors 114, 115)" % (pk, cls))
+            by_key = by_key or ["producer"]
     derived = "undeclared" if undeclared else ("self-checked" if (same_name or collision or by_key)
                                                else "independent")
     details["independence_derived"] = derived
@@ -2463,12 +2545,50 @@ def _provable_order(commit_tst, ref_tst, commit_time, ref_time):
     return "yes" if ref_time - commit_time > acc_c + acc_r else "not-provable (difference <= sum of accuracies)"
 
 
-def _correspondence(ctx, crit_bytes, results, mode):
+CRITERIA_READ_TYPES = (("id", str, "a string"), ("required", bool, "a boolean"))        # README W6
+# README Q34: the form of the other members in every published criteria file (the profile defines none).
+CRITERIA_KNOWN_TOP = (("criteria_set", str, "a string"), ("title", str, "a string"), ("version", str, "a string"),
+                      ("result_vocabulary", list, "an array"))
+CRITERIA_KNOWN_ITEM = (("requirement", str, "a string"), ("title", str, "a string"))
+
+
+def _criteria_unreadable(crit_bytes, opts):
+    """Profile 1.4.8 step 4 (README W3-W6): the reason a criteria document cannot be read, or None."""
+    try:
+        doc = strict_json_loads(crit_bytes, opts["criteria_limits"] == "unreadable")
+    except Refusal as e:
+        return "%s: %s" % (e.reason, e.detail) if e.detail else e.reason
+    absent = opts["criteria_shape"] == "absent"                               # Q33
+    known = opts["criteria_types"] == "known"                                 # Q34
+    if not isinstance(doc, dict):
+        return "the document is not an object" if absent else None
+    if "criteria" not in doc:
+        return "the document has no member `criteria`" if absent else None
+    if not isinstance(doc["criteria"], list):
+        return "member `criteria` is not an array"
+    if known:
+        for m, t, name in CRITERIA_KNOWN_TOP:
+            if m in doc and not isinstance(doc[m], t):
+                return "member `%s` is not %s" % (m, name)
+        if "result_vocabulary" in doc and not all(isinstance(x, str) for x in doc["result_vocabulary"]):
+            return "member `result_vocabulary` holds something other than a string"
+    for i, c in enumerate(doc["criteria"]):
+        if not isinstance(c, dict):
+            return "criteria[%d] is not an object" % i
+        for m, t, name in CRITERIA_READ_TYPES + (CRITERIA_KNOWN_ITEM if known else ()):
+            if m in c and not isinstance(c[m], t):
+                return "criteria[%d].%s is not %s" % (i, m, name)
+            if absent and m not in c and (m, t, name) in CRITERIA_READ_TYPES:
+                return "criteria[%d] has no member `%s`" % (i, m)
+    return None
+
+
+def _correspondence(ctx, crit_bytes, results, mode, limits=True):
     """README step 4: 'check the results correspond to the criteria'. The criteria document format is not
     defined by the profile; every member other than `criteria`, and every member of a criterion other than
     `id`, `required` and `title`, is listed in notes as not interpreted."""
     try:
-        doc = strict_json_loads(crit_bytes)
+        doc = strict_json_loads(crit_bytes, limits)
     except Refusal as e:
         return ["criteria document is not strict JSON: %s" % e.reason]
     if not isinstance(doc, dict) or not isinstance(doc.get("criteria"), list):
@@ -2603,10 +2723,15 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --keys KEYFILE.json          use this key file instead of inputs.keys
   --relying-party-keys FILE    the relying party's own key list (profile 1.4.5 step 12), replacing
                                inputs.relying_party_keys; a usage error under --rp-input unknown
-  defaults follow profile 1.4.5 (maximusrufus/work-acceptance-record@c4b4bd4; step 12 of 1.4.5, step 8 of 1.4.4, the
-                               other steps as in 1.3, step 10 rules of 1.4.2, step 11 clarifications of 1.4.3)
-  --profile 1.4.4              the reading 0.8.0 gave to 1.4.4 where 1.4.5 fixes it otherwise (rp-input unknown); a
-                               switch given explicitly overrides it
+  defaults follow profile 1.4.8 (maximusrufus/work-acceptance-record@3e53aac; steps 2 and 4 of 1.4.8, step 12 of 1.4.7,
+                               step 8 of 1.4.4, the other steps as in 1.3, step 10 rules of 1.4.2, step 11
+                               clarifications of 1.4.3)
+  --profile 1.4.7              the readings 0.10.0 gave to 1.4.7 where 1.4.8 fixes them otherwise (sig-r not-small,
+                               criteria-unreadable mismatch); a switch given explicitly overrides it
+  --profile 1.4.5              the readings 0.9.0 gave to 1.4.5 where 1.4.7 fixes them otherwise (rp-repeated no-key,
+                               rp-point off) with those of --profile 1.4.7; a switch given explicitly overrides it
+  --profile 1.4.4              the reading 0.8.0 gave to 1.4.4 where 1.4.5 fixes it otherwise (rp-input unknown) with
+                               those of --profile 1.4.5; a switch given explicitly overrides it
   --profile 1.4.3              the readings 0.7.0 gave to 1.4.3 where 1.4.4 fixes them otherwise (name-compare exact,
                                undeclared no-key, producer-presence required, name-type refuse, key-claim always)
                                with that of --profile 1.4.4; a switch given explicitly overrides it
@@ -2643,9 +2768,16 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --rp-input step12|unknown           (default step12)
   --rp-form object|bare-list          (default object)
   --rp-empty holds-nothing|absent|refuse   (default holds-nothing)
-  --rp-repeated no-key|bytes          (default no-key)
+  --rp-repeated bytes|no-key          (default bytes)
   --rp-entry-defect note|key-rejected   (default note)
   --rp-lookup keys|both               (default keys)
+  --rp-point step12|off|always        (default step12)
+  --sig-r prime-order|not-small       (default prime-order)
+  --criteria-unreadable step4|mismatch   (default step4)
+  --criteria-read matched|always      (default matched)
+  --criteria-shape typed|absent       (default typed)
+  --criteria-types read|known         (default read)
+  --criteria-limits unreadable|readable   (default unreadable)
   exit 0 needs: accepted as stated, --keys, no test key, no rejected key in the key file or the relying party's list,
   tokens authenticated (--tokens pkix) when their time is used, supplied files matching, receipt.key_id ==
   signature.key_id (unless --key-id-agreement ignore), a relying party's list given with --relying-party-keys, not
@@ -2670,7 +2802,10 @@ def main(argv):
                "--stated-fraction": "stated_fraction", "--undeclared": "undeclared",
                "--producer-presence": "producer_presence", "--name-type": "name_type", "--key-claim": "key_claim",
                "--rp-input": "rp_input", "--rp-form": "rp_form", "--rp-empty": "rp_empty",
-               "--rp-repeated": "rp_repeated", "--rp-entry-defect": "rp_entry_defect", "--rp-lookup": "rp_lookup"}
+               "--rp-repeated": "rp_repeated", "--rp-entry-defect": "rp_entry_defect", "--rp-lookup": "rp_lookup",
+               "--rp-point": "rp_point", "--sig-r": "sig_r", "--criteria-unreadable": "criteria_unreadable",
+               "--criteria-read": "criteria_read", "--criteria-shape": "criteria_shape",
+               "--criteria-types": "criteria_types", "--criteria-limits": "criteria_limits"}
     profile = None
     while args:
         a = args.pop(0)
@@ -2678,7 +2813,7 @@ def main(argv):
             vector_mode = True
         elif a == "--profile" and args:
             if profile is not None or args[0] not in PROFILES:
-                sys.stderr.write("--profile takes 1.4.4, 1.4.3, 1.4.2 or 1.2.1, once\n")
+                sys.stderr.write("--profile takes 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 or 1.2.1, once\n")
                 return 64
             profile = args.pop(0)
         elif a == "--keys" and args:

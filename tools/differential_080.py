@@ -12,7 +12,7 @@ import test_profile144 as t
 import test_profile145 as u
 spec = importlib.util.spec_from_file_location("w8", os.path.join(d080, "war_verify.py"))
 w8 = importlib.util.module_from_spec(spec); spec.loader.exec_module(w8)
-assert w8.VERSION.endswith("0.8.0") and w9.VERSION.endswith("0.9.0")
+assert w8.VERSION.endswith("0.8.0") and w9.VERSION.endswith(("0.9.0", "0.10.0", "0.11.0"))
 
 
 def out(mod, doc, opts):

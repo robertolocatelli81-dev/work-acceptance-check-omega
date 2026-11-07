@@ -128,5 +128,50 @@ fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json 
       verdict_recomputed: expected "pass", ours "<absent>"
       verdict_stated: expected "pass", ours "<absent>"
       warning_codes: expected [], ours "<absent>"
+fonti/upstream_6f7a075/vectors/112-relying-party-key-non-canonical-base64.json DISAGREE 0/9
+      criteria_committed_before_check: expected "yes", ours "<absent>"
+      criteria_hash: expected "match", ours "<absent>"
+      independence: expected "independent", ours "<absent>"
+      problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours "<absent>"
+      receipt_timestamp: expected "none", ours "<absent>"
+      signature_valid: expected true, ours "<absent>"
+      verdict_recomputed: expected "pass", ours "<absent>"
+      verdict_stated: expected "pass", ours "<absent>"
+      warning_codes: expected [], ours "<absent>"
+fonti/upstream_6f7a075/vectors/113-relying-party-keys-repeated-key-id.json  DISAGREE 0/9
+      criteria_committed_before_check: expected "yes", ours "<absent>"
+      criteria_hash: expected "match", ours "<absent>"
+      independence: expected "independent", ours "<absent>"
+      problem_codes: expected [], ours "<absent>"
+      receipt_timestamp: expected "none", ours "<absent>"
+      signature_valid: expected true, ours "<absent>"
+      verdict_recomputed: expected "pass", ours "<absent>"
+      verdict_stated: expected "pass", ours "<absent>"
+      warning_codes: expected [], ours "<absent>"
+fonti/upstream_6f7a075/vectors/114-producer-key-neutral-point.json          DISAGREE 0/9
+      criteria_committed_before_check: expected "yes", ours "<absent>"
+      criteria_hash: expected "match", ours "<absent>"
+      independence: expected "independent", ours "<absent>"
+      problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours "<absent>"
+      receipt_timestamp: expected "none", ours "<absent>"
+      signature_valid: expected true, ours "<absent>"
+      verdict_recomputed: expected "pass", ours "<absent>"
+      verdict_stated: expected "pass", ours "<absent>"
+      warning_codes: expected [], ours "<absent>"
+fonti/upstream_6f7a075/vectors/115-neutral-point-from-unrelated-list.json   DISAGREE 0/9
+      criteria_committed_before_check: expected "yes", ours "<absent>"
+      criteria_hash: expected "match", ours "<absent>"
+      independence: expected "independent", ours "<absent>"
+      problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours "<absent>"
+      receipt_timestamp: expected "none", ours "<absent>"
+      signature_valid: expected true, ours "<absent>"
+      verdict_recomputed: expected "pass", ours "<absent>"
+      verdict_stated: expected "pass", ours "<absent>"
+      warning_codes: expected [], ours "<absent>"
+fonti/upstream_3e53aac/vectors/116-signature-r-neutral-point.json           AGREE    9/9
+fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json DISAGREE 8/9
+      problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
+fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json        DISAGREE 8/9
+      problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set c4b4bd4: documents 110/112 agree; fields 1004/1022; options {'rp_input': 'unknown'}
+TOTAL set 3e53aac: documents 111/119 agree; fields 1029/1085; options {'sig_r': 'not-small', 'criteria_unreadable': 'mismatch', 'rp_repeated': 'no-key', 'rp_point': 'off', 'rp_input': 'unknown'}

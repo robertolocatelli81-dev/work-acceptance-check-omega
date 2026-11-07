@@ -10420,7 +10420,7 @@
   "expected": {
    "criteria_hash": "match",
    "problem_codes": [
-    "CRITERIA_RESULTS_MISMATCH"
+    "CRITERIA_UNREADABLE"
    ]
   },
   "family": "criteria bytes",
@@ -10429,7 +10429,7 @@
   "ours": {
    "criteria_committed_before_check": "yes",
    "problem_codes": [
-    "CRITERIA_RESULTS_MISMATCH"
+    "CRITERIA_UNREADABLE"
    ],
    "reason": null,
    "refused": null,
@@ -10737,20 +10737,16 @@
  {
   "case": "relying_party_keys: repeated identifier",
   "expected": {
-   "problem_codes": [
-    "INDEPENDENCE_INCONSISTENT"
-   ],
+   "problem_codes": [],
    "signature_valid": true,
    "warning_codes": []
   },
   "family": "relying party keys",
   "lax_accepted_as_stated": true,
-  "lax_ok": false,
+  "lax_ok": true,
   "ours": {
    "criteria_committed_before_check": "yes",
-   "problem_codes": [
-    "INDEPENDENCE_INCONSISTENT"
-   ],
+   "problem_codes": [],
    "reason": null,
    "refused": null,
    "signature_valid": true,
@@ -11115,6 +11111,3539 @@
    "refused": true,
    "signature_valid": null,
    "warning_codes": null
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0100000000 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0100000000 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0100000000, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0100000000, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion ecffffff7f in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion ecffffff7f under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion ecffffff7f, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion ecffffff7f, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000000 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000000 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000000, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000000, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000080 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000080 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000080, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 0000000080, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f05 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f05 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f05, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f05, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f85 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f85 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f85, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion 26e8958f85, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a707a in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a707a under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a707a, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a707a, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a70fa in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a70fa under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a70fa, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: torsion c7176a70fa, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed ecffffff7f in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed ecffffff7f under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed ecffffff7f, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed ecffffff7f, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000000 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000000 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000000, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000000, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000080 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000080 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000080, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 0000000080, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f05 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f05 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f05, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f05, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f85 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f85 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f85, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed 26e8958f85, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a707a in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a707a under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a707a, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a707a, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a70fa in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a70fa under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a70fa, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: mixed c7176a70fa, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: y = p + 1 in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: y = p + 1 under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: y = p + 1, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: y = p + 1, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: x = 0, sign bit in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: x = 0, sign bit under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: x = 0, sign bit, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: x = 0, sign bit, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 31 bytes in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 31 bytes under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 31 bytes, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 31 bytes, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 33 bytes in both lists",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 33 bytes under an unrelated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 33 bytes, repeated identifier",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: 33 bytes, no list",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: repeated identifier, order 0 1 2",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: repeated identifier, order 0 2 1",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: repeated identifier, order 1 0 2",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: repeated identifier, order 1 2 0",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: repeated identifier, order 2 0 1",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: repeated identifier, order 2 1 0",
+  "expected": {
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.7: repeated identifier, other keys only",
+  "expected": {
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "relying party keys 1.4.7",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "INDEPENDENCE_INCONSISTENT"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order 01000000",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order ecffffff",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of mixed order, r*B + ecffffff",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order 00000000",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of mixed order, r*B + 00000000",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order 00000000",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of mixed order, r*B + 00000000",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order 26e8958f",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of mixed order, r*B + 26e8958f",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order 26e8958f",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of mixed order, r*B + 26e8958f",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order c7176a70",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of mixed order, r*B + c7176a70",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of small order c7176a70",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of mixed order, r*B + c7176a70",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R with y = p",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R with y = p + 1",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R with x = 0, sign bit",
+  "expected": {
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "signature_valid": false
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "SIGNATURE_INVALID"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": false,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: R of prime order, S = r + k*a",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file not UTF-8, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file not UTF-8",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file surrogate as bytes, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file surrogate as bytes",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file empty, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file empty",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file trailing text, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file trailing text",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file NaN, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file NaN",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file Infinity, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file Infinity",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file -Infinity, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file -Infinity",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file repeated name, top, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file repeated name, top",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file repeated name, nested, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file repeated name, nested",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file repeated name after an escape, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file repeated name after an escape",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file two cases of a letter, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file two cases of a letter",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file lone high in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file lone high in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file lone low in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file lone low in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file reversed pair, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file reversed pair",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file valid pair, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file valid pair",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file escaped backslash, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file escaped backslash",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file criterion id a number, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file criterion id a number",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file required a string, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file required a string",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file required null, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file required null",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file criteria an object, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file criteria an object",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file no required, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file no required",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_RESULTS_MISMATCH"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_RESULTS_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file the document an array, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file the document an array",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_RESULTS_MISMATCH"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_RESULTS_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file integer past 2^53, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file integer past 2^53",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file 1e400, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file 1e400",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file depth 65, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file depth 65",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file depth 64, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.8: criteria file depth 64",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.8",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
   },
   "ours_ok": true
  }

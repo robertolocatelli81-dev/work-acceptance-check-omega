@@ -48,7 +48,7 @@ M = [
  ("U4 any key held", HELD, 'elif not rp["held"]:'),
  ("U4 a key is enough", HELD, 'elif pk_pub is None:'),
  # U5 outcome
- ("U5 no effect", 'by_key = by_key or ["producer"]', 'pass'),
+ ("U5 no effect", '(profile 1.4.5 step 12, vector 110)" % (pk,))\n            by_key = by_key or ["producer"]', '(profile 1.4.5 step 12, vector 110)" % (pk,))\n            pass'),
  ("U5 no note", 'ctx.notes.append("X_RP_PRODUCER_KEY_NOT_HELD: relying_party_keys', 'str("X_RP_PRODUCER_KEY_NOT_HELD: relying_party_keys'),
  # U7 CLI
  ("U7 replaced list open", '                check_rp_keys(Ctx(opts), inputs[RP_INPUT])\n', ''),
@@ -87,9 +87,9 @@ M = [
  ("Q25 no note", 'ctx.notes.append("X_RP_KEYS_EMPTY: %s holds no entry', 'str("X_RP_KEYS_EMPTY: %s holds no entry'),
  ("Q25 note always says supplied", '"read as absent" if opts["rp_empty"] == "absent" else "supplied, and it holds no key"', '"supplied, and it holds no key"'),
  ("Q25 absent does nothing", '        if opts["rp_empty"] == "absent":\n            return None\n', ''),
- ("Q26 default bytes", '    "rp_repeated": "no-key",', '    "rp_repeated": "bytes",'),
+ ("Q26 default no-key", '    "rp_repeated": "bytes",', '    "rp_repeated": "no-key",'),
  ("Q26 bytes does nothing", '(not repeated or opts["rp_repeated"] == "bytes")', 'not repeated'),
- ("Q26 note says no key", '"holds no key" if opts["rp_repeated"] == "no-key" else "compared by its bytes"', '"holds no key"'),
+ ("Q26 note says no key", 'is listed more than once: matched by key, compared by "\n', 'is listed more than once: holds no key, not "\n'),
  ("Q26 ids hold the repeated", '            if not repeated:\n                ids[k["key_id"]] = pub', '            ids[k["key_id"]] = pub'),
  ("Q27 default key-rejected", '    "rp_entry_defect": "note",', '    "rp_entry_defect": "key-rejected",'),
  ("Q27 switch does nothing", '        if rp["defects"] and opts["rp_entry_defect"] == "key-rejected":      # Q27\n            problems.add("KEY_REJECTED")\n', ''),
@@ -101,7 +101,7 @@ M = [
  ("Q28 key not used", '    if rp_found:\n        pk_pub = rp["ids"][pk]\n', ''),
  # profiles and CLI
  ("P profile 1.4.3 without 1.4.4", 'PROFILE_1_4_3 = dict(PROFILE_1_4_4, **{', 'PROFILE_1_4_3 = dict({}, **{'),
- ("P profile 1.4.4 empty", 'PROFILE_1_4_4 = {"rp_input": "unknown"}', 'PROFILE_1_4_4 = {}'),
+ ("P profile 1.4.4 empty", 'PROFILE_1_4_4 = dict(PROFILE_1_4_5, **{"rp_input": "unknown"})', 'PROFILE_1_4_4 = dict(PROFILE_1_4_5)'),
  ("P CLI --profile 1.4.4 unknown", '"1.4.4": PROFILE_1_4_4, ', ''),
  ("P CLI --rp-input unknown", '"--rp-input": "rp_input", ', ''),
  ("P CLI --rp-form unknown", '"--rp-form": "rp_form", ', ''),
@@ -109,9 +109,9 @@ M = [
  ("P CLI --rp-repeated unknown", '"--rp-repeated": "rp_repeated", ', ''),
  ("P CLI --rp-entry-defect unknown", '"--rp-entry-defect": "rp_entry_defect", ', ''),
  ("P CLI --rp-lookup unknown", ', "--rp-lookup": "rp_lookup"', ''),
- ("P version", 'VERSION = "war_verify 0.9.0"', 'VERSION = "war_verify 0.8.0"'),
+ ("P version", 'VERSION = "war_verify 0.11.0"', 'VERSION = "war_verify 0.9.0"'),
 ]
-TESTS = ["tests/test_profile145.py", "tests/test_vectors.py", "tests/test_cli.py"]
+TESTS = ["tests/test_profile145.py", "tests/test_vectors.py", "tests/test_cli.py", "tests/test_profile147.py"]
 
 
 def run(text):

@@ -1,0 +1,14 @@
+tables: 2240 records as an object, 2240 as a bare list, 1512 with the keys of the point rule
+defaults: 0 of 2240 refused as an object, 2240 of 2240 as a bare list
+--rp-form bare-list: 2240 of 2240 records differ; 6f7a075 set 116/116 []
+--rp-empty absent: 2 of 2240 records differ; 6f7a075 set 116/116 []
+--rp-empty refuse: 140 of 2240 records differ; 6f7a075 set 116/116 []
+--rp-repeated no-key: 6 of 2240 records differ; 6f7a075 set 115/116 ['113']
+--rp-entry-defect key-rejected: 420 of 2240 records differ; 6f7a075 set 113/116 ['112', '114', '115']
+--rp-lookup both: 2 of 2240 records differ; 6f7a075 set 116/116 []
+--rp-point off: 104 of 1512 records differ; 6f7a075 set 114/116 ['114', '115']
+--rp-point always: 208 of 1512 records differ; 6f7a075 set 116/116 []
+--rp-point always, a list, claim self-checked: removes INDEPENDENCE_INCONSISTENT on 156 records
+--rp-point always, no list, claim independent: adds INDEPENDENCE_INCONSISTENT on 26 records
+--rp-point always, no list, claim self-checked: removes INDEPENDENCE_INCONSISTENT on 26 records
+Q29: 552 records with an undeclared producer and a key not held or failing the point rule; 552 have INDEPENDENCE_INCONSISTENT and PRODUCER_UNDECLARED

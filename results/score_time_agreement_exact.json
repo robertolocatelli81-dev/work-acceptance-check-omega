@@ -1,7 +1,7 @@
 {
- "agree": 108,
- "fields": 1022,
- "fields_agree": 1018,
+ "agree": 115,
+ "fields": 1085,
+ "fields_agree": 1081,
  "options": {
   "time_agreement": "exact"
  },
@@ -843,9 +843,58 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
+   "file": "fonti/upstream_6f7a075/vectors/112-relying-party-key-non-canonical-base64.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6f7a075/vectors/113-relying-party-keys-repeated-key-id.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6f7a075/vectors/114-producer-key-neutral-point.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_6f7a075/vectors/115-neutral-point-from-unrelated-list.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_3e53aac/vectors/116-signature-r-neutral-point.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "c4b4bd4",
- "total": 112
+ "set": "3e53aac",
+ "total": 119
 }

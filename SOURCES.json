@@ -2143,5 +2143,50 @@
   "path": "fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json",
   "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/c4b4bd4030fc1a52f1fd23f7c3493f56167c0361/vectors/111-producer-key-also-in-relying-party-keys.json",
   "sha256": "f8fab2bf0a5450f256e94ce771011985abfda63ca3009deceb11655998313cc0"
+ },
+ {
+  "path": "fonti/upstream_6f7a075/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/6f7a075fe71116a723a1b222c1199bf1742ac71d/README.md",
+  "sha256": "4add381119ba337ba4416c97f86f5b7baa1344901b5be06068bcc48d26f826c6"
+ },
+ {
+  "path": "fonti/upstream_6f7a075/vectors/112-relying-party-key-non-canonical-base64.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/6f7a075fe71116a723a1b222c1199bf1742ac71d/vectors/112-relying-party-key-non-canonical-base64.json",
+  "sha256": "57c0de2083b4da99a93801d247c49b81970f7935eee291bfa9114777ee185230"
+ },
+ {
+  "path": "fonti/upstream_6f7a075/vectors/113-relying-party-keys-repeated-key-id.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/6f7a075fe71116a723a1b222c1199bf1742ac71d/vectors/113-relying-party-keys-repeated-key-id.json",
+  "sha256": "ad670780af3b31b9252c5029d012adf5aa05f08e1c48b1a7d7ac6d199b81e5a0"
+ },
+ {
+  "path": "fonti/upstream_6f7a075/vectors/114-producer-key-neutral-point.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/6f7a075fe71116a723a1b222c1199bf1742ac71d/vectors/114-producer-key-neutral-point.json",
+  "sha256": "4c32d3be83594a46cbece696f7e2c8b66e2dc6baf066e9fad052faaa933909c8"
+ },
+ {
+  "path": "fonti/upstream_6f7a075/vectors/115-neutral-point-from-unrelated-list.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/6f7a075fe71116a723a1b222c1199bf1742ac71d/vectors/115-neutral-point-from-unrelated-list.json",
+  "sha256": "6af00df17fd532d4bd51ad2bfd122ddec395fd8613b7b9da532168a4e8764450"
+ },
+ {
+  "path": "fonti/upstream_3e53aac/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/3e53aac24ee5298b2316a10dceeaddb99695cc8c/README.md",
+  "sha256": "bf0f360f600bc5a8b92897cc40b2677b88b8e21708b89d6d13cd8dfe1e898cc3"
+ },
+ {
+  "path": "fonti/upstream_3e53aac/vectors/116-signature-r-neutral-point.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/3e53aac24ee5298b2316a10dceeaddb99695cc8c/vectors/116-signature-r-neutral-point.json",
+  "sha256": "6ade886e9ef677adf1d83fcc770071a9227051a04f83d3c26765b36726884fa6"
+ },
+ {
+  "path": "fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/3e53aac24ee5298b2316a10dceeaddb99695cc8c/vectors/117-criteria-file-duplicate-member-name.json",
+  "sha256": "2c6c4e659245ce5e60985323429bac748d2e053cc2cf555ed621722a7f7d2940"
+ },
+ {
+  "path": "fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/3e53aac24ee5298b2316a10dceeaddb99695cc8c/vectors/118-criteria-file-lone-surrogate.json",
+  "sha256": "23990e9a540aa876b227ddd43c515471548a664f163332bc89e3107ffbb2a5ed"
  }
 ]

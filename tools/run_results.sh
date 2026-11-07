@@ -3,7 +3,7 @@
 set -e
 PY="${PY:-python3}"
 mkdir -p results
-# defaults = profile 1.4.5 at c4b4bd4 (111 vectors + live record); each switch's other value; this verifier's 1.2.1 readings
+# defaults = profile 1.4.8 at 3e53aac (118 vectors + live record); each switch's other value; this verifier's 1.2.1 readings
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_default.json > results/score_default.txt
 for o in key_id_source=envelope reference_time=covering-token accuracy=ignore accuracy=interval \
          key_id_agreement=require key_id_agreement=ignore key_rule=all-keys key_rule=refuse \
@@ -11,13 +11,19 @@ for o in key_id_source=envelope reference_time=covering-token accuracy=ignore ac
          correspondence=strict ed25519=rfc8032 unknown_fields=report key_scope=all-entries empty_key_id=refuse \
          digest_form=refuse stated_fraction=three name_compare=exact undeclared=no-key producer_presence=required \
          name_type=refuse key_claim=always rp_input=unknown rp_form=bare-list rp_empty=absent rp_empty=refuse \
-         rp_repeated=bytes rp_entry_defect=key-rejected rp_lookup=both; do
+         rp_repeated=no-key rp_entry_defect=key-rejected rp_lookup=both rp_point=off rp_point=always \
+         sig_r=not-small criteria_unreadable=mismatch criteria_read=always criteria_shape=absent criteria_types=known \
+         criteria_limits=readable; do
   env -u PYTHONPATH $PY -B tools/score.py --json "results/score_${o%%=*}_${o#*=}.json" "$o" > "results/score_${o%%=*}_${o#*=}.txt"
 done
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_2_1.json --profile 1.2.1 > results/score_profile_1_2_1.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_4_2.json --profile 1.4.2 > results/score_profile_1_4_2.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_4_3.json --profile 1.4.3 > results/score_profile_1_4_3.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_4_4.json --profile 1.4.4 > results/score_profile_1_4_4.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_4_5.json --profile 1.4.5 > results/score_profile_1_4_5.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_profile_1_4_7.json --profile 1.4.7 > results/score_profile_1_4_7.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_6f7a075.json --set 6f7a075 > results/score_set_6f7a075.txt
+env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_c4b4bd4.json --set c4b4bd4 > results/score_set_c4b4bd4.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_1b81ec9.json --set 1b81ec9 > results/score_set_1b81ec9.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_6bb7d0b.json --set 6bb7d0b > results/score_set_6bb7d0b.txt
 env -u PYTHONPATH $PY -B tools/score.py --json results/score_set_85a310d.json --set 85a310d > results/score_set_85a310d.txt
@@ -41,6 +47,8 @@ print('new vectors: %d/%d agree' % (sum(r['agree'] for r in rows), len(rows)))" 
 env -u PYTHONPATH nice -n 10 $PY -B tools/fuzz.py --json results/fuzz.json > results/fuzz.txt
 env -u PYTHONPATH $PY -B tools/ed25519_edges.py > results/ed25519_edges.txt
 env -u PYTHONPATH $PY -B tools/readings145.py > results/readings145.txt
+env -u PYTHONPATH $PY -B tools/readings147.py > results/readings147.txt
+env -u PYTHONPATH $PY -B tools/readings148.py > results/readings148.txt
 env -u PYTHONPATH $PY -B war_verify.py --vector --tokens pkix --tsa-roots roots/freetsa_cacert.pem \
   fonti/issuer_274159c/selftest-pass.json > results/selftest_pkix.json || true
 env -u PYTHONPATH $PY -B tools/compose.py > results/compose.txt

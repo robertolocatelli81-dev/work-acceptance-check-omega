@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""How much each reading of profile 1.4.5 changes (README, Q24-Q29), on the records of tests/test_profile145.py: LISTS as
+"""How much each reading of profile 1.4.5 changed under 0.9.0 (from 0.10.0: --profile 1.4.5 and --set c4b4bd4; README, Q24-Q29; tools/readings147.py counts the defaults), on the records of tests/test_profile145.py: LISTS as
 an object, and as a bare list for Q24, with a key list of two clean entries: the longer one of the test table is KEY_REJECTED
 already (79), which would hide Q27. An outcome is the members of `COMPARED`, refused or not, and the reason. The
 counts follow from the table chosen: they say that a switch changes outcomes, not how often it would in use.
@@ -30,7 +30,7 @@ for key, value, table, base in (("rp_form", "bare-list", bare, default_bare), ("
                                 ("rp_empty", "refuse", records, default), ("rp_repeated", "bytes", records, default),
                                 ("rp_entry_defect", "key-rejected", records, default), ("rp_lookup", "both", records, default)):
     other = [outcome(i, {key: value})[0] for i in table]
-    rows = score.score({key: value})
+    rows = score.score(dict(wv.PROFILE_1_4_5, **{key: value}), which="c4b4bd4")
     print("--%s %s: %d of %d records differ; c4b4bd4 set %d/%d" % (
         key.replace("_", "-"), value, sum(a != b for a, b in zip(base, other)), len(table), sum(r["agree"] for r in rows), len(rows)))
 # Q29: an undeclared producer whose key the list does not hold, under the claim

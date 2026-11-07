@@ -1,8 +1,9 @@
 {
- "agree": 104,
- "fields": 1022,
- "fields_agree": 965,
+ "agree": 105,
+ "fields": 1085,
+ "fields_agree": 990,
  "options": {
+  "criteria_unreadable": "mismatch",
   "digest_form": "refuse",
   "empty_key_id": "refuse",
   "key_claim": "always",
@@ -11,6 +12,9 @@
   "name_type": "refuse",
   "producer_presence": "required",
   "rp_input": "unknown",
+  "rp_point": "off",
+  "rp_repeated": "no-key",
+  "sig_r": "not-small",
   "stated_fraction": "three",
   "time_agreement": "truncate",
   "undeclared": "no-key"
@@ -1178,6 +1182,303 @@
    "file": "fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json"
   },
   {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "match",
+     "field": "criteria_hash",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "independent",
+     "field": "independence",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [
+      "INDEPENDENCE_INCONSISTENT"
+     ],
+     "field": "problem_codes",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "none",
+     "field": "receipt_timestamp",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": true,
+     "field": "signature_valid",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_recomputed",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_stated",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [],
+     "field": "warning_codes",
+     "ours": "<absent>"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 0,
+   "file": "fonti/upstream_6f7a075/vectors/112-relying-party-key-non-canonical-base64.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "match",
+     "field": "criteria_hash",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "independent",
+     "field": "independence",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [],
+     "field": "problem_codes",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "none",
+     "field": "receipt_timestamp",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": true,
+     "field": "signature_valid",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_recomputed",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_stated",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [],
+     "field": "warning_codes",
+     "ours": "<absent>"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 0,
+   "file": "fonti/upstream_6f7a075/vectors/113-relying-party-keys-repeated-key-id.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "match",
+     "field": "criteria_hash",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "independent",
+     "field": "independence",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [
+      "INDEPENDENCE_INCONSISTENT"
+     ],
+     "field": "problem_codes",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "none",
+     "field": "receipt_timestamp",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": true,
+     "field": "signature_valid",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_recomputed",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_stated",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [],
+     "field": "warning_codes",
+     "ours": "<absent>"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 0,
+   "file": "fonti/upstream_6f7a075/vectors/114-producer-key-neutral-point.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "match",
+     "field": "criteria_hash",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "independent",
+     "field": "independence",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [
+      "INDEPENDENCE_INCONSISTENT"
+     ],
+     "field": "problem_codes",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "none",
+     "field": "receipt_timestamp",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": true,
+     "field": "signature_valid",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_recomputed",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": "pass",
+     "field": "verdict_stated",
+     "ours": "<absent>"
+    },
+    {
+     "agree": false,
+     "expected": [],
+     "field": "warning_codes",
+     "ours": "<absent>"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 0,
+   "file": "fonti/upstream_6f7a075/vectors/115-neutral-point-from-unrelated-list.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_3e53aac/vectors/116-signature-r-neutral-point.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": [
+      "CRITERIA_UNREADABLE"
+     ],
+     "field": "problem_codes",
+     "ours": [
+      "CRITERIA_RESULTS_MISMATCH"
+     ]
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": [
+      "CRITERIA_UNREADABLE"
+     ],
+     "field": "problem_codes",
+     "ours": [
+      "CRITERIA_RESULTS_MISMATCH"
+     ]
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json"
+  },
+  {
    "agree": true,
    "disagreements": [],
    "fields": 9,
@@ -1185,6 +1486,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "c4b4bd4",
- "total": 112
+ "set": "3e53aac",
+ "total": 119
 }

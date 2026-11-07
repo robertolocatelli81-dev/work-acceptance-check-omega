@@ -177,5 +177,19 @@ fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json    DISA
       criteria_committed_before_check: expected "yes", ours "undetermined"
 fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json DISAGREE 8/9
       criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_6f7a075/vectors/112-relying-party-key-non-canonical-base64.json DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_6f7a075/vectors/113-relying-party-keys-repeated-key-id.json  DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_6f7a075/vectors/114-producer-key-neutral-point.json          DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_6f7a075/vectors/115-neutral-point-from-unrelated-list.json   DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_3e53aac/vectors/116-signature-r-neutral-point.json           DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
+fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json        DISAGREE 8/9
+      criteria_committed_before_check: expected "yes", ours "undetermined"
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set c4b4bd4: documents 46/112 agree; fields 955/1022; options {'accuracy': 'interval'}
+TOTAL set 3e53aac: documents 46/119 agree; fields 1011/1085; options {'accuracy': 'interval'}

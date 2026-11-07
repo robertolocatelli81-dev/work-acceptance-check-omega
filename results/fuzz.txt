@@ -10,5 +10,7 @@ Ed25519                       5        5            3                      3
 key_id confusion              7        7            4                      2
 time ties and grammar        12       12            7                      2
 criteria bytes               10       10            1                      1
-relying party keys           29       29           25                     25
-TOTAL cases 652, ours meets expectation 652, lax caught 598, lax wrongly accepted-as-stated 438
+relying party keys           29       29           24                     24
+relying party keys 1.4.7     83       83           58                     58
+1.4.8                        71       71           24                     24
+TOTAL cases 806, ours meets expectation 806, lax caught 679, lax wrongly accepted-as-stated 519

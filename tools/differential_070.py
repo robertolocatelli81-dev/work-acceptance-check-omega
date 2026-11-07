@@ -12,7 +12,7 @@ import war_verify as w8, fuzz, build
 import test_profile144 as t
 spec = importlib.util.spec_from_file_location("w7", os.path.join(d070, "war_verify.py"))
 w7 = importlib.util.module_from_spec(spec); spec.loader.exec_module(w7)
-assert w7.VERSION.endswith("0.7.0") and w8.VERSION.endswith(("0.8.0", "0.9.0"))
+assert w7.VERSION.endswith("0.7.0") and w8.VERSION.endswith(("0.8.0", "0.9.0", "0.10.0", "0.11.0"))
 KEYS = ("refused", "reason", "problem_codes", "warning_codes", "signature_valid", "criteria_committed_before_check",
         "criteria_hash", "independence", "receipt_timestamp", "verdict_recomputed", "tsa_signature", "files",
         "extension_codes")

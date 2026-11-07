@@ -7,6 +7,7 @@ usage: nice -n 10 python3 -B tools/fuzz.py [--json OUT]"""
 import base64
 import copy
 import hashlib
+import itertools
 import json
 import os
 import sys
@@ -373,8 +374,69 @@ def fam_criteria_bytes(base):
         inp["receipt"]["receipt"]["criteria"]["sha256"] = hashlib.sha256(b).hexdigest()
         build.criteria_token(inp)
         build.refresh(inp)
-        exp = {"criteria_hash": "match", "problem_codes": ["CRITERIA_RESULTS_MISMATCH"] if name == "BOM prefix" else []}
+        # 1.4.8: a byte order mark is what this parser cannot read (README W3, reading Q35)
+        exp = {"criteria_hash": "match", "problem_codes": ["CRITERIA_UNREADABLE"] if name == "BOM prefix" else []}
         yield "criteria file %s, record re-hashed to it" % name, {"inputs": inp}, exp
+
+
+def fam_148(base):
+    """Profile 1.4.8 steps 2 and 4 (README W1-W7): expectations from the sentences, not from running the verifier."""
+    bad_sig = {"signature_valid": False, "problem_codes": ["SIGNATURE_INVALID"]}
+    seed = bytes.fromhex(build.SEEDS["omega-test-1"])
+    h = hashlib.sha512(seed).digest()
+    a = (int.from_bytes(h[:32], "little") & ((1 << 254) - 8)) | (1 << 254)
+    msg = wv.jcs(base["receipt"]["receipt"])
+    pub = base64.b64decode(build.pub_b64("omega-test-1"))
+    torsion = ["01" + "00" * 31, "ec" + "ff" * 30 + "7f", "00" * 32, "00" * 31 + "80",
+               "26e8958fc2b227b045c3f489f2ef98f0d5dfac05d3c63339b13802886d53fc05",
+               "26e8958fc2b227b045c3f489f2ef98f0d5dfac05d3c63339b13802886d53fc85",
+               "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac037a",
+               "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac03fa"]
+
+    def forged(rb, r=0):
+        k = int.from_bytes(hashlib.sha512(rb + pub + msg).digest(), "little") % wv._L
+        i = copy.deepcopy(base)
+        i["receipt"]["signature"]["value"] = base64.b64encode(rb + ((r + k * a) % wv._L).to_bytes(32, "little")).decode()
+        return {"inputs": i}
+
+    for t in torsion:
+        yield "1.4.8: R of small order %s" % t[:8], forged(bytes.fromhex(t)), bad_sig
+        if t != torsion[0]:
+            rb = wv._encode_point(wv._padd(wv._pmul(1000, wv._BASE), wv.ed_decode(bytes.fromhex(t))))
+            yield "1.4.8: R of mixed order, r*B + %s" % t[:8], forged(rb, 1000), bad_sig
+    for name, hx in (("y = p", "ed" + "ff" * 30 + "7f"), ("y = p + 1", "ee" + "ff" * 30 + "7f"), ("x = 0, sign bit", "01" + "00" * 30 + "80")):
+        yield "1.4.8: R with %s" % name, forged(bytes.fromhex(hx)), bad_sig
+    yield "1.4.8: R of prime order, S = r + k*a", forged(wv._encode_point(wv._pmul(1000, wv._BASE)), 1000), \
+        dict(OK_EXPECT, criteria_hash="match")
+    raw = base64.b64decode(base["criteria_file_base64"])
+
+    def put(body):
+        return raw[:1] + body + b"," + raw[1:]
+
+    unread = {"criteria_hash": "match", "problem_codes": ["CRITERIA_UNREADABLE"], "signature_valid": True}
+    fine = {"criteria_hash": "match", "problem_codes": [], "signature_valid": True}
+    results = {"criteria_hash": "match", "problem_codes": ["CRITERIA_RESULTS_MISMATCH"], "signature_valid": True}
+    docs = [("not UTF-8", b'{"criteria":[],"\xff":1}', unread), ("surrogate as bytes", put(b'"x":"\xed\xa0\x80"'), unread), ("empty", b"", unread),
+            ("trailing text", raw + b"x", unread), ("NaN", put(b'"x":NaN'), unread), ("Infinity", put(b'"x":[Infinity]'), unread), ("-Infinity", put(b'"x":-Infinity'), unread),
+            ("repeated name, top", put(b'"title":"x"'), unread), ("repeated name, nested", put(b'"x":[{"a":{"b":1,"b":1}}]'), unread),
+            ("repeated name after an escape", put(b'"x":{"a":1,"\\u0061":1}'), unread), ("two cases of a letter", put(b'"x":{"a":1,"A":1}'), fine),
+            ("lone high in a value", put(b'"x":"\\ud800"'), unread), ("lone low in a name", put(b'"\\udc00":1'), unread), ("reversed pair", put(b'"x":"\\ude00\\ud83d"'), unread),
+            ("valid pair", put(b'"x":"\\ud83d\\ude00"'), fine), ("escaped backslash", put(b'"x":"\\\\ud800"'), fine),
+            ("criterion id a number", raw.replace(b'"id":"c1"', b'"id":1'), unread), ("required a string", raw.replace(b'"required":true', b'"required":"true"', 1), unread),
+            ("required null", raw.replace(b'"required":true', b'"required":null', 1), unread), ("criteria an object", raw.replace(b'"criteria":[', b'"x":[', 1)[:-1] + b',"criteria":{}}', unread),
+            ("no required", raw.replace(b'"required":true,', b"", 1), results), ("the document an array", b"[]", results),
+            ("integer past 2^53", put(b'"x":9007199254740992'), unread), ("1e400", put(b'"x":1e400'), unread), ("depth 65", put(b'"x":' + b"[" * 65 + b"]" * 65), unread),
+            ("depth 64", put(b'"x":' + b"[" * 64 + b"]" * 64), fine)]
+    for name, b, exp in docs:
+        i = copy.deepcopy(base)
+        i["criteria_file_base64"] = base64.b64encode(b).decode()
+        yield "1.4.8: criteria file %s, record hash of the original" % name, {"inputs": i}, \
+            {"criteria_hash": "mismatch", "problem_codes": ["CRITERIA_HASH_MISMATCH"]}
+        i = copy.deepcopy(i)
+        i["receipt"]["receipt"]["criteria"]["sha256"] = hashlib.sha256(b).hexdigest()
+        build.criteria_token(i)
+        build.refresh(i)
+        yield "1.4.8: criteria file %s" % name, {"inputs": i}, exp
 
 
 def fam_rp(base):
@@ -397,7 +459,7 @@ def fam_rp(base):
     yield case("the key file itself", inp["keys"], OK_EXPECT)
     yield case("empty list", {"keys": []}, not_held)
     yield case("another key", {"keys": [entry("omega-test-2", k1)]}, not_held)
-    yield case("repeated identifier", {"keys": [entry("a", k2), entry("a", k2)]}, not_held)
+    yield case("repeated identifier", {"keys": [entry("a", k2), entry("a", k2)]}, OK_EXPECT)      # 1.4.7, vector 113
     yield case("not canonical base64", {"keys": [entry("p", k2[:-2] + "B=")]}, not_held)
     for v in (None, True, 0, 1, "x", [], [held["keys"][0]], {}):
         yield case("value %r" % (v,), v, REF)
@@ -413,11 +475,51 @@ def fam_rp(base):
     yield case("empty key_id", {"keys": [dict(held["keys"][0], key_id="")]}, REF)
 
 
+def fam_rp_147(base):
+    """Profile 1.4.7 step 12 (README V1, V3, V4): expectations from the sentences, not from running the verifier."""
+    inp = copy.deepcopy(base)
+    inp["receipt"]["receipt"]["parties"]["producer"]["key_id"] = "omega-test-2"
+    build.refresh(inp)
+    k2, k1 = build.pub_b64("omega-test-2"), build.pub_b64("omega-test-1")
+    k3 = base64.b64encode(hashlib.sha256(b"not the producer").digest()[:31] + b"\x00").decode()
+    entry = lambda kid, pub: {"alg": "Ed25519", "key_id": kid, "public_key_base64": pub, "status": "test"}  # noqa: E731
+    fails = {"problem_codes": ["INDEPENDENCE_INCONSISTENT"], "warning_codes": [], "signature_valid": True}
+    k2raw = base64.b64decode(k2)
+    torsion = ["01" + "00" * 31, "ec" + "ff" * 30 + "7f", "00" * 32, "00" * 31 + "80",
+               "26e8958fc2b227b045c3f489f2ef98f0d5dfac05d3c63339b13802886d53fc05",
+               "26e8958fc2b227b045c3f489f2ef98f0d5dfac05d3c63339b13802886d53fc85",
+               "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac037a",
+               "c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac03fa"]
+    bad = [("torsion " + h[:8] + h[-2:], bytes.fromhex(h)) for h in torsion]
+    bad += [("mixed " + h[:8] + h[-2:], wv._encode_point(wv._padd(wv.ed_decode(k2raw), wv.ed_decode(bytes.fromhex(h)))))
+            for h in torsion[1:]]
+    bad += [("y = p + 1", bytes.fromhex("ee" + "ff" * 30 + "7f")), ("x = 0, sign bit", bytes.fromhex("01" + "00" * 30 + "80")),
+            ("31 bytes", b"\x01" * 31), ("33 bytes", b"\x01" * 33)]
+
+    def case(name, pub, value, exp):
+        i = copy.deepcopy(inp)
+        i["keys"]["keys"][1]["public_key_base64"] = pub
+        if value is not None:
+            i["relying_party_keys"] = value
+        return "1.4.7: %s" % name, {"inputs": i}, exp
+
+    for name, raw in bad:
+        pub = base64.b64encode(raw).decode()
+        yield case("%s in both lists" % name, pub, {"keys": [entry("omega-test-2", pub)]}, fails)
+        yield case("%s under an unrelated identifier" % name, pub, {"keys": [entry("unrelated", pub)]}, fails)
+        yield case("%s, repeated identifier" % name, pub, {"keys": [entry("a", pub), entry("a", pub)]}, fails)
+        yield case("%s, no list" % name, pub, None, OK_EXPECT)
+    for order in itertools.permutations((k2, k1, k3)):
+        yield case("repeated identifier, order %d %d %d" % tuple((k2, k1, k3).index(x) for x in order), k2,
+                   {"keys": [entry("a", x) for x in order]}, OK_EXPECT)
+    yield case("repeated identifier, other keys only", k2, {"keys": [entry("a", k1), entry("a", k3)]}, fails)
+
+
 FAMILIES = [("parties", fam_parties), ("unknown member", fam_unknown_member), ("duplicate member", fam_duplicate_member),
             ("wrong type", fam_wrong_type), ("lone surrogate", fam_surrogate), ("numbers", fam_numbers),
             ("DER / TSTInfo", fam_der), ("Ed25519", fam_ed25519), ("key_id confusion", fam_keyid),
             ("time ties and grammar", fam_time), ("criteria bytes", fam_criteria_bytes),
-            ("relying party keys", fam_rp)]
+            ("relying party keys", fam_rp), ("relying party keys 1.4.7", fam_rp_147), ("1.4.8", fam_148)]
 
 
 def _ours(case):

@@ -4,6 +4,7 @@
  "fields_agree": 225,
  "options": {
   "accuracy": "ignore",
+  "criteria_unreadable": "mismatch",
   "digest_form": "refuse",
   "empty_key_id": "refuse",
   "independence_rule": "stated-independent",
@@ -17,6 +18,9 @@
   "producer_presence": "required",
   "reference_time": "covering-token",
   "rp_input": "unknown",
+  "rp_point": "off",
+  "rp_repeated": "no-key",
+  "sig_r": "not-small",
   "stated_fraction": "three",
   "time_agreement": "truncate",
   "undeclared": "no-key"

@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Score war_verify field by field (code lists as sets) on a published vector set + the live issuer record.
-  --set c4b4bd4 (default) the 111 vectors of profile 1.4.5 at maximusrufus/work-acceptance-record@c4b4bd4 + live
+  --set 3e53aac (default) the 118 vectors of profile 1.4.8 at maximusrufus/work-acceptance-record@3e53aac + live
+               record: the files of --set 6f7a075 and 116-118 of 3e53aac (01-115 byte-identical at 3e53aac, compared
+               blob by blob on 2026-11-07)
+  --set 6f7a075 the 115 vectors of profile 1.4.7 at maximusrufus/work-acceptance-record@6f7a075 + live
+               record: the files of --set c4b4bd4 and 112-115 of 6f7a075 (01-111 byte-identical at 6f7a075, compared
+               blob by blob on 2026-11-06)
+  --set c4b4bd4 the 111 vectors of profile 1.4.5 at maximusrufus/work-acceptance-record@c4b4bd4 + live
                record: the files of --set 1b81ec9 and 110-111 of c4b4bd4 (01-109 byte-identical at c4b4bd4, compared
                blob by blob on 2026-11-06)
   --set 1b81ec9 the 109 vectors of profile 1.4.4 at maximusrufus/work-acceptance-record@1b81ec9 + live
@@ -19,7 +25,7 @@
   --set 1.2.1  the 23 vectors + 12b + 22-sha1 of the 1.2.1 round + live record (26 documents)
 Vector 20 (1.3, 1.4 and 1.4.1, byte-identical) states a contributor's differing expectation in its `difference` member; it is also scored
 against that expectation (CONTRIBUTOR_EXPECTATIONS), reported separately, never folded into the total.
-usage: python3 -B tools/score.py [--json OUT] [--set c4b4bd4|1b81ec9|6bb7d0b|85a310d|bc5a138|48ab8c9|1.4.1|1.4|1.3|1.2.1] [--profile 1.4.4|1.4.3|1.4.2|1.2.1] [war_verify options as key=value ...]"""
+usage: python3 -B tools/score.py [--json OUT] [--set 3e53aac|6f7a075|c4b4bd4|1b81ec9|6bb7d0b|85a310d|bc5a138|48ab8c9|1.4.1|1.4|1.3|1.2.1] [--profile 1.4.7|1.4.5|1.4.4|1.4.3|1.4.2|1.2.1] [war_verify options as key=value ...]"""
 import glob, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -37,16 +43,20 @@ CONTRIBUTOR_EXPECTATIONS = {"fonti/upstream_42b4ed0/vectors/20-producer-undeclar
                             "fonti/upstream_85a310d/vectors/20-producer-undeclared.json": {"problem_codes": []}}
 
 
-def vector_files(which="c4b4bd4"):
-    if which in ("c4b4bd4", "1b81ec9", "6bb7d0b"):
+def vector_files(which="3e53aac"):
+    if which in ("3e53aac", "6f7a075", "c4b4bd4", "1b81ec9", "6bb7d0b"):
         f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_85a310d/vectors/*.json")))
         f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_cb7e8f1/vectors/*.json")))
         f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_6bb7d0b/vectors/*.json")),
                     key=lambda p: int(os.path.basename(p).split("-")[0]))
-        if which in ("c4b4bd4", "1b81ec9"):
+        if which in ("3e53aac", "6f7a075", "c4b4bd4", "1b81ec9"):
             f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_1b81ec9/vectors/*.json")))
-        if which == "c4b4bd4":
+        if which in ("3e53aac", "6f7a075", "c4b4bd4"):
             f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_c4b4bd4/vectors/*.json")))
+        if which in ("3e53aac", "6f7a075"):
+            f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_6f7a075/vectors/*.json")))
+        if which == "3e53aac":
+            f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_3e53aac/vectors/*.json")))
     elif which in ("85a310d", "bc5a138", "48ab8c9"):
         f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_%s/vectors/*.json" % which)))
     elif which == "1.4.1":
@@ -65,7 +75,7 @@ def vector_files(which="c4b4bd4"):
     return f + [os.path.join(ROOT, LIVE)]
 
 
-def score(options=None, files=None, verify_fn=None, which="c4b4bd4"):
+def score(options=None, files=None, verify_fn=None, which="3e53aac"):
     rows = []
     for f in files or vector_files(which):
         with open(f, "rb") as fh:
@@ -90,7 +100,7 @@ def score(options=None, files=None, verify_fn=None, which="c4b4bd4"):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    out, which, opts = None, "c4b4bd4", {}
+    out, which, opts = None, "3e53aac", {}
     while args and args[0] in ("--json", "--set", "--profile"):
         flag, val = args[0], args[1]
         args = args[2:]
@@ -101,7 +111,7 @@ if __name__ == "__main__":
         elif val in wv.PROFILES:
             opts.update(wv.PROFILES[val])
         else:
-            raise SystemExit("--profile takes 1.4.4, 1.4.3, 1.4.2 or 1.2.1")
+            raise SystemExit("--profile takes 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 or 1.2.1")
     opts.update(dict(a.split("=", 1) for a in args))
     rows = score(opts, which=which)
     for r in rows:

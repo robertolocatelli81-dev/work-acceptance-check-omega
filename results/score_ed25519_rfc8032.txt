@@ -110,5 +110,14 @@ fonti/upstream_1b81ec9/vectors/108-stated-self-checked-derived-independent.json 
 fonti/upstream_1b81ec9/vectors/109-independent-claim-no-producer-object.json AGREE    9/9
 fonti/upstream_c4b4bd4/vectors/110-producer-key-only-in-issuer-keys.json    AGREE    9/9
 fonti/upstream_c4b4bd4/vectors/111-producer-key-also-in-relying-party-keys.json AGREE    9/9
+fonti/upstream_6f7a075/vectors/112-relying-party-key-non-canonical-base64.json AGREE    9/9
+fonti/upstream_6f7a075/vectors/113-relying-party-keys-repeated-key-id.json  AGREE    9/9
+fonti/upstream_6f7a075/vectors/114-producer-key-neutral-point.json          AGREE    9/9
+fonti/upstream_6f7a075/vectors/115-neutral-point-from-unrelated-list.json   AGREE    9/9
+fonti/upstream_3e53aac/vectors/116-signature-r-neutral-point.json           DISAGREE 7/9
+      problem_codes: expected ["SIGNATURE_INVALID"], ours []
+      signature_valid: expected false, ours true
+fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json AGREE    9/9
+fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json        AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set c4b4bd4: documents 112/112 agree; fields 1022/1022; options {'ed25519': 'rfc8032'}
+TOTAL set 3e53aac: documents 118/119 agree; fields 1083/1085; options {'ed25519': 'rfc8032'}

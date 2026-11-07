@@ -1,0 +1,10 @@
+tables: 198 criteria documents, by family [('NaN or Infinity', 12), ('absent', 9), ('limit', 9), ('lone surrogate', 27), ('no lone surrogate', 19), ('no repeated name', 8), ('not JSON', 26), ('not UTF-8', 8), ('other member', 7), ('readable', 5), ('repeated name', 19), ('within the limits', 7), ('wrongly typed', 42)]; 22 signatures
+defaults: 143 of 198 documents CRITERIA_UNREADABLE, 13 CRITERIA_RESULTS_MISMATCH
+--criteria-unreadable mismatch: 143 of 198 records differ; 3e53aac set 117/119 ['117', '118']
+--criteria-read always: 143 of 198 records differ; 3e53aac set 119/119 []
+--criteria-shape absent: 9 of 198 records differ; 3e53aac set 119/119 []
+--criteria-types known: 7 of 198 records differ; 3e53aac set 119/119 []
+--criteria-limits readable: 9 of 198 records differ; 3e53aac set 119/119 []
+--sig-r not-small: 0 of 22 records differ; 3e53aac set 119/119 []
+--ed25519 rfc8032: 1 of 22 records differ; 3e53aac set 118/119 ['116']
+--sig-r not-small: details.signature_reason differs on 7 of 22 signatures

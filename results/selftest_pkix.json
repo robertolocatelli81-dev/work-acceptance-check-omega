@@ -129,6 +129,11 @@
   "options": {
    "accuracy": "widen",
    "correspondence": "ids-required",
+   "criteria_limits": "unreadable",
+   "criteria_read": "matched",
+   "criteria_shape": "typed",
+   "criteria_types": "read",
+   "criteria_unreadable": "step4",
    "digest_form": "mismatch",
    "ed25519": "strict",
    "empty_key_id": "signature-invalid",
@@ -147,7 +152,9 @@
    "rp_form": "object",
    "rp_input": "step12",
    "rp_lookup": "keys",
-   "rp_repeated": "no-key",
+   "rp_point": "step12",
+   "rp_repeated": "bytes",
+   "sig_r": "prime-order",
    "stated_fraction": "1-3",
    "time_agreement": "second",
    "tokens": "pkix",
@@ -167,5 +174,5 @@
   "verdict_stated": "pass",
   "warning_codes": []
  },
- "verifier": "war_verify 0.9.0"
+ "verifier": "war_verify 0.11.0"
 }

@@ -1,7 +1,8 @@
 """Profile 1.4.5 (maximusrufus/work-acceptance-record@c4b4bd4, README step 12, vectors 110-111). Oracle: the c4b4bd4
 vectors, and generative cases whose expectation comes from the hand-written labels of LISTS below and from the
 sentences of step 12 (README of this project, "Profile 1.4.5 rules", U1-U9), never from running the verifier. Positive
-control: run on 0.8.0 (ce8de8c), these tests fail (README, "Tests")."""
+control: run on 0.8.0 (ce8de8c), these tests fail (README, "Tests"). From 0.10.0 they run under --profile 1.4.5, the 0.9.0
+readings, and on --set c4b4bd4: tests/test_profile147.py holds what 1.4.7 fixes otherwise."""
 import base64
 import copy
 import hashlib
@@ -24,6 +25,8 @@ import test_profile144 as t
 import war_verify as wv
 
 P144 = wv.PROFILE_1_4_4
+P145 = wv.PROFILE_1_4_5
+SET = "c4b4bd4"
 STEP1 = wv.STEP1_REASON
 X = "INDEPENDENCE_INCONSISTENT"
 MISSING = t.MISSING
@@ -96,7 +99,7 @@ def doc(stated, pname, pk, rp=MISSING, ck=SIGNER, cname=CHECKER[0], full=False):
 
 def run(i, opts=None, **kw):
     try:
-        return wv.verify(copy.deepcopy(i), dict(opts) if opts else None, **kw)
+        return wv.verify(copy.deepcopy(i), dict(P145, **(opts or {})), **kw)
     except wv.Refusal as e:
         return {"refused": True, "reason": e.reason, "detail": e.detail}
 
@@ -125,18 +128,18 @@ OUTCOME = wv.COMPARED + ("refused", "reason", "tsa_signature")
 
 class Vectorsc4b4bd4(unittest.TestCase):
     def test_112_of_112(self):
-        rows = score.score()
+        rows = score.score(which=SET)
         self.assertEqual(len(rows), 112)                    # 01-111 and the live record
         self.assertEqual([r["file"] for r in rows if not r["agree"]], [])
         self.assertEqual(sum(r["fields"] for r in rows), 1022)
-        self.assertEqual([os.path.basename(f).split("-")[0] for f in score.vector_files()[:-1]],
+        self.assertEqual([os.path.basename(f).split("-")[0] for f in score.vector_files(SET)[:-1]],
                          ["%02d" % n for n in range(1, 112)])
 
     def test_profile_1_4_4_disagrees_on_110_and_111_only(self):
-        rows = score.score(dict(P144))
+        rows = score.score(dict(P144), which=SET)
         self.assertEqual([os.path.basename(r["file"]).split("-")[0] for r in rows if not r["agree"]], ["110", "111"])
         self.assertEqual(sum(r["fields_agree"] for r in rows), 1004)
-        for f in score.vector_files()[-3:-1]:
+        for f in score.vector_files(SET)[-3:-1]:
             rep = wv.run_vector_bytes(read(f), dict(P144))[0]
             self.assertEqual((rep["reason"], rep["reason_detail"]), ("unknown member(s) in inputs", RP))
 
@@ -148,7 +151,7 @@ class Vectorsc4b4bd4(unittest.TestCase):
                              (n, n, fields), which)
 
     def vector(self, n):
-        return wv.strict_json_loads(read(score.vector_files()[n - 1]))["inputs"]
+        return wv.strict_json_loads(read(score.vector_files(SET)[n - 1]))["inputs"]
 
     def test_110_derived_and_notes(self):
         rep = run(self.vector(110))
@@ -487,7 +490,7 @@ class Switches(unittest.TestCase):
             i = doc("independent", "Example Vendor", "omega-test-2", rpdoc(entries))
             self.assertEqual(self.codes(i), [X])
             self.assertEqual(self.codes(i, rp_repeated="bytes"), [])
-            self.assertIn("X_UNUSED_KEY_REJECTED", run(i, {"rp_repeated": "bytes"})["local_blocks"])
+            self.assertNotIn("X_UNUSED_KEY_REJECTED", run(i, {"rp_repeated": "bytes"})["local_blocks"])     # V1, from 0.10.0
             self.assertTrue([n for n in run(i, {"rp_repeated": "bytes"})["notes"] if "compared by its bytes" in n])
 
     def test_q27_defect(self):
@@ -527,12 +530,14 @@ class Switches(unittest.TestCase):
         for key, values in wv.OPTION_VALUES.items():
             if key.startswith("rp_") and key != "rp_input":
                 for v in values:
-                    self.assertEqual(sum(r["agree"] for r in score.score({key: v})), 112, (key, v))
+                    self.assertEqual(sum(r["agree"] for r in score.score({key: v}, which=SET)), 112, (key, v))
 
 
 class Profiles(unittest.TestCase):
     def test_each_older_profile_refuses_the_input(self):
         for name, prof in wv.PROFILES.items():
+            if name in ("1.4.5", "1.4.7"):
+                continue
             self.assertEqual(prof["rp_input"], "unknown", name)
             rep = run(GOOD, prof)
             self.assertEqual((rep["reason"], rep["detail"]), ("unknown member(s) in inputs", RP), name)
@@ -564,7 +569,7 @@ class CommandLine(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.v110, self.v111 = score.vector_files()[-3:-1]
+        self.v110, self.v111 = score.vector_files(SET)[-3:-1]
         self.lst = self.write("rp.json", json.loads(read(self.v111))["inputs"][RP])
 
     def write(self, name, obj, raw=None):
@@ -606,7 +611,7 @@ class CommandLine(unittest.TestCase):
         for args in (("--relying-party-keys", "", self.v110), ("--relying-party-keys", self.lst, "--relying-party-keys", self.lst, self.v110),
                      ("--rp-input", "unknown", "--relying-party-keys", self.lst, self.v110)):
             self.assertEqual(self.run_cli(*args)[0], 64, args)
-        for name in wv.PROFILES:
+        for name in set(wv.PROFILES) - {"1.4.5", "1.4.7"}:
             rc, _, err = self.run_cli("--profile", name, "--relying-party-keys", self.lst, self.v110)
             self.assertEqual(rc, 64, name)
             self.assertIn("--rp-input step12", err)
@@ -678,9 +683,10 @@ class CommandLine(unittest.TestCase):
         self.assertEqual(self.report("--rp-empty", "refuse", f)[0], 2)
         producer = i[RP]["keys"][1]
         f = self.write("r.json", dict(i, **{RP: {"keys": [dict(producer, key_id="a"), dict(producer, key_id="a")]}}))
-        self.assertEqual(self.report(f)[1]["report"]["problem_codes"], [X])
-        self.assertEqual(self.report("--rp-repeated", "bytes", f)[1]["report"]["problem_codes"], [])
-        self.assertEqual(self.report("--rp-entry-defect", "key-rejected", f)[1]["report"]["problem_codes"], [X, "KEY_REJECTED"])
+        self.assertEqual(self.report("--profile", "1.4.5", f)[1]["report"]["problem_codes"], [X])
+        self.assertEqual(self.report("--profile", "1.4.5", "--rp-repeated", "bytes", f)[1]["report"]["problem_codes"], [])
+        self.assertEqual(self.report("--profile", "1.4.5", "--rp-entry-defect", "key-rejected", f)[1]["report"]["problem_codes"],
+                         [X, "KEY_REJECTED"])
         g = dict(i)
         g["keys"] = dict(i["keys"], keys=[i["keys"]["keys"][0]])
         f = self.write("l.json", g)
@@ -688,7 +694,7 @@ class CommandLine(unittest.TestCase):
         self.assertEqual(self.report("--rp-lookup", "both", f)[1]["report"]["problem_codes"], [])
 
     def test_version(self):
-        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.9.0")
+        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.11.0")
 
     def test_usage_text_names_every_flag(self):
         rc, out, _ = self.run_cli("--help")
