@@ -262,6 +262,12 @@ keeps it (see "Switches"); the rules W1-W8, V1-V5, U1-U9, T1-T7, S1-S8 and R1-R1
   what 0.11.0 gave (measured below); `--profile 1.4.7`, `--profile 1.4.5`, `--profile 1.4.4`, `--profile 1.4.3`, `--profile 1.4.2` and
   `--profile 1.2.1` add it to their own, so each still gives what it gave.
 
+Correction to the message of commit `a5238a9` (0.12.0), which stays as published: it says of the four cases of step 4 "two of
+which are no requirement of RFC 7493". RFC 7493 sets no depth and names no byte-order mark, but of numbers it says in 2.2 that
+a message "SHOULD NOT" hold one of greater magnitude or precision than a double, which covers the overflow of 123; what does
+not follow RFC 7493 is that step 4 makes 2^53 unreadable (122), which a double holds exactly. X4 and Q36 above state it so since
+`caf351b`; the code, the tests and the results are the same in both commits.
+
 ## Profile 1.4.8 rules (3e53aac, vectors 116-118; version 0.11.0)
 
 Profile 1.4.8 (maximusrufus/work-acceptance-record@3e53aac, tag `v1.4.8`: the sentences added to steps 2 and 4, the
