@@ -412,9 +412,9 @@ class Profiles(unittest.TestCase):
         self.assertEqual(P145, dict(wv.PROFILE_1_4_7, rp_repeated="no-key", rp_point="off"))
         self.assertEqual((wv.DEFAULT_OPTIONS["rp_repeated"], wv.DEFAULT_OPTIONS["rp_point"]), ("bytes", "step12"))
         for name, prof in wv.PROFILES.items():
-            if name != "1.4.7":
+            if name not in ("1.4.7", "1.4.8"):
                 self.assertEqual({k: prof[k] for k in P145}, P145, name)
-        self.assertEqual(sorted(wv.PROFILES), ["1.2.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.7"])
+        self.assertEqual(sorted(wv.PROFILES), ["1.2.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.7", "1.4.8"])
         self.assertEqual(wv.OPTION_VALUES["rp_point"], ("step12", "off", "always"))
         self.assertEqual(wv.OPTION_VALUES["rp_repeated"], ("bytes", "no-key"))
 

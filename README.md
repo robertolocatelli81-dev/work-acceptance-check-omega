@@ -1,14 +1,15 @@
-# war-verify: a clean-room verifier for work-acceptance records (profile 1.4.8)
+# war-verify: a clean-room verifier for work-acceptance records (profile 1.4.11)
 
-`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.8 at
-maximusrufus/work-acceptance-record@3e53aac, vectors 01-118, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
-1.2.1) the way the profile README describes, and refuses anything it does not understand. Version 0.11.0 follows steps 2 and 4
-of 1.4.8 (see "Profile 1.4.8 rules", W1-W8), the
+`war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.11 at
+maximusrufus/work-acceptance-record@8ce7f42, vectors 01-126, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
+1.2.1) the way the profile README describes, and refuses anything it does not understand. Version 0.12.0 follows steps 4 and 12
+of 1.4.11 (see "Profile 1.4.11 rules", X1-X7), steps 2 and 4 of 1.4.8 (see "Profile 1.4.8 rules", W1-W8), the
 step 12 of 1.4.7 (see "Profile 1.4.7 rules", V1-V5, and "Profile 1.4.5 rules", U1-U9), on top of step 8 of 1.4.4 (see
 "Profile 1.4.4 rules", T1-T7), the
 1.4.3 clarifications (see "Profile 1.4.3 rules", S1-S8), the 1.4.2 rules (see "Profile 1.4.2 rules", R1-R10) and the
-clarification of 2026-10-27 (cb7e8f1, vectors 88-90); the 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 and 1.4.1 sets (6f7a075, c4b4bd4, 1b81ec9, 6bb7d0b,
-85a310d, bc5a138, 48ab8c9, 06d3b94) still agree in full. The readings version 0.10.0 gave to profile 1.4.7 where 1.4.8 fixes
+clarification of 2026-10-27 (cb7e8f1, vectors 88-90); the 1.4.8, 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 and 1.4.1 sets (3e53aac, 6f7a075, c4b4bd4,
+1b81ec9, 6bb7d0b, 85a310d, bc5a138, 48ab8c9, 06d3b94) still agree in full. The reading version 0.11.0 gave to profile 1.4.8 where 0.12.0
+reads 1.4.11 otherwise (no note on a noncharacter, X4) is kept: `--profile 1.4.8` selects it. The readings version 0.10.0 gave to profile 1.4.7 where 1.4.8 fixes
 them otherwise are kept: `--profile 1.4.7` selects them. The readings version 0.9.0 gave to profile 1.4.5 where 1.4.7 fixes
 them otherwise are kept: `--profile 1.4.5` selects them. The reading version 0.8.0 gave to profile 1.4.4 where 1.4.5 fixes it
 otherwise is kept: `--profile 1.4.4` selects it. The readings
@@ -28,7 +29,8 @@ it (two reviews and a fleet audit, under the same coordinator, opened parts of t
 "What was read"); for 0.9.0, the agent that wrote it opened or downloaded no file of those folders, at any commit, and
 it read the disclosure of those reads (see "What was read"); the same holds for 0.10.0, and its brief carried readings
 of the coordinator (see "What was read"); the same holds for 0.11.0, and its brief carried a summary of the coordinator and
-two reviews of 0.10.0 with measures of vectors 116-118 (see "What was read").
+two reviews of 0.10.0 with measures of vectors 116-118 (see "What was read"); the same holds for 0.12.0, and its brief carried a
+summary of the coordinator and the coordinator's measures of 0.11.0 on edge cases (see "What was read").
 
 Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 `LICENSE-APACHE`). The new vectors in `vectors/` are CC0, like the upstream vectors.
@@ -36,7 +38,7 @@ Licence of this project's own files: MIT OR Apache-2.0 (`LICENSE-MIT`,
 Third-party inputs are **not included** in this repository. `python3 tools/fetch_sources.py` downloads them from the
 commits and URLs pinned in `SOURCES.json` into `fonti/` and `roots/`, and keeps a file only if its SHA-256 matches;
 the tests need them. Their licences are their authors': the profile README is CC BY 4.0
-(maximusrufus/work-acceptance-record), the upstream vectors (116-118 at 3e53aac; 112-115 at 6f7a075; 110-111 at c4b4bd4; 108-109 at 1b81ec9; 91-107 at 6bb7d0b; 88-90 at cb7e8f1; 01-87 at 85a310d; 01-59 at 48ab8c9, then the head of PR #1, merged on
+(maximusrufus/work-acceptance-record), the upstream vectors (119-126 at 8ce7f42; 116-118 at 3e53aac; 112-115 at 6f7a075; 110-111 at c4b4bd4; 108-109 at 1b81ec9; 91-107 at 6bb7d0b; 88-90 at cb7e8f1; 01-87 at 85a310d; 01-59 at 48ab8c9, then the head of PR #1, merged on
 2026-10-27; 01-57 at bc5a138; 01-47 at 06d3b94, 01-46 at 4daf721, 01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
 CC0-1.0, and the babyblueviper1
 vectors and the issuer files (`selftest-pass.json`, its README, `checker-keys-live.json`) state no licence. The
@@ -57,7 +59,8 @@ Profile steps 1-9 and 12, with the problem and warning codes of step 8:
    prime order, else `SIGNATURE_INVALID` (W1);
 3. delivered and original files, when supplied (`delivered_file_base64`, `original_file_base64`);
 4. criteria document hash, and that the results correspond to the criteria; from 0.11.0 (1.4.8), `CRITERIA_UNREADABLE` for
-   a document that cannot be read (W3-W7);
+   a document that cannot be read (W3-W7); from 0.12.0 (1.4.11), also for the four cases step 4 names under "I-JSON" (X1), which
+   0.11.0 already read so; a noncharacter, which RFC 7493 forbids and step 4 does not name, is read and noted (X4, reading Q36);
 5. criteria commitment: imprint of the criteria token (SHA-256 by OID), its genTime against `committed_at`,
    fallback to `committed_at` with `CRITERIA_COMMITMENT_UNVERIFIED`, strict "earlier than" against the reference
    time, which is the earlier of `issued_utc` and a covering record token's genTime. A token's stated `accuracy`
@@ -162,7 +165,8 @@ rules"), and the 1.4.5 cases (an entry of `relying_party_keys` that cannot be re
 `X_UNUSED_KEY_REJECTED`: see "Profile 1.4.5 rules", U9), and the 1.4.7 cases (a `key_id` that `relying_party_keys` repeats,
 the note `X_RP_KEY_ID_REPEATED`; a producer's key that fails the point rule, `X_RP_PRODUCER_KEY_POINT_RULE`: see "Profile
 1.4.7 rules", V1, V3), and the 1.4.8 case (a criteria document that cannot be read, `CRITERIA_UNREADABLE`, with its reason in
-`details.criteria_unreadable`: see "Profile 1.4.8 rules"). A member of another type than the specification gives is refused with the step
+`details.criteria_unreadable`: see "Profile 1.4.8 rules"; from 1.4.11 that includes a criteria file that is not I-JSON: see "Profile
+1.4.11 rules"). A member of another type than the specification gives is refused with the step
 1 outcome (1.4.2 R8). That includes duplicate JSON member names, lone surrogates, integers outside the I-JSON range of plus or minus
 (2^53 - 1), a byte order mark, base64 that is not canonical in `tsa_roots_base64`, any non-DER encoding in a token
 (a `genTime` element not tagged GeneralizedTime included). A signature whose R fails the rule is not refused: it is
@@ -189,6 +193,73 @@ The profile does not define the envelope, key-file or criteria-document formats.
 them are those found in the published inputs (the 26 documents of the 1.2.1 round and the 27 vectors of 1.3). For the criteria document, only `criteria[].id`, `required` and
 `title` are interpreted, and the other members are listed in `notes`; which of them have a type is reading Q34. `--unknown-fields report` turns refusals
 for unknown members into notes (the four exceptions above are notes under both values).
+
+## Profile 1.4.11 rules (8ce7f42, vectors 119-126; version 0.12.0)
+
+Profile 1.4.11 (maximusrufus/work-acceptance-record@8ce7f42, 2026-11-07: the sentence added to step 4, the two sentences added to
+step 12, eight new rows of the vector table, and the changelog entries of 1.4.9, 1.4.10 and 1.4.11) is the default from 0.12.0. It
+states no new problem or warning code. Its changelog says it "Settles two questions raised by robertolocatelli81-dev": Q35 and Q31
+of this README, and "Vectors 01-118 and their outcomes are unchanged". Releases 1.4.9 and 1.4.10 are errata, "Text only: no
+requirement, reference verifier code or vector outcome changes"; the sentence 1.4.10 added to step 4 ("Inputs the list does not
+name ... are not specified by this profile") is replaced by 1.4.11. Rules X1-X7 below are written from that text and RFC 7493; the
+number after each rule is the vector that fixes it, and a rule with no number has no vector. Version 0.11.0 already gave every
+outcome of 119-126 (measured below); the one rule that changes code is X4. Where 0.11.0 read the input otherwise, `--profile 1.4.8`
+keeps it (see "Switches"); the rules W1-W8, V1-V5, U1-U9, T1-T7, S1-S8 and R1-R10 are unchanged, except as X1, X5 and X6 say.
+
+- **X1 the limits of the criteria file** (121-126; closes Q35). "The file must also be I-JSON (RFC 7493) and is otherwise unreadable
+  when it starts with a byte-order mark (121), holds an integer outside ±(2^53−1) (122), holds a number that overflows to infinity
+  (123), or holds a value, scalar or container, more than 64 levels below the root, the root being level 0 (124-126)". These are the
+  four cases Q35 named, and `CRITERIA_UNREADABLE` is the reading 0.11.0 took (`--criteria-limits unreadable`, the default): Q35 is
+  closed, and the code that implements it is unchanged. `--criteria-limits readable` stays, and is **outside profile 1.4.11** for
+  121-124 and 126. Depth: the root is level 0, so the value of a member of the root object is level 1; a scalar or an empty array
+  or object at level 64 is readable (125: a number), and any value at level 65 is not, whether it is a number (126), an array (124),
+  an object, a string, `true`, `false` or `null`, empty or not; so an array or an object at level 64 that holds anything is not. A member name is not a value: it sits with the value it names. W7 stands: the hash comes first, and the
+  limits are read only when it matches.
+- **X2 "an integer"** (122). A number written with neither a fraction nor an exponent, the `int` of RFC 8259 6 alone, as 122 writes
+  2^53: `9007199254740992`, `-9007199254740992` and any integer of more digits are unreadable, `9007199254740991` and
+  `-9007199254740991` are readable. A number with a fraction or an exponent is no integer here, even when its value is a whole number:
+  `9007199254740992.0`, `9.007199254740992e15` and `1e16` are readable, as in 0.11.0. Reading Q37.
+- **X3 "a number that overflows to infinity"** (123). A number whose value, rounded to the nearest double (round to nearest, ties
+  to even, as the conversion of Python's `float`), is infinite: `1e400`, `-1e400` and `1.7976931348623159e308` are unreadable,
+  `1.7976931348623157e308` is not. A number that underflows to zero (`1e-400`) does not overflow, and a number with more digits than
+  a double holds (`3.141592653589793238462643383279`) is read as its nearest double: both are readable, as in 0.11.0. Reading Q38.
+- **X4 the rest of I-JSON** (no vector; reading Q36). "The file must also be I-JSON (RFC 7493)". RFC 7493 2.1: "Object member names,
+  and string values in arrays and object members, MUST NOT include code points that identify Surrogates or Noncharacters as defined by
+  [UNICODE]. This applies both to characters encoded directly in UTF-8 and to those which are escaped". Every other "MUST" of RFC
+  7493 2 is already a trigger of step 4: UTF-8 (2.1), a lone surrogate (2.1; `"\uD800\uDEAD"` "would be legal", so a pair is one
+  character and readable, W5), a repeated member name (2.3). Noncharacters are not: the 66 code points U+FDD0-U+FDEF and the last two
+  of each plane, U+FFFE, U+FFFF, U+1FFFE, U+1FFFF ... U+10FFFE, U+10FFFF (Unicode 15.1, 23.7). What step 4 says a verifier does is
+  the list after "and is otherwise unreadable when": four cases, and the changelog of 1.4.11 names the same four ("a byte-order mark,
+  an integer outside ±(2^53−1), a number that overflows and a value more than 64 levels below the root are `CRITERIA_UNREADABLE`") and
+  says "the reference verifier adds the I-JSON number and depth checks", with no check of noncharacters. Two of the four are not
+  requirements of RFC 7493 (it sets no depth, and of an integer past 2^53 says only that a receiver need not treat it "as an exact
+  value"), so "I-JSON" in step 4 names the profile's own list, not every clause of RFC 7493. A criteria file that holds a noncharacter
+  in a member name or a string value inside the document, as bytes or as an escape, is therefore read, as 0.11.0 read it, and the
+  report carries the note `X_CRITERIA_NOT_I_JSON` with the code point (`--criteria-noncharacters report`, the default); the note is
+  written only when the hash matches (W7) and the document is otherwise readable. The other reading, that a file which fails the
+  "must" of step 4 takes the one code step 4 has for a file it does not take, is `--criteria-noncharacters unreadable`
+  (`CRITERIA_UNREADABLE`, with the code point in `details.criteria_unreadable`). The text fixes neither and no vector decides. The
+  changelog names no check of noncharacters in the reference verifier; whether it reads such a file was not measured here (its code
+  was not opened, see "What was read"). This verifier does not refuse what the procedure of step 4 does not name, and the question
+  goes to the profile author (Q36). A document that is one string is no member name and no string in an array or an
+  object member: RFC 7493 2.1 does not reach it, and it stays Q33 under every value. No criteria file of the published vectors, of
+  any set, and none of ours, holds a noncharacter (measured below). The "SHOULD NOT" of RFC 7493 2.2 on numbers is not a "MUST": what
+  1.4.11 makes of it is X3; RFC 7493 4.1 and 4.2 are recommendations for protocol design, and a document that is no object stays Q33.
+- **X5 where the point rule applies** (119, 120; closes Q31). "Without `relying_party_keys` the rule is not applied, and `keys` is
+  read as the relying party's list, as before (119). The point rule for the producer's key applies only under the conditions above;
+  under a `self-checked` claim it is not applied, and derived independence decides as for any record (120)". This is V4, the
+  default `--rp-point step12` of 0.10.0 and 0.11.0: Q31 is closed. `--rp-point always` stays, and is **outside profile 1.4.11** for
+  119 and 120 (measured below); `--rp-point off` stays the 0.9.0 reading, behind `--profile 1.4.5`.
+- **X6 the errata of 1.4.9 and 1.4.10**. No outcome changes. Step 12 now cites "step 10's canonical-base64 rule", as V2 read it;
+  the heading of the profile README names 1.4.11; in the `description` of 113, "is not KEY_COLLISION" reads "is not KEY_REJECTED",
+  and in that of 116 "(step 5)" reads "(step 2)" (the vector files are unchanged). The 1.4.10 sentence "Inputs the list does not name (for
+  example a byte-order mark, integers beyond ±(2^53−1), or deep nesting) are not specified by this profile; no vector covers them, and
+  verifiers may differ" is gone: its examples are now the four cases of X1, and step 4 no longer says what becomes of an input it
+  does not name (X4, Q36); the 1.4.10 changelog, still in the text, keeps "the list is the specified set". Q32-Q34 are not answered
+  by 1.4.11, and stay open.
+- **X7 the older readings**. `--criteria-noncharacters readable` is the 0.11.0 reading of X4: read, with no note. `--profile 1.4.8` selects it and gives
+  what 0.11.0 gave (measured below); `--profile 1.4.7`, `--profile 1.4.5`, `--profile 1.4.4`, `--profile 1.4.3`, `--profile 1.4.2` and
+  `--profile 1.2.1` add it to their own, so each still gives what it gave.
 
 ## Profile 1.4.8 rules (3e53aac, vectors 116-118; version 0.11.0)
 
@@ -564,6 +635,7 @@ python3 war_verify.py --vector VECTOR.json              # compare with "expected
 python3 war_verify.py --keys fonti/issuer_274159c/checker-keys-live.json --tokens pkix \
         --tsa-roots roots/freetsa_cacert.pem fonti/issuer_274159c/selftest-pass.json      # exit 0 (measured)
 python3 war_verify.py --keys ISSUER_KEYS.json --relying-party-keys MY_OWN_KEYS.json RECORD.json   # step 12 of 1.4.7
+python3 war_verify.py --vector --profile 1.4.8 VECTOR.json   # the reading of 0.11.0
 python3 war_verify.py --vector --profile 1.4.7 VECTOR.json   # the readings of 0.10.0
 ```
 
@@ -605,12 +677,15 @@ before this guard with 39.0.2: the chain step failed silently and 31, 32 and 34 
 `cryptography` package is the Ed25519 arithmetic engine and the X.509 parser for the TSA checks.
 Canonicalisation and the DER, CMS and TSTInfo parsers are written here.
 
-## Switches: profile 1.4.8 by default, the 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 and 1.2.1 readings kept
+## Switches: profile 1.4.11 by default, the 1.4.8, 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 and 1.2.1 readings kept
 
-Defaults follow profile 1.4.8 (steps 2 and 4 of 1.4.8, step 12 of 1.4.7, step 8 of 1.4.4, the other steps of 1.3, the step 10
-rules of 1.4.2 and the step 11 clarifications of 1.4.3). `--profile 1.4.7` selects the readings 0.10.0 gave to 1.4.7 where 1.4.8
+Defaults follow profile 1.4.11 (steps 4 and 12 of 1.4.11, step 2 of 1.4.8, step 8 of 1.4.4, the other steps of 1.3, the step 10
+rules of 1.4.2 and the step 11 clarifications of 1.4.3). `--profile 1.4.8` selects the reading 0.11.0 gave to 1.4.8 where 0.12.0
+reads 1.4.11 otherwise (`--criteria-noncharacters readable`, no note; README X4); with it the report is the one 0.11.0 gave, but for the member
+`options` (see "Results, profile 1.4.11"). There is no `--profile 1.4.11`, `1.4.10` or `1.4.9`: the first is the defaults, the
+other two are errata with no requirement of their own. `--profile 1.4.7` adds to it the readings 0.10.0 gave to 1.4.7 where 1.4.8
 fixes them otherwise (`--sig-r not-small`, `--criteria-unreadable mismatch`; README W1, W3); with it the report is the one 0.10.0
-gave, but for the member `options` and the wording of one note (see "Results, profile 1.4.8"). There is no `--profile 1.4.8`: those are the defaults.
+gave, but for the member `options` and the wording of one note (see "Results, profile 1.4.8").
 `--profile 1.4.5` adds to them the readings 0.9.0 gave to 1.4.5 where 1.4.7 fixes them
 otherwise (`--rp-repeated no-key`, `--rp-point off`; README V1, V3); with it every vector set gives what 0.9.0 gave
 (measured below). There is no `--profile 1.4.6`: that release changed licences only. `--profile 1.4.4` adds to them the
@@ -654,15 +729,16 @@ overrides either profile.
 | `--rp-repeated` | `bytes`: every entry is compared by its bytes, a repeated `key_id` is no defect (1.4.7) | `no-key` (0.9.0, 1.4.5: an entry whose `key_id` the list repeats holds no key, and is a defect of the list) | 1.4.7 step 12 "a repeated `key_id` changes nothing"; vector 113; Q26, closed |
 | `--rp-entry-defect` | `note`: a local block | `key-rejected`: also `KEY_REJECTED`; **outside the profile** for a producer's entry that does not decode (112) and for an entry holding a producer's key the point rule refuses (114, 115); open for any other entry | step 10 "the key list", step 12 "a key list"; reading Q27 |
 | `--rp-lookup` | `keys`: the producer's `key_id` is resolved in the key list in use | `both`: also in `relying_party_keys` | 1.4.5 step 12 "counts only when"; reading Q28 |
-| `--rp-point` | `step12`: the point rule on the producer's key, under the conditions of U3 (1.4.7) | `off` (0.9.0, 1.4.5); `always`: with or without a list, under either claim | 1.4.7 step 12 "The producer's key must pass step 2's point rule"; vectors 114, 115; reading Q31 |
+| `--rp-point` | `step12`: the point rule on the producer's key, under the conditions of U3 (1.4.7, 1.4.11) | `off` (0.9.0, 1.4.5); `always`: with or without a list, under either claim, **outside profile 1.4.11** for 119 and 120 | 1.4.11 step 12 "The point rule for the producer's key applies only under the conditions above"; vectors 114, 115, 119, 120; Q31, closed (X5) |
 | `--unknown-fields` | `refuse` | `report` | profile silent, except where bc5a138 fixes the outcome: `receipt.tools.numbers_for_canonicalization` (vectors 52, 57), a `receipt.payment` outside its form (55) and the unsigned envelope `timestamp.digest_sha256` outside its form (step 6) are notes under both values |
 | `--ed25519` | `strict` (canonical R, the rule of `--sig-r` on R, S < L) | `rfc8032` (RFC 8032 5.1.7 only; outside the profile for 116, W2) | the key itself is governed by `--key-rule` |
 | `--sig-r` | `prime-order`: under `strict`, R of small or mixed order is `SIGNATURE_INVALID` (1.4.8) | `not-small` (0.10.0, 1.4.7: small order only; an R of mixed order then fails the equation) | 1.4.8 step 2 "the signature's R must be a canonical point of prime order"; README W1 |
-| `--criteria-unreadable` | `step4`: `CRITERIA_UNREADABLE` (1.4.8) | `mismatch` (0.10.0, 1.4.7: `CRITERIA_RESULTS_MISMATCH`; `--criteria-read`, `--criteria-shape`, `--criteria-types` and `--criteria-limits` then do nothing) | 1.4.8 step 4 "A criteria document that cannot be read is `CRITERIA_UNREADABLE`"; README W3 |
+| `--criteria-unreadable` | `step4`: `CRITERIA_UNREADABLE` (1.4.8) | `mismatch` (0.10.0, 1.4.7: `CRITERIA_RESULTS_MISMATCH`; `--criteria-read`, `--criteria-shape`, `--criteria-types`, `--criteria-limits` and `--criteria-noncharacters` then do nothing) | 1.4.8 step 4 "A criteria document that cannot be read is `CRITERIA_UNREADABLE`"; README W3 |
 | `--criteria-read` | `matched`: the document is read when the hash matches | `always`: also on a mismatch, so both codes can stand | reading Q32 |
 | `--criteria-shape` | `typed`: an absent member, or a document that is no object, is not unreadable | `absent`: they are | reading Q33 |
 | `--criteria-types` | `read`: `criteria`, its elements, `id` and `required` have a type | `known`: also `criteria_set`, `title`, `version`, `result_vocabulary` and, in a criterion, `title` and `requirement`, when present | reading Q34 |
-| `--criteria-limits` | `unreadable`: a byte order mark, an integer outside +-(2^53-1), a number that overflows, depth over 64 | `readable`: read past them, up to the depth Python's parser reaches | reading Q35 |
+| `--criteria-limits` | `unreadable`: a byte order mark, an integer outside +-(2^53-1), a number that overflows, depth over 64 (1.4.11) | `readable`: read past them, up to the depth Python's parser reaches; **outside profile 1.4.11** for 121-124 and 126 | 1.4.11 step 4 "The file must also be I-JSON (RFC 7493) and is otherwise unreadable when ..."; vectors 121-126; Q35, closed (X1) |
+| `--criteria-noncharacters` | `report`: a noncharacter in a member name or a string value inside the document is read, with the note `X_CRITERIA_NOT_I_JSON` (1.4.11, X4) | `unreadable` (`CRITERIA_UNREADABLE`, the other reading of Q36); `readable` (0.11.0, 1.4.8: read, no note) | 1.4.11 step 4 "The file must also be I-JSON (RFC 7493)"; RFC 7493 2.1; reading Q36 |
 | `--correspondence` | `ids-required` (same ids, same `required`) | `strict` (titles too) | step 4 "check the results correspond to the criteria" |
 
 Other decisions taken from the text:
@@ -718,6 +794,26 @@ Only these files; their URLs and SHA-256 values are in `SOURCES.json`, or given 
 but are not kept. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- for 0.12.0, on 2026-11-10: `fonti/upstream_8ce7f42/` (the README at 8ce7f42, the head of `master`, and vectors 119-126; SHA-256 in
+  `SOURCES.json`, 9 entries added). They were taken from a local clone of the repository, fetched by the coordinator before this
+  work, with `git show 8ce7f42:PATH`. The agent that wrote 0.12.0 read: the diff 3e53aac..8ce7f42 of `README.md`, `CONFORMANCE.md` and
+  `x402_capture/README.md` (step 4, step 12, the eight vector rows, the sentence on the reference verifier, the implementations table,
+  the changelog entries of 1.4.9, 1.4.10 and 1.4.11), the sentence of step 4 at e4e664f (1.4.10), the titles of the commits
+  3e53aac..8ce7f42, `git diff --stat` and `--name-status` of that range (which name the files of `verifier/` and `x402_capture/`
+  changed, without their content), and the members outside `inputs`, the input names and the decoded criteria file of 119-126. No
+  file of `vectors/` was changed or removed in 3e53aac..8ce7f42, so 01-118 are the files of `--set 3e53aac`. It also read RFC 7493
+  (rfc-editor.org, SHA-256 a44ccf1451a7bf4f4bbb78b39e10ed0e9a27ff2ee5b639c6458042b5a7197062) and section 23.7 of the Unicode
+  Standard 15.1 (unicode.org, chapter 23). That agent opened or downloaded no file of `verifier/`, `interop/`, `composition/` or
+  `x402_capture/capture_gate.py`, at any commit. These inputs were not independent of this project. The brief of the coordinator gave
+  the agent, besides the paths: a summary of 1.4.9-1.4.11 (the coordinator states it read the diff of the `.md` files
+  3e53aac..8ce7f42), the coordinator's measure of 0.11.0 on the 126 vectors (126/126, 1148/1148 fields, without the live record),
+  and the coordinator's runs of the function `_criteria_unreadable` of 0.11.0 on edge cases (2^53 in decimal and exponent form, an
+  underflow, the depth of each kind of value), with the remark that some were fixed neither by the text nor by the vectors. This agent
+  measured each again, and wrote Q37 and Q38 from them; Q36 (noncharacters) it found on RFC 7493 2.1. A second message of the
+  coordinator, relaying Roberto, asked for the generative tests of `tests/test_profile1411.py` (numbers, byte order mark, depth, the
+  product of step 12, the closure of the criteria file) and a positive control for each group. This agent cannot check what else that
+  coordinator has seen, so the disclosures below should be read with this one. `CONFORMANCE.md` lists 0.11.0 at 7d9f528 with
+  "119/119 documents, 1085/1085 fields", which this README stated; no rule here rests on it, nor on `x402_capture/README.md`.
 - for 0.11.0, on 2026-11-07: `fonti/upstream_3e53aac/` (the README at 3e53aac, tag `v1.4.8`, and vectors 116-118; SHA-256 in
   `SOURCES.json`, 4 entries added). The agent that wrote 0.11.0 read: the differences between the README at 6f7a075 and at 3e53aac,
   computed on the two files kept here (steps 2, 4 and 8, the three vector rows, the sentence on the reference verifier, the
@@ -990,7 +1086,7 @@ show that a switch changes outcomes, not how often it would in use.
 | Q28 | The producer's `key_id` is not listed in `inputs.keys` and `relying_party_keys` lists it. Is the key established? | No. "Only when" is a further condition, "the same decoded key" needs a key to compare, and steps 8 and 11 keep "not listed once" under an independent claim: T5 stands, `self-checked`. | `--rp-lookup both` resolves the `key_id` in `relying_party_keys` when `inputs.keys` does not list it, and that key then enters `KEY_COLLISION`: 2 of 2,240 differ |
 | Q29 | An undeclared producer (T2) with a `key_id` the list does not hold, or (1.4.7) a key that fails the point rule: "otherwise derived independence is `self-checked`", and step 8 puts `undeclared` first. | `undeclared` stays first, as with the key checks in T2. | No switch: the outcome members are the same (`INDEPENDENCE_INCONSISTENT` and `PRODUCER_UNDECLARED` either way); only `details.independence_derived` would differ. On the tables of `tools/readings147.py`, 552 such records, all 552 with both codes. |
 | Q30 | A list equal to `keys.keys`, or one the issuer wrote: "obtained itself" cannot be read from the bytes. | Taken as supplied; 111 is such a list (its `relying_party_keys.keys` equals `keys.keys`). `X_RP_KEYS_FROM_INPUT` is what the verifier can say. | No alternative is computable from the input. |
-| Q31 | (1.4.7) Does the point rule run outside the conditions of step 12? The sentence states none of its own, says "never establishes", and the changelog says "Step 12 now requires the producer's key to pass step 2's point rule"; the same step says "Without `relying_party_keys` the rule is not applied, and `keys` is read as the relying party's list, as before". | No: the conditions of U3 (V4), so with no list, or under a `self-checked` claim, the outcome is that of 0.9.0. No vector has a producer's key that fails the rule outside them. | `--rp-point always` runs the rule on any record whose producer states a key the list in use resolves, with or without a list, under either claim, as long as `--independence-rule` is `derived`: 208 of 1,512 records differ: 156 have a list under a `self-checked` claim, a branch the sentence "Without `relying_party_keys`" does not reach, and 52 have no list; `always` removes `INDEPENDENCE_INCONSISTENT` on 182 of them and adds it on 26 (`results/readings147.txt`); 116/116 on the 6f7a075 set, so no vector decides it. `--rp-point off`: 104 of 1,512 differ, 114/116 (114, 115) |
+| Q31 | (1.4.7) Does the point rule run outside the conditions of step 12? The sentence states none of its own, says "never establishes", and the changelog says "Step 12 now requires the producer's key to pass step 2's point rule"; the same step says "Without `relying_party_keys` the rule is not applied, and `keys` is read as the relying party's list, as before". | No: the conditions of U3 (V4), so with no list, or under a `self-checked` claim, the outcome is that of 0.9.0. **Closed by 1.4.11 (8ce7f42, step 12; vectors 119, 120), as read here (X5)**: `--rp-point always` is outside the profile for 119 and 120. | `--rp-point always` runs the rule on any record whose producer states a key the list in use resolves, with or without a list, under either claim, as long as `--independence-rule` is `derived`: 208 of 1,512 records differ: 156 have a list under a `self-checked` claim, a branch the sentence "Without `relying_party_keys`" does not reach, and 52 have no list; `always` removes `INDEPENDENCE_INCONSISTENT` on 182 of them and adds it on 26 (`results/readings147.txt`); 116/116 on the 6f7a075 set, so no vector decides it. `--rp-point off`: 104 of 1,512 differ, 114/116 (114, 115) |
 
 ### Profile 1.4.8: readings not fixed by the text (questions for the profile author)
 
@@ -1005,7 +1101,22 @@ reach each branch, and says that a switch changes outcomes, not how often it wou
 | Q32 | A document whose hash does not match and that cannot be read. "When it matches, check the results correspond" conditions the correspondence; the sentence on `CRITERIA_UNREADABLE` states no condition. | `CRITERIA_HASH_MISMATCH` alone: the document is not the committed one, so what it holds says nothing of the record. 07, 67, 89 and 94 mismatch with readable or no bytes, and do not decide it. | `--criteria-read always` reads it too, and gives both codes: 143 of the 198 documents with a hash that does not match |
 | Q33 | No member `criteria`, a criterion without `id` or `required`, a document that is no object (`[]`). "A wrongly typed member" needs a member. | `CRITERIA_RESULTS_MISMATCH`, as in 0.10.0: the results correspond to nothing that was read. Our vectors omega-04 and omega-05 hold two of them. | `--criteria-shape absent` makes them `CRITERIA_UNREADABLE`: 9 of 198 |
 | Q34 | A member this verifier does not read, of a type other than in the published files (`"title": 1`). The profile defines no format, and gives one example, "a criterion id that is not a string". | Not unreadable: only `criteria`, its elements, `id` and `required` have a type here, and the others stay notes. | `--criteria-types known` adds the form of every published criteria file (`tests/test_profile148.py` checks that they all have it): 7 of 198 |
-| Q35 | What this parser refuses and the sentence does not list: a byte order mark (RFC 8259 8.1 lets a parser ignore it), an integer outside +-(2^53-1), a number that overflows such as `1e400`, depth over 64 (RFC 8259 9 allows limits). The title of commit 8994178, which wrote the list of step 4, says it lists "every CRITERIA_UNREADABLE trigger": these four are our addition to that list, not a reading of it. | `CRITERIA_UNREADABLE`, under "cannot be read", with the reason in `details`. Limits that this verifier keeps for the record, and one code for a document it does not read. | `--criteria-limits readable` reads past them, every integer as zero; nesting then ends where Python's parser ends, at a depth that depends on the Python, and that is `CRITERIA_UNREADABLE`: 9 of 198 |
+| Q35 | What this parser refuses and the sentence does not list: a byte order mark (RFC 8259 8.1 lets a parser ignore it), an integer outside +-(2^53-1), a number that overflows such as `1e400`, depth over 64 (RFC 8259 9 allows limits). The title of commit 8994178, which wrote the list of step 4, says it lists "every CRITERIA_UNREADABLE trigger": these four are our addition to that list, not a reading of it. | `CRITERIA_UNREADABLE`, under "cannot be read", with the reason in `details`. Limits that this verifier keeps for the record, and one code for a document it does not read. **Closed by 1.4.11 (8ce7f42, step 4; vectors 121-126), as read here (X1)**: `--criteria-limits readable` is outside the profile for 121-124 and 126. | `--criteria-limits readable` reads past them, every integer as zero; nesting then ends where Python's parser ends, at a depth that depends on the Python, and that is `CRITERIA_UNREADABLE`: 9 of 198 |
+
+### Profile 1.4.11: readings not fixed by the text (questions for the profile author)
+
+Pinned in `tests/test_profile1411.py`; Q36-Q38 written from the 1.4.11 text, RFC 7493 and vectors 119-126; the agent that wrote them
+did not open the reference verifier. On the 8ce7f42 set every value of `--criteria-noncharacters` gives 127/127, so no vector decides
+Q36; Q37 and Q38 have no switch. `tools/readings1411.py` counts, under the 0.12.0 defaults, how many of 680 criteria documents (482
+of the generative tables of `tests/test_profile1411.py`, 198 of `tests/test_profile148.py`) give another outcome
+(`results/readings1411.txt`); the count follows from the tables, built to reach each branch, and says that a switch changes outcomes,
+not how often it would in use.
+
+| # | case | reading taken here (0.12.0) | switch, and what it changes |
+|---|---|---|---|
+| Q36 | A noncharacter (U+FDD0-U+FDEF, U+xFFFE, U+xFFFF) in a member name or a string value. "The file must also be I-JSON (RFC 7493)", and RFC 7493 2.1 says such a text "MUST NOT include" one; the list after "and is otherwise unreadable when" names four cases and not this one. | Read, with the note `X_CRITERIA_NOT_I_JSON` (X4): step 4 lists what is unreadable, and its changelog names the same four cases and says the reference verifier adds "the I-JSON number and depth checks", no check of noncharacters; two of the four are no requirement of RFC 7493, so "I-JSON" there names the profile's list. Against it: "must also be I-JSON" is a requirement of the file, and RFC 7493 2.1 is a "MUST NOT". No published criteria file holds one. | `--criteria-noncharacters unreadable` makes it `CRITERIA_UNREADABLE` (132 of 680 documents differ, the documents of the tables of 1.4.11 that hold one); `--criteria-noncharacters readable` reads it with no note, as 0.11.0 did, and `--profile 1.4.8` selects that (no outcome differs); 127/127 on the 8ce7f42 set under each value |
+| Q37 | "An integer outside ±(2^53−1)": a number written with a fraction or an exponent whose value is a whole number of that size, such as `9007199254740992.0`, `9.007199254740992e15` or `1e16`. RFC 8259 6 calls `int` the part before a fraction or exponent; RFC 7493 2.2 speaks of "an integer whose absolute value is greater than 9007199254740991". 122 writes `9007199254740992`. | Readable (X2): an integer is a number written as one, as in 0.11.0. | No switch. The other reading, by value, makes every number of magnitude 2^53 or more unreadable, because every double of that magnitude is a whole number: `1.5e300` too. |
+| Q38 | A number that underflows to zero (`1e-400`, `2.4e-324`) or has more digits than a double holds (`3.141592653589793238462643383279`). RFC 7493 2.2 says such numbers "SHOULD NOT" be sent (its example of excess precision is the second), and 1.4.11 makes only the overflow unreadable. | Readable (X3), as in 0.11.0: a "SHOULD NOT" of the sender is not a "must" of the file, and the text names overflow alone. | No switch. |
 
 ### Profile 1.4.4: readings not fixed by the text (questions for the profile author)
 
@@ -1026,6 +1137,58 @@ under A (`false`, `0`, `0.0`, `-0.0`, `[]`, `{}`) and 13 declared. On the publis
 and 1004/1004 under each, so no vector decides Q19. Q23, measured the same day: `--key-claim always` also gives 110/110,
 so no vector decides the empty and unlisted case either; counting a repeated identifier under the independent claim
 only, the literal sentence of step 8, gives 109/110: vector 75, with `INDEPENDENCE_INCONSISTENT` added.
+
+## Results, profile 1.4.11 at 8ce7f42 (measured 2026-11-10, version 0.12.0)
+
+Defaults: the 126 vectors of 8ce7f42 and the live record (`tools/score.py`, `results/score_default.txt`): 127/127 documents,
+1157/1157 fields. No file of `vectors/` was changed or removed in 3e53aac..8ce7f42 (`git diff --name-status`: 8 added), so `--set
+8ce7f42` reads 01-118 from the folders of `--set 3e53aac` and 119-126 from `fonti/upstream_8ce7f42/`. The sentence of the changelog,
+"Vectors 01-118 and their outcomes are unchanged", holds by measure too: on the 119 documents of `--set 3e53aac` the whole report under
+the defaults equals the one under `--profile 1.4.8`, but for its member `options` (`tests/test_profile1411.py`). The older sets,
+remeasured with 0.12.0, are unchanged: 3e53aac 119/119 and 1085/1085 (`results/score_set_3e53aac.txt`), 6f7a075 116/116 and
+1058/1058, c4b4bd4 112/112 and 1022/1022, 1b81ec9 110/110 and 1004/1004, 6bb7d0b 108/108 and 986/986, 85a310d 88/88 and 803/803,
+bc5a138 58/58 and 537/537, 48ab8c9 60/60 and 557/557, 06d3b94 48/48 and 441/441, 1.4 37/37 and 332/332, 1.3 28/28 and 245/245. Our own
+vectors (`vectors/`, 52): 52/52.
+
+Version 0.11.0 (7d9f528, the parent of this commit) on the same 127 documents: 127/127 and 1157/1157. Every outcome of 119-126 was
+already the one 1.4.11 states: 119 and 120 by V4, 121-126 by the reading of Q35 that 1.4.11 adopts. `--profile 1.4.8` gives 127/127
+too: no vector holds a noncharacter, so no vector decides Q36 (every criteria file of every published set and of ours scanned: none
+holds one, in a name or a value, as bytes or as an escape). Two rows of the table of `tests/test_profile148.py`, labelled readable
+under 1.4.8, held a noncharacter: `"\uffff"` and the pair `"\udbff\udfff"` (U+10FFFF). They now hold U+FFFD and U+10FFFD, which keep
+what the rows test (no lone surrogate); the noncharacters themselves are in `tests/test_profile1411.py`.
+
+Differential of 0.11.0 (7d9f528, from `git archive`) against 0.12.0 with `--profile 1.4.8` (`tools/differential_0110.py`,
+2026-11-10): the 930 fuzz cases, every vector file in `fonti/` and `vectors/`, and 6,277 generated cases (those of the 0.11.0 bench and
+the 66 noncharacters escaped in a value and as bytes in a name, their 35 neighbours and 300 generated strings), 7,687 cases under eleven
+option sets (defaults against `--profile 1.4.8`, the six older profiles, `--unknown-fields report`, `--criteria-limits readable`,
+`--criteria-read always`, `--rp-point always`), 84,557 runs: the whole report but its member `options` differs in 0. Positive control,
+0.12.0 with its defaults on the same cases: 345 of 7,687 differ (32 fuzz cases, 132 noncharacter cases and 181 generated strings, all
+holding a noncharacter), by the note `X_CRITERIA_NOT_I_JSON` (`notes`, `extension_codes`; the
+eight the bench prints differ by nothing else, on the 680 documents of `tools/readings1411.py` the default and `--criteria-noncharacters
+readable` give the same outcome, and 0.11.0 and 0.12.0 both meet the 930 fuzz expectations, X4). The bench calls the library; 7d9f528 is in the history of this repository, so a
+reader can rerun it from `git archive 7d9f528`.
+
+Each other value of each switch on the 127 documents (`results/score_*.txt`; the rows not listed give what they gave on the 3e53aac
+set, see "Results, profile 1.4.8", with 119-126 agreeing):
+
+| switch | documents agreeing | disagreeing vectors |
+|---|---|---|
+| `--profile 1.4.8`, `--criteria-noncharacters readable`, `--criteria-noncharacters unreadable` | 127/127 each | none |
+| `--criteria-limits readable` | 122/127 | 121, 122, 123, 124, 126 |
+| `--rp-point always` | 125/127 | 119, 120 |
+| `--rp-point off` | 125/127 | 114, 115 |
+| `--profile 1.4.7`, `--criteria-unreadable mismatch` | 120/127 each | 117, 118, 121-124, 126 |
+| `--profile 1.4.5` | 117/127 | 113, 114, 115, 117, 118, 121-124, 126 |
+| `--profile 1.4.4` | 113/127 | 110-115, 117, 118, 120-124, 126 |
+| `--rp-input unknown` | 120/127 | 110-115, 120 |
+| `--profile 1.4.3` | 112/127 | 109-115, 117, 118, 120-124, 126 |
+| `--profile 1.4.2` | 107/127 | 91, 94, 95, 104, 106, 109-115, 117, 118, 120-124, 126 |
+| `--profile 1.2.1` | 90/127 | 20, 22, 26, 27, 28, 29, 64, 69, 75, 79, 80, 81, 86, 91, 94, 95, 100, 103, 104, 106, 108-115, 117-124, 126 |
+| `--rp-entry-defect key-rejected` | 123/127 | 112, 114, 115, 120 |
+| `--key-rule all-keys` | 121/127 | 28, 91, 114, 115, 119, 120 |
+| `--key-rule refuse` | 116/127 | 26, 27, 28, 69, 75, 79, 91, 114, 115, 119, 120 |
+| `--independence-rule stated-independent` | 115/127 | 20, 80, 81, 103, 106, 108, 109, 110, 112, 114, 115, 120 |
+| `--accuracy interval` | 46/127 | 81 vectors |
 
 ## Results, profile 1.4.8 at 3e53aac (measured 2026-11-07, version 0.11.0)
 
@@ -1608,7 +1771,7 @@ The "strict" column is the signature primitive (`ed25519_verify`); the key rule 
 
 ### Generative attack (`tools/fuzz.py`, `results/fuzz.txt`)
 
-806 generated cases in 14 families, each with an expectation written from the text (profile 1.3; at 1.3 five
+930 generated cases in 15 families, each with an expectation written from the text (profile 1.3; at 1.3 five
 expectations and one case's `issued_utc` changed and one case was added, each with the sentence in `tools/fuzz.py`;
 at 0.5.0 the 6 wrong-type cases at the unsigned envelope `timestamp.digest_sha256` expect the outcome of the
 unaltered record, see "Closed by construction"; at 0.6.0 the `genTime` and stated-time expectations follow R4 and R5,
@@ -1617,9 +1780,11 @@ because their `committed_at` carries a fraction (S5), and their expectation name
 only, which is unchanged; at 0.8.0 the 10 wrong-type cases at `parties.*.name` expect the step 8 outcome, reading Q19,
 and the family `parties` is added; at 0.9.0 the family `relying party keys` is added; at 0.10.0 its case of a repeated
 identifier expects the outcome of 113, and the family `relying party keys 1.4.7` is added; at 0.11.0 the case of a byte order mark
-in the criteria file expects `CRITERIA_UNREADABLE`, reading Q35, and the family `1.4.8` is added). This verifier meets all 806. The
-deliberately lax verifier `tools/lax_verify.py` is the positive control: it fails 679, and wrongly reports 519 as accepted
-as stated (655 and 495 at 0.10.0; 598 and 438 at 0.9.0; 573 and 413 at 0.8.0; 556 and 411 at 0.7.0; 554 and 410 at 0.5.0; 560 and 416 before the 6 envelope expectations changed).
+in the criteria file expects `CRITERIA_UNREADABLE`, reading Q35, and the family `1.4.8` is added; at 0.12.0 the family `1.4.11` is
+added; its 32 cases of a noncharacter in a criteria file whose hash matches expect a readable document, X4 and Q36). This verifier
+meets all 930, and so does 0.11.0: on those 32 the two differ only by the note `X_CRITERIA_NOT_I_JSON`. The deliberately lax verifier
+`tools/lax_verify.py` is the positive control: it fails 689, and wrongly reports 529 as accepted
+as stated (679 and 519 at 0.11.0; 655 and 495 at 0.10.0; 598 and 438 at 0.9.0; 573 and 413 at 0.8.0; 556 and 411 at 0.7.0; 554 and 410 at 0.5.0; 560 and 416 before the 6 envelope expectations changed).
 
 | family | cases | lax verifier fails |
 |---|---|---|
@@ -1637,6 +1802,7 @@ as stated (655 and 495 at 0.10.0; 598 and 438 at 0.9.0; 573 and 413 at 0.8.0; 55
 | `relying_party_keys`: held, not held, types, members, entries (U2-U5, U9, V1) | 29 | 24 |
 | 1.4.7: the 8 points of small order, 7 of mixed order, encodings that are not canonical and other lengths as the producer's key, with and without the list; a repeated `key_id` in every order (V1, V3, V4) | 83 | 58 |
 | 1.4.8: R of small and of mixed order, encodings that are not canonical, a control of prime order; 26 criteria documents, with the hash of the original and with their own (W1, W3-W7) | 71 | 24 |
+| 1.4.11: 8 noncharacters as bytes, escaped, in a name and 40 levels down, 7 neighbours; every kind of value at levels 64 and 65; 2^53 in three forms, the overflow and underflow edges; each with the hash of the original and with its own (X1-X4) | 124 | 42 |
 
 ### Composition with a counterparty acceptance (`tools/compose.py`, `results/compose.txt`)
 
@@ -1664,9 +1830,46 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 398 tests
+python3 -B -m unittest discover -s tests          # 448 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
+
+Measured on 2026-11-10 UTC (0.12.0), on a clean copy of the tree (`git archive`) with the sources fetched by
+`tools/fetch_sources.py` (447/447): 448/448 pass on Python 3.9.25, 3.11.2 and 3.13.15, each with `cryptography` 50.0.2; on Python
+3.11.2 with `cryptography` 40.0.0, 448/448; with 39.0.2, 69 of the 448 fail by design (61 failures and 8 errors: below the 40.0 this
+README declares for the TSA checks; the three new ones are tests of `tests/test_profile1411.py` that run whole vector sets). The 49 tests of `tests/test_profile1411.py` (profile 1.4.11): the vectors 119-126 and the
+whole report on 01-118; each of the 66 noncharacters, escaped in a value and as bytes in a name, their 70 neighbours, 15 other places, and
+2,000 generated strings against the list of Unicode 23.7 written in the test file; and the generative groups asked for this release, each
+with its expectation written from the text before it was run: every integer of +-(2^53-1), +-2^53, 2^53+1, -(2^53+1) and 10^20 in five
+forms at four places, negative zero, overflow and underflow (`GenerativeNumbers`); the byte order mark at the start, inside a string and
+between tokens (`GenerativeByteOrderMark`); levels 63, 64, 65 and 200 for seven kinds of value, through arrays or members, under the root
+or a criterion, and 100,000 levels under six option sets (`GenerativeDepth`); the product of step 12, list (absent, holding the
+producer's bytes, another key) x claim x producer named or undeclared x producer's key (prime order, neutral point, order 8, y = p, no
+entry) x `key_id` stated or not, 120 records (`Q31Product`); and the closure of the criteria file: new members and repeated members at
+every level, every wrong type of every known member, encodings, text outside the grammar, the 198 documents of the 1.4.8 table and 400
+generated ones, each under six option sets, with no exception and a reason for every code (`ClosedCriteriaFile`).
+Positive control: on the 0.11.0 code (7d9f528, with the 0.12.0 tests and tools copied in and one name added for the test modules to load,
+`PROFILE_1_4_8 = {}`: no behaviour), 15 of the 50 fail (13 failures and two errors, all in `Noncharacters`, `Profiles` and `CommandLine`:
+0.11.0 writes no note), and so do 6 tests of other files (`test_profiles_inherit`, `test_version`, two `test_the_values`,
+`test_every_older_profile_keeps_them`, `test_usage_text_names_every_flag`): 21 of 448 in all, 19 failures and two errors;
+`test_ours_meets_all` passes, since the fuzz expectations of X4 are now a readable document. The groups of
+X1-X3 and X5 do not fail on 0.11.0, which already gave those outcomes: they are regression tests, and each was checked against a copy of
+0.12.0 that breaks its rule (these copies were made of 0.12.0 before the default of Q36 became `report`; the groups of X1-X3 and X5 did
+not change). With the I-JSON rule removed (`strict_json_loads` without its limits, no noncharacter check): 23 failures and
+one error, among them `GenerativeNumbers` 2 of 4, `GenerativeByteOrderMark` 1 of 3, `GenerativeDepth` 1 of 2, `Limits` 6 of 7. With
+`--rp-point` defaulting to `always`, or to `off`: `Q31Product` 2 of 2 each. With the type check of `id` and `required` removed:
+`ClosedCriteriaFile` 1 of 6; with the note on an unread member removed: 4 of 6; with `RecursionError` no longer caught: the test of
+100,000 levels. Twelve of the 50 fail on none of these seven copies (each run on the whole of `tests/test_profile1411.py`), and so prove only what they pin: `test_negative_zero` and `test_underflow`
+(readable values, Q38), `test_inside_a_string_it_is_a_character` and `test_between_tokens_it_is_not_json`, `test_the_text_without_one`,
+`test_the_neighbours_are_characters`, `test_the_list` (the list itself), `test_repeated_members_at_every_level` and
+`test_outside_the_grammar` (rules of 1.4.8), `test_criteria_limits_readable_is_outside_1_4_11` (it sets the switch itself),
+`test_no_outcome_of_01_to_118_changes` and `test_the_default_set_is_8ce7f42` (the vector set of `tools/score.py`). No test found a
+defect of 0.11.0. `tools/mutate1411.py`: 44 targeted mutants of the 0.12.0 lines (X4, the note of Q36, the document that is one string, X7, the command line, the version), 44/44 killed
+after a control run of the unmutated copy (Python 3.11.2). The 0.12.0 edits moved patterns of the older batteries (the version, the
+message that names the profiles, the line of the defaults, `PROFILE_1_4_7`, and the walk of `_check_strings`, whose lines the new walk
+repeats): same mutants, new text. `tools/mutate148.py` 81/81 killed, `tools/mutate147.py` 40/40, `tools/mutate145.py` 87/87, each after a control run, measured before the
+default of Q36 became `report` (every pattern of those batteries still applies to this version).
+`tools/mutate148_sites.py`, which needs the 0.10.0 file, was not run again. The fuzz bench: 930/930.
 
 Measured on 2026-11-07 UTC (0.11.0), on a clean copy of the tree (`git archive`) with the sources fetched by
 `tools/fetch_sources.py` (438/438): 398/398 pass on Python 3.9.25, 3.11.2 and 3.13.15, each with `cryptography` 50.0.2; on Python

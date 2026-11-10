@@ -2188,5 +2188,50 @@
   "path": "fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json",
   "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/3e53aac24ee5298b2316a10dceeaddb99695cc8c/vectors/118-criteria-file-lone-surrogate.json",
   "sha256": "23990e9a540aa876b227ddd43c515471548a664f163332bc89e3107ffbb2a5ed"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/README.md",
+  "sha256": "97752aa9922d6f1212258ac6a60095b96d43204750676467ceb2707c586f9bce"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/119-neutral-producer-key-without-relying-party-keys.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/119-neutral-producer-key-without-relying-party-keys.json",
+  "sha256": "df5e94e704d5a968c5c1c6f8ed5cecc810a8d180e5afec570683dd073a49d00f"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/120-neutral-producer-key-self-checked-claim.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/120-neutral-producer-key-self-checked-claim.json",
+  "sha256": "29a3bd6d6a6563c51f9dff4cbb534a90f827e89d0a78f2a7c153e3b6bb30aaae"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/121-criteria-file-byte-order-mark.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/121-criteria-file-byte-order-mark.json",
+  "sha256": "25c3870043957ea856ef4677ae81b7280126fbadafe380fa22c70ec34a5939a9"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/122-criteria-file-integer-beyond-2-53.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/122-criteria-file-integer-beyond-2-53.json",
+  "sha256": "36a2036f7911c72dba6b7fe19e6c08662f961c10d6074bfb683bc18ec06f9d1a"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/123-criteria-file-number-overflows.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/123-criteria-file-number-overflows.json",
+  "sha256": "67953a55c59ad609886e493edd1ab41b580997f04630cc41fecfcccc6d7fdd56"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/124-criteria-file-nesting-65.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/124-criteria-file-nesting-65.json",
+  "sha256": "76379f9d9f91918d57b42dff566277694ec57006675ad8e547beda8f42ef9f6e"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/125-criteria-file-scalar-at-level-64.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/125-criteria-file-scalar-at-level-64.json",
+  "sha256": "342f532f7c0a913cff5c3164aba358cbb865d7a040dcdc0890d44a4cb497559c"
+ },
+ {
+  "path": "fonti/upstream_8ce7f42/vectors/126-criteria-file-scalar-at-level-65.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/126-criteria-file-scalar-at-level-65.json",
+  "sha256": "8b2214ca488707dbb6de6eeb81f9867152bdd3385fbe4710ff99dd46dc7d970c"
  }
 ]

@@ -32,7 +32,7 @@ for key, value, table, base in (("criteria_unreadable", "mismatch", matched, bas
                                 ("criteria_types", "known", matched, base_m), ("criteria_limits", "readable", matched, base_m),
                                 ("sig_r", "not-small", sigs, base_s), ("ed25519", "rfc8032", sigs, base_s)):
     got = [outcome(i, {key: value}) for i in table]
-    res = score.score({key: value})
+    res = score.score({key: value}, which="3e53aac")
     print("--%s %s: %d of %d records differ; 3e53aac set %d/%d %s" % (key.replace("_", "-"), value, sum(a != b for a, b in zip(base, got)), len(table),
                                                                      sum(r["agree"] for r in res), len(res), v.nums(res)))
 why = [v.run(i, None)["details"]["signature_reason"] != v.run(i, {"sig_r": "not-small"})["details"]["signature_reason"] for i in sigs]

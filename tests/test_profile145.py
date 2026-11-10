@@ -536,7 +536,7 @@ class Switches(unittest.TestCase):
 class Profiles(unittest.TestCase):
     def test_each_older_profile_refuses_the_input(self):
         for name, prof in wv.PROFILES.items():
-            if name in ("1.4.5", "1.4.7"):
+            if name in ("1.4.5", "1.4.7", "1.4.8"):
                 continue
             self.assertEqual(prof["rp_input"], "unknown", name)
             rep = run(GOOD, prof)
@@ -611,7 +611,7 @@ class CommandLine(unittest.TestCase):
         for args in (("--relying-party-keys", "", self.v110), ("--relying-party-keys", self.lst, "--relying-party-keys", self.lst, self.v110),
                      ("--rp-input", "unknown", "--relying-party-keys", self.lst, self.v110)):
             self.assertEqual(self.run_cli(*args)[0], 64, args)
-        for name in set(wv.PROFILES) - {"1.4.5", "1.4.7"}:
+        for name in set(wv.PROFILES) - {"1.4.5", "1.4.7", "1.4.8"}:
             rc, _, err = self.run_cli("--profile", name, "--relying-party-keys", self.lst, self.v110)
             self.assertEqual(rc, 64, name)
             self.assertIn("--rp-input step12", err)
@@ -694,7 +694,7 @@ class CommandLine(unittest.TestCase):
         self.assertEqual(self.report("--rp-lookup", "both", f)[1]["report"]["problem_codes"], [])
 
     def test_version(self):
-        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.11.0")
+        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.12.0")
 
     def test_usage_text_names_every_flag(self):
         rc, out, _ = self.run_cli("--help")

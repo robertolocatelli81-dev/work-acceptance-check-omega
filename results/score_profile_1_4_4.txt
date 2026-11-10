@@ -173,5 +173,27 @@ fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json DISA
       problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
 fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json        DISAGREE 8/9
       problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
+fonti/upstream_8ce7f42/vectors/119-neutral-producer-key-without-relying-party-keys.json AGREE    9/9
+fonti/upstream_8ce7f42/vectors/120-neutral-producer-key-self-checked-claim.json DISAGREE 0/9
+      criteria_committed_before_check: expected "yes", ours "<absent>"
+      criteria_hash: expected "match", ours "<absent>"
+      independence: expected "self-checked", ours "<absent>"
+      problem_codes: expected ["INDEPENDENCE_INCONSISTENT"], ours "<absent>"
+      receipt_timestamp: expected "none", ours "<absent>"
+      signature_valid: expected true, ours "<absent>"
+      verdict_recomputed: expected "pass", ours "<absent>"
+      verdict_stated: expected "pass", ours "<absent>"
+      warning_codes: expected ["SELF_CHECKED"], ours "<absent>"
+fonti/upstream_8ce7f42/vectors/121-criteria-file-byte-order-mark.json       DISAGREE 8/9
+      problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
+fonti/upstream_8ce7f42/vectors/122-criteria-file-integer-beyond-2-53.json   DISAGREE 8/9
+      problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
+fonti/upstream_8ce7f42/vectors/123-criteria-file-number-overflows.json      DISAGREE 8/9
+      problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
+fonti/upstream_8ce7f42/vectors/124-criteria-file-nesting-65.json            DISAGREE 8/9
+      problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
+fonti/upstream_8ce7f42/vectors/125-criteria-file-scalar-at-level-64.json    AGREE    9/9
+fonti/upstream_8ce7f42/vectors/126-criteria-file-scalar-at-level-65.json    DISAGREE 8/9
+      problem_codes: expected ["CRITERIA_UNREADABLE"], ours ["CRITERIA_RESULTS_MISMATCH"]
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 3e53aac: documents 111/119 agree; fields 1029/1085; options {'sig_r': 'not-small', 'criteria_unreadable': 'mismatch', 'rp_repeated': 'no-key', 'rp_point': 'off', 'rp_input': 'unknown'}
+TOTAL set 8ce7f42: documents 113/127 agree; fields 1087/1157; options {'criteria_noncharacters': 'readable', 'sig_r': 'not-small', 'criteria_unreadable': 'mismatch', 'rp_repeated': 'no-key', 'rp_point': 'off', 'rp_input': 'unknown'}

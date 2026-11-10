@@ -1,7 +1,7 @@
 {
- "agree": 119,
- "fields": 1085,
- "fields_agree": 1085,
+ "agree": 127,
+ "fields": 1157,
+ "fields_agree": 1157,
  "options": {
   "unknown_fields": "report"
  },
@@ -850,9 +850,65 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/119-neutral-producer-key-without-relying-party-keys.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/120-neutral-producer-key-self-checked-claim.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/121-criteria-file-byte-order-mark.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/122-criteria-file-integer-beyond-2-53.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/123-criteria-file-number-overflows.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/124-criteria-file-nesting-65.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/125-criteria-file-scalar-at-level-64.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_8ce7f42/vectors/126-criteria-file-scalar-at-level-65.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "3e53aac",
- "total": 119
+ "set": "8ce7f42",
+ "total": 127
 }

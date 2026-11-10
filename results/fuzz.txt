@@ -13,4 +13,5 @@ criteria bytes               10       10            1                      1
 relying party keys           29       29           24                     24
 relying party keys 1.4.7     83       83           58                     58
 1.4.8                        71       71           24                     24
-TOTAL cases 806, ours meets expectation 806, lax caught 679, lax wrongly accepted-as-stated 519
+1.4.11                      124      124           10                     10
+TOTAL cases 930, ours meets expectation 930, lax caught 689, lax wrongly accepted-as-stated 529

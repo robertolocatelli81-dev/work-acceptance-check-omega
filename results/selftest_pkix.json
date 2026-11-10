@@ -130,6 +130,7 @@
    "accuracy": "widen",
    "correspondence": "ids-required",
    "criteria_limits": "unreadable",
+   "criteria_noncharacters": "report",
    "criteria_read": "matched",
    "criteria_shape": "typed",
    "criteria_types": "read",
@@ -174,5 +175,5 @@
   "verdict_stated": "pass",
   "warning_codes": []
  },
- "verifier": "war_verify 0.11.0"
+ "verifier": "war_verify 0.12.0"
 }

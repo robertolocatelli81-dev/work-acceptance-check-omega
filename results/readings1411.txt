@@ -1,0 +1,7 @@
+tables: 680 criteria documents (482 of tests/test_profile1411.py, 198 of tests/test_profile148.py); 120 records of step 12
+defaults: 239 of 680 documents CRITERIA_UNREADABLE
+--criteria-noncharacters unreadable: 132 of 680 documents differ; 8ce7f42 set 127/127 []
+--criteria-noncharacters readable: 0 of 680 documents differ; 8ce7f42 set 127/127 []
+--criteria-limits readable: 105 of 680 documents differ; 8ce7f42 set 122/127 ['121', '122', '123', '124', '126']
+--rp-point always: 12 of 120 records differ; 8ce7f42 set 125/127 ['119', '120']
+--rp-point off: 3 of 120 records differ; 8ce7f42 set 125/127 ['114', '115']

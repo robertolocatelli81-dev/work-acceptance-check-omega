@@ -54,7 +54,7 @@ M = [
  ("V5 profile 1.4.4 does not inherit", 'PROFILE_1_4_4 = dict(PROFILE_1_4_5, **{"rp_input": "unknown"})', 'PROFILE_1_4_4 = {"rp_input": "unknown"}'),
  ("V5 CLI --profile 1.4.5 unknown", '"1.4.5": PROFILE_1_4_5, ', ''),
  ("V5 CLI --rp-point unknown", '"--rp-point": "rp_point", "--sig-r"', '"--sig-r"'),
- ("V5 usage error names the profile", '--profile takes 1.4.7, 1.4.5, 1.4.4,', '--profile takes 1.4.7, 1.4.4,'),
+ ("V5 usage error names the profile", '--profile takes 1.4.8, 1.4.7, 1.4.5, 1.4.4,', '--profile takes 1.4.8, 1.4.7, 1.4.4,'),
  ("V5 usage line of the switch", '  --rp-point step12|off|always        (default step12)\n', ''),
  ("V5 usage line of the profile", '  --profile 1.4.5              the readings 0.9.0 gave', '  --profile 1.4.4              the readings 0.9.0 gave'),
 ]

@@ -507,7 +507,7 @@ class Profile143(unittest.TestCase):
             self.assertEqual(wv.PROFILE_1_2_1[k], v, k)
             self.assertNotEqual(wv.DEFAULT_OPTIONS[k], v, k)
             self.assertIn(v, wv.OPTION_VALUES[k], k)
-        self.assertEqual(set(P143), {"name_compare", "undeclared", "producer_presence", "name_type", "key_claim", "rp_input", "rp_repeated", "rp_point", "sig_r", "criteria_unreadable"})
+        self.assertEqual(set(P143), {"name_compare", "undeclared", "producer_presence", "name_type", "key_claim", "rp_input", "rp_repeated", "rp_point", "sig_r", "criteria_unreadable", "criteria_noncharacters"})
 
 
 class CLI144(unittest.TestCase):

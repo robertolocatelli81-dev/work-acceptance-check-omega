@@ -4,6 +4,7 @@
  "fields_agree": 225,
  "options": {
   "accuracy": "ignore",
+  "criteria_noncharacters": "readable",
   "criteria_unreadable": "mismatch",
   "digest_form": "refuse",
   "empty_key_id": "refuse",

@@ -14646,5 +14646,2711 @@
    "warning_codes": []
   },
   "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDD0 in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FDEF in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFE in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+FFFF in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+1FFFE in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+2FFFF in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFE in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF as bytes in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF as bytes in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF escaped in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF escaped in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF in a name, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF in a name",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF in an array, 40 levels down, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file noncharacter U+10FFFF in an array, 40 levels down",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FDCF in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FDCF in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FDF0 in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FDF0 in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FFFD in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FFFD in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FEFF in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+FEFF in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+1FFFD in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+1FFFD in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+10FFFD in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+10FFFD in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+E000 in a value, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file U+E000 in a value",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 0 at level 64, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 0 at level 64",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 0 at level 65, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 0 at level 65",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file \"s\" at level 64, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file \"s\" at level 64",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file \"s\" at level 65, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file \"s\" at level 65",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file null at level 64, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file null at level 64",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file null at level 65, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file null at level 65",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file true at level 64, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file true at level 64",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file true at level 65, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file true at level 65",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file {} at level 64, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file {} at level 64",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file {} at level 65, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file {} at level 65",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file [] at level 64, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file [] at level 64",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file [] at level 65, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file [] at level 65",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 written 9007199254740992.0, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 written 9007199254740992.0",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 written 9.007199254740992e15, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 written 9.007199254740992e15",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 1e16, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 1e16",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file -2^53, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file -2^53",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 + 1, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 + 1",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 - 1, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 2^53 - 1",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file the largest double, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file the largest double",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file halfway past the largest double, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file halfway past the largest double",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file -1e400, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file -1e400",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": false,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_UNREADABLE"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 1e-400, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file 1e-400",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file thirty digits of pi, record hash of the original",
+  "expected": {
+   "criteria_hash": "mismatch",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ]
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": false,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [
+    "CRITERIA_HASH_MISMATCH"
+   ],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
+ },
+ {
+  "case": "1.4.11: criteria file thirty digits of pi",
+  "expected": {
+   "criteria_hash": "match",
+   "problem_codes": [],
+   "signature_valid": true
+  },
+  "family": "1.4.11",
+  "lax_accepted_as_stated": true,
+  "lax_ok": true,
+  "ours": {
+   "criteria_committed_before_check": "yes",
+   "problem_codes": [],
+   "reason": null,
+   "refused": null,
+   "signature_valid": true,
+   "warning_codes": []
+  },
+  "ours_ok": true
  }
 ]

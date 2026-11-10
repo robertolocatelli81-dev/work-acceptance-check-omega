@@ -131,8 +131,8 @@ def table():
     for label, b in (("in a read id", RAW.replace(b'"id":"c1"', b'"id":"c1\\ud800"')), ("in a criterion title", RAW.replace(b"First required", b"\\ud800First required")),
                      ("in an array", extra(b'"x":["\\ud800"]')), ("in a nested name", extra(b'"x":[{"y":{"\\udc00":1}}]')), ("in a criterion member", extra(b'"\\udc00":1', "item"))):
         row(label, b, "unreadable", "lone surrogate")
-    for label, esc in (("pair", b"\\ud83d\\ude00"), ("pair, upper-case hex", b"\\uD83D\\uDE00"), ("first pair", b"\\ud800\\udc00"), ("last pair", b"\\udbff\\udfff"),
-                       ("an escaped backslash before the text", b"\\\\ud800"), ("U+FFFF", b"\\uffff"), ("U+0000", b"\\u0000"), ("U+D7FF", b"\\ud7ff"), ("U+E000", b"\\ue000")):
+    for label, esc in (("pair", b"\\ud83d\\ude00"), ("pair, upper-case hex", b"\\uD83D\\uDE00"), ("first pair", b"\\ud800\\udc00"), ("the last pair that holds no noncharacter, U+10FFFD", b"\\udbff\\udffd"),
+                       ("an escaped backslash before the text", b"\\\\ud800"), ("U+FFFD", b"\\ufffd"), ("U+0000", b"\\u0000"), ("U+D7FF", b"\\ud7ff"), ("U+E000", b"\\ue000")):
         row(label + " in a value", extra(b'"x":"a' + esc + b'"'), "ok", "no lone surrogate")
         row(label + " in a name", extra(b'"a' + esc + b'":1'), "ok", "no lone surrogate")
     row("a character past the BMP as bytes", extra('"x":"\U0001f600"'.encode()), "ok", "no lone surrogate")
@@ -355,7 +355,7 @@ class Vectors3e53aac(unittest.TestCase):
         self.assertEqual((sum(r["fields_agree"] for r in rows), sum(r["fields"] for r in rows)), (1085, 1085))
 
     def test_the_default_set_is_3e53aac(self):
-        self.assertEqual(score.vector_files(), score.vector_files(SET))
+        self.assertEqual(score.vector_files()[:118], score.vector_files(SET)[:118])       # 0.12.0: the default is 8ce7f42
         self.assertEqual(len(score.vector_files(SET)), 119)
 
     def test_older_sets_unchanged(self):
@@ -726,8 +726,8 @@ class Notes(unittest.TestCase):
 
 class Profiles(unittest.TestCase):
     def test_the_values(self):
-        self.assertEqual(sorted(wv.PROFILES), ["1.2.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.7"])
-        self.assertEqual(P147, {"sig_r": "not-small", "criteria_unreadable": "mismatch"})
+        self.assertEqual(sorted(wv.PROFILES), ["1.2.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.7", "1.4.8"])
+        self.assertEqual(P147, {"sig_r": "not-small", "criteria_unreadable": "mismatch", "criteria_noncharacters": "readable"})
         self.assertEqual(wv.DEFAULT_OPTIONS["sig_r"], "prime-order")
         self.assertEqual(wv.DEFAULT_OPTIONS["criteria_unreadable"], "step4")
         self.assertEqual({k: wv.DEFAULT_OPTIONS[k] for k in ("criteria_read", "criteria_shape", "criteria_types", "criteria_limits")},
@@ -735,8 +735,10 @@ class Profiles(unittest.TestCase):
 
     def test_every_older_profile_keeps_them(self):
         for name, p in wv.PROFILES.items():
+            if name == "1.4.8":
+                continue
             self.assertEqual((p["sig_r"], p["criteria_unreadable"]), ("not-small", "mismatch"), name)
-            self.assertEqual(sum(1 for k in p if k.startswith("criteria_")), 1, name)
+            self.assertEqual(sum(1 for k in p if k.startswith("criteria_")), 2, name)       # 0.12.0 adds criteria_noncharacters
 
     def test_the_code_is_in_the_closed_list(self):
         self.assertIn(UNREADABLE, wv.PROBLEM_CODES)
@@ -790,7 +792,7 @@ class CommandLine(unittest.TestCase):
             for args in ((flag, "bogus"), (flag, ""), (flag, good, flag, good), (flag + "=" + good,), (flag.upper(), good)):
                 self.assertEqual(self.run_cli(*args, f)[0], 64, args)
             self.assertEqual(self.run_cli(flag)[0], 64, flag)
-        self.assertEqual(self.run_cli("--profile", "1.4.8", f)[0], 64)
+        self.assertEqual(self.run_cli("--profile", "1.4.11", f)[0], 64)
         self.assertEqual(self.run_cli("--profile", "1.4.6", f)[0], 64)
         self.assertIn("1.4.7, 1.4.5", self.run_cli("--profile", "1.4.6", f)[2])
 
@@ -800,7 +802,7 @@ class CommandLine(unittest.TestCase):
         for words in ("--sig-r prime-order|not-small       (default prime-order)", "--criteria-unreadable step4|mismatch   (default step4)",
                       "--criteria-read matched|always      (default matched)", "--criteria-shape typed|absent       (default typed)",
                       "--criteria-types read|known         (default read)", "--criteria-limits unreadable|readable   (default unreadable)",
-                      "  --profile 1.4.7              the readings 0.10.0 gave", "defaults follow profile 1.4.8"):
+                      "  --profile 1.4.7              the readings 0.10.0 gave", "defaults follow profile 1.4.11"):
             self.assertIn(words, out)
 
 

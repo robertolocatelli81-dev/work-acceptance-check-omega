@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.8 (schema identifier 1.2).
+"""war_verify.py - clean-room verifier for work-acceptance records, draft profile 1.4.11 (schema identifier 1.2).
 
-Written from the profile README at maximusrufus/work-acceptance-record@3e53aac (profile 1.4.8, the sentences added to steps 2 and
+Written from the profile README at maximusrufus/work-acceptance-record@8ce7f42 (profile 1.4.11, the sentence added to step 4, the
+two sentences added to step 12, the eight new rows of the vector table and the changelog entries of 1.4.9-1.4.11; the agent that
+wrote 0.12.0 opened no file of verifier/, interop/ or composition/, at any commit; README.md, "What was read", states which inputs
+were not independent), RFC 7493, at 3e53aac (profile 1.4.8, the sentences added to steps 2 and
 4, the code added to step 8, the three new rows of the vector table and the changelog entry; the agent that wrote 0.11.0 opened
 no file of verifier/, interop/ or composition/, at any commit; README.md, "What was read", states which inputs were not
 independent), at 6f7a075 (profile 1.4.7, the sentences added to step
@@ -20,7 +23,7 @@ verifier/check_payment.py (opened), and the reference verifier/war_verify.py was
 black box (README.md, "What was read"); no other implementation of this profile was opened. The 1.2.1 readings of version 0.1.0 are selectable with
 --profile 1.2.1, the 1.4.2 readings of version 0.6.0 with --profile 1.4.2, the 1.4.3 readings of version 0.7.0 with
 --profile 1.4.3, the 1.4.4 reading of version 0.8.0 with --profile 1.4.4, the 1.4.5 readings of version 0.9.0 with
---profile 1.4.5, the 1.4.7 readings of version 0.10.0 with --profile 1.4.7.
+--profile 1.4.5, the 1.4.7 readings of version 0.10.0 with --profile 1.4.7, the 1.4.8 reading of version 0.11.0 with --profile 1.4.8.
 
 Closed by construction: every member of every JSON object is either understood or the input is refused with a
 reason, except where profile 1.4.1 (bc5a138) or 1.4.2 (85a310d) fixes the outcome; each such case is listed in "notes" (README.md,
@@ -55,7 +58,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.11.0"
+VERSION = "war_verify 0.12.0"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -193,6 +196,10 @@ DEFAULT_OPTIONS = {
     # README Q35: what only this parser refuses (BOM, integers past 2^53, numbers overflowing, depth over 64) = unreadable;
     # readable = read past those limits.
     "criteria_limits": "unreadable",
+    # Profile 1.4.11 step 4 "The file must also be I-JSON (RFC 7493)" (README X4, reading Q36): a noncharacter in a member name or
+    # a string value inside the document (RFC 7493 2.1) is read, as no trigger of step 4 names it, and noted (report); unreadable =
+    # CRITERIA_UNREADABLE; readable = 0.11.0, read with no note.
+    "criteria_noncharacters": "report",
 }
 OPTION_VALUES = {
     "key_id_source": ("envelope", "receipt"), "reference_time": ("covering-token", "earlier"),
@@ -213,11 +220,14 @@ OPTION_VALUES = {
     "rp_point": ("step12", "off", "always"),
     "sig_r": ("prime-order", "not-small"), "criteria_unreadable": ("step4", "mismatch"),
     "criteria_read": ("matched", "always"), "criteria_shape": ("typed", "absent"), "criteria_types": ("read", "known"),
-    "criteria_limits": ("unreadable", "readable"),
+    "criteria_limits": ("unreadable", "readable"), "criteria_noncharacters": ("report", "unreadable", "readable"),
 }
+# The reading version 0.11.0 gave to profile 1.4.8 where 0.12.0 reads 1.4.11 (8ce7f42) otherwise (README, X4: no note), selectable with
+# --profile 1.4.8.
+PROFILE_1_4_8 = {"criteria_noncharacters": "readable"}
 # The readings version 0.10.0 gave to profile 1.4.7 where 1.4.8 (3e53aac) fixes them otherwise (README, W1, W3), selectable
-# with --profile 1.4.7.
-PROFILE_1_4_7 = {"sig_r": "not-small", "criteria_unreadable": "mismatch"}
+# with --profile 1.4.7; the 0.11.0 reading comes with them, so it gives what it gave in 0.11.0.
+PROFILE_1_4_7 = dict(PROFILE_1_4_8, **{"sig_r": "not-small", "criteria_unreadable": "mismatch"})
 # The readings version 0.9.0 gave to profile 1.4.5 where 1.4.7 (6f7a075) fixes them otherwise (README, V1, V3), selectable
 # with --profile 1.4.5; the 0.10.0 readings come with them, so it gives what it gave in 0.10.0.
 PROFILE_1_4_5 = dict(PROFILE_1_4_7, **{"rp_repeated": "no-key", "rp_point": "off"})
@@ -237,7 +247,7 @@ PROFILE_1_4_2 = dict(PROFILE_1_4_3, **{"key_scope": "all-entries", "empty_key_id
 PROFILE_1_2_1 = dict(PROFILE_1_4_2, **{"key_id_source": "envelope", "reference_time": "covering-token",
                                        "accuracy": "ignore", "key_id_agreement": "require", "key_rule": "refuse",
                                        "independence_rule": "stated-independent"})
-PROFILES = {"1.4.7": PROFILE_1_4_7, "1.4.5": PROFILE_1_4_5, "1.4.4": PROFILE_1_4_4, "1.4.3": PROFILE_1_4_3, "1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
+PROFILES = {"1.4.8": PROFILE_1_4_8, "1.4.7": PROFILE_1_4_7, "1.4.5": PROFILE_1_4_5, "1.4.4": PROFILE_1_4_4, "1.4.3": PROFILE_1_4_3, "1.4.2": PROFILE_1_4_2, "1.2.1": PROFILE_1_2_1}
 
 
 class Refusal(Exception):
@@ -2194,6 +2204,12 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
             problems.add("CRITERIA_UNREADABLE")
             details["criteria_unreadable"] = unreadable
         elif crit_hash == "match":
+            if opts["criteria_noncharacters"] == "report":                         # X4, Q36
+                nc = _criteria_noncharacter(crit_file, opts)
+                if nc is not None:
+                    ctx.notes.append("X_CRITERIA_NOT_I_JSON: the criteria document holds the noncharacter U+%04X (RFC 7493 2.1); "
+                                     "step 4 names no trigger for it: read (reading Q36; --criteria-noncharacters unreadable "
+                                     "refuses it)" % nc)
             mism = _correspondence(ctx, crit_file, r["results"], opts["correspondence"],
                                    opts["criteria_unreadable"] == "mismatch" or opts["criteria_limits"] == "unreadable")
             if mism:
@@ -2552,12 +2568,44 @@ CRITERIA_KNOWN_TOP = (("criteria_set", str, "a string"), ("title", str, "a strin
 CRITERIA_KNOWN_ITEM = (("requirement", str, "a string"), ("title", str, "a string"))
 
 
+def _noncharacter(obj):
+    """README X4: a noncharacter (Unicode 23.7: U+FDD0-U+FDEF and the last two code points of each plane) in a member name or
+    a string value in an array or an object member (RFC 7493 2.1; a document that is one string is not reached), or None.
+    Iterative: under --criteria-limits readable the depth has no limit of ours."""
+    stack = [obj] if isinstance(obj, (dict, list)) else []
+    while stack:
+        v = stack.pop()
+        if isinstance(v, str):
+            for ch in v:
+                c = ord(ch)
+                if 0xFDD0 <= c <= 0xFDEF or c & 0xFFFE == 0xFFFE:
+                    return c
+        elif isinstance(v, dict):
+            stack.extend(v)
+            stack.extend(v.values())
+        elif isinstance(v, list):
+            stack.extend(v)
+    return None
+
+
+def _criteria_noncharacter(crit_bytes, opts):
+    """README X4 under --criteria-noncharacters report: the noncharacter a readable criteria document holds, or None."""
+    try:
+        return _noncharacter(strict_json_loads(crit_bytes, opts["criteria_limits"] == "unreadable"))
+    except Refusal:
+        return None
+
+
 def _criteria_unreadable(crit_bytes, opts):
-    """Profile 1.4.8 step 4 (README W3-W6): the reason a criteria document cannot be read, or None."""
+    """Profile 1.4.8 and 1.4.11 step 4 (README W3-W6, X1-X4): the reason a criteria document cannot be read, or None."""
     try:
         doc = strict_json_loads(crit_bytes, opts["criteria_limits"] == "unreadable")
     except Refusal as e:
         return "%s: %s" % (e.reason, e.detail) if e.detail else e.reason
+    if opts["criteria_noncharacters"] == "unreadable":                        # X4, Q36
+        c = _noncharacter(doc)
+        if c is not None:
+            return "JSON string with the noncharacter U+%04X (RFC 7493 2.1)" % c
     absent = opts["criteria_shape"] == "absent"                               # Q33
     known = opts["criteria_types"] == "known"                                 # Q34
     if not isinstance(doc, dict):
@@ -2723,11 +2771,14 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --keys KEYFILE.json          use this key file instead of inputs.keys
   --relying-party-keys FILE    the relying party's own key list (profile 1.4.5 step 12), replacing
                                inputs.relying_party_keys; a usage error under --rp-input unknown
-  defaults follow profile 1.4.8 (maximusrufus/work-acceptance-record@3e53aac; steps 2 and 4 of 1.4.8, step 12 of 1.4.7,
-                               step 8 of 1.4.4, the other steps as in 1.3, step 10 rules of 1.4.2, step 11
+  defaults follow profile 1.4.11 (maximusrufus/work-acceptance-record@8ce7f42; step 4 of 1.4.11, step 2 of 1.4.8, step 12
+                               of 1.4.11, step 8 of 1.4.4, the other steps as in 1.3, step 10 rules of 1.4.2, step 11
                                clarifications of 1.4.3)
+  --profile 1.4.8              the reading 0.11.0 gave to 1.4.8 where 0.12.0 reads 1.4.11 otherwise (criteria-noncharacters
+                               readable: no note); a switch given explicitly overrides it
   --profile 1.4.7              the readings 0.10.0 gave to 1.4.7 where 1.4.8 fixes them otherwise (sig-r not-small,
-                               criteria-unreadable mismatch); a switch given explicitly overrides it
+                               criteria-unreadable mismatch) with that of --profile 1.4.8; a switch given explicitly
+                               overrides it
   --profile 1.4.5              the readings 0.9.0 gave to 1.4.5 where 1.4.7 fixes them otherwise (rp-repeated no-key,
                                rp-point off) with those of --profile 1.4.7; a switch given explicitly overrides it
   --profile 1.4.4              the reading 0.8.0 gave to 1.4.4 where 1.4.5 fixes it otherwise (rp-input unknown) with
@@ -2778,6 +2829,7 @@ USAGE = """usage: war_verify.py [options] FILE.json
   --criteria-shape typed|absent       (default typed)
   --criteria-types read|known         (default read)
   --criteria-limits unreadable|readable   (default unreadable)
+  --criteria-noncharacters report|unreadable|readable   (default report)
   exit 0 needs: accepted as stated, --keys, no test key, no rejected key in the key file or the relying party's list,
   tokens authenticated (--tokens pkix) when their time is used, supplied files matching, receipt.key_id ==
   signature.key_id (unless --key-id-agreement ignore), a relying party's list given with --relying-party-keys, not
@@ -2805,7 +2857,8 @@ def main(argv):
                "--rp-repeated": "rp_repeated", "--rp-entry-defect": "rp_entry_defect", "--rp-lookup": "rp_lookup",
                "--rp-point": "rp_point", "--sig-r": "sig_r", "--criteria-unreadable": "criteria_unreadable",
                "--criteria-read": "criteria_read", "--criteria-shape": "criteria_shape",
-               "--criteria-types": "criteria_types", "--criteria-limits": "criteria_limits"}
+               "--criteria-types": "criteria_types", "--criteria-limits": "criteria_limits",
+               "--criteria-noncharacters": "criteria_noncharacters"}
     profile = None
     while args:
         a = args.pop(0)
@@ -2813,7 +2866,7 @@ def main(argv):
             vector_mode = True
         elif a == "--profile" and args:
             if profile is not None or args[0] not in PROFILES:
-                sys.stderr.write("--profile takes 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 or 1.2.1, once\n")
+                sys.stderr.write("--profile takes 1.4.8, 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 or 1.2.1, once\n")
                 return 64
             profile = args.pop(0)
         elif a == "--keys" and args:

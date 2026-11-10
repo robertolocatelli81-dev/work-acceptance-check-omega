@@ -109,7 +109,7 @@ M = [
  ("P CLI --rp-repeated unknown", '"--rp-repeated": "rp_repeated", ', ''),
  ("P CLI --rp-entry-defect unknown", '"--rp-entry-defect": "rp_entry_defect", ', ''),
  ("P CLI --rp-lookup unknown", ', "--rp-lookup": "rp_lookup"', ''),
- ("P version", 'VERSION = "war_verify 0.11.0"', 'VERSION = "war_verify 0.9.0"'),
+ ("P version", 'VERSION = "war_verify 0.12.0"', 'VERSION = "war_verify 0.9.0"'),
 ]
 TESTS = ["tests/test_profile145.py", "tests/test_vectors.py", "tests/test_cli.py", "tests/test_profile147.py"]
 

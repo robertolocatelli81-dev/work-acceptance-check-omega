@@ -117,5 +117,13 @@ fonti/upstream_6f7a075/vectors/115-neutral-point-from-unrelated-list.json   AGRE
 fonti/upstream_3e53aac/vectors/116-signature-r-neutral-point.json           AGREE    9/9
 fonti/upstream_3e53aac/vectors/117-criteria-file-duplicate-member-name.json AGREE    9/9
 fonti/upstream_3e53aac/vectors/118-criteria-file-lone-surrogate.json        AGREE    9/9
+fonti/upstream_8ce7f42/vectors/119-neutral-producer-key-without-relying-party-keys.json AGREE    9/9
+fonti/upstream_8ce7f42/vectors/120-neutral-producer-key-self-checked-claim.json AGREE    9/9
+fonti/upstream_8ce7f42/vectors/121-criteria-file-byte-order-mark.json       AGREE    9/9
+fonti/upstream_8ce7f42/vectors/122-criteria-file-integer-beyond-2-53.json   AGREE    9/9
+fonti/upstream_8ce7f42/vectors/123-criteria-file-number-overflows.json      AGREE    9/9
+fonti/upstream_8ce7f42/vectors/124-criteria-file-nesting-65.json            AGREE    9/9
+fonti/upstream_8ce7f42/vectors/125-criteria-file-scalar-at-level-64.json    AGREE    9/9
+fonti/upstream_8ce7f42/vectors/126-criteria-file-scalar-at-level-65.json    AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 3e53aac: documents 119/119 agree; fields 1085/1085; options {'name_compare': 'exact'}
+TOTAL set 8ce7f42: documents 127/127 agree; fields 1157/1157; options {'name_compare': 'exact'}

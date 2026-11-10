@@ -439,6 +439,49 @@ def fam_148(base):
         yield "1.4.8: criteria file %s" % name, {"inputs": i}, exp
 
 
+
+def fam_1411(base):
+    """Profile 1.4.11 step 4 (README X1-X4): expectations from the sentences and RFC 7493, not from running the verifier."""
+    raw = base64.b64decode(base["criteria_file_base64"])
+
+    def put(body):
+        return raw[:1] + body + b"," + raw[1:]
+
+    unread = {"criteria_hash": "match", "problem_codes": ["CRITERIA_UNREADABLE"], "signature_valid": True}
+    fine = {"criteria_hash": "match", "problem_codes": [], "signature_valid": True}
+    docs = []
+    for c in (0xFDD0, 0xFDEF, 0xFFFE, 0xFFFF, 0x1FFFE, 0x2FFFF, 0x10FFFE, 0x10FFFF):     # X4: noncharacters, Unicode 23.7; read (Q36)
+        ch = chr(c).encode("utf-8")
+        esc = (json.dumps(chr(c), ensure_ascii=True)[1:-1]).encode()
+        docs += [("noncharacter U+%04X as bytes in a value" % c, put(b'"x":"a' + ch + b'"'), fine),
+                 ("noncharacter U+%04X escaped in a value" % c, put(b'"x":"' + esc + b'"'), fine),
+                 ("noncharacter U+%04X in a name" % c, put(b'"' + ch + b'":1'), fine),
+                 ("noncharacter U+%04X in an array, 40 levels down" % c, put(b'"x":' + b"[" * 40 + b'"' + esc + b'"' + b"]" * 40), fine)]
+    for c in (0xFDCF, 0xFDF0, 0xFFFD, 0xFEFF, 0x1FFFD, 0x10FFFD, 0xE000):              # their neighbours are characters
+        docs.append(("U+%04X in a value" % c, put(b'"x":"' + (json.dumps(chr(c), ensure_ascii=True)[1:-1]).encode() + b'"'), fine))
+    nest = lambda n, v: b"[" * (n - 1) + v + b"]" * (n - 1)
+    for v in (b"0", b'"s"', b"null", b"true", b"{}", b"[]"):                           # X1: the member's value is level 1
+        docs += [("%s at level 64" % v.decode(), put(b'"x":' + nest(64, v)), fine),
+                 ("%s at level 65" % v.decode(), put(b'"x":' + nest(65, v)), unread)]
+    docs += [("2^53 written 9007199254740992.0", put(b'"x":9007199254740992.0'), fine),           # X2, Q37
+             ("2^53 written 9.007199254740992e15", put(b'"x":9.007199254740992e15'), fine),
+             ("1e16", put(b'"x":1e16'), fine), ("-2^53", put(b'"x":-9007199254740992'), unread),
+             ("2^53 + 1", put(b'"x":9007199254740993'), unread), ("2^53 - 1", put(b'"x":9007199254740991'), fine),
+             ("the largest double", put(b'"x":1.7976931348623157e308'), fine),                 # X3, Q38
+             ("halfway past the largest double", put(b'"x":1.7976931348623159e308'), unread),
+             ("-1e400", put(b'"x":-1e400'), unread), ("1e-400", put(b'"x":1e-400'), fine),
+             ("thirty digits of pi", put(b'"x":3.141592653589793238462643383279'), fine)]
+    for name, b, exp in docs:
+        i = copy.deepcopy(base)
+        i["criteria_file_base64"] = base64.b64encode(b).decode()
+        yield "1.4.11: criteria file %s, record hash of the original" % name, {"inputs": i}, \
+            {"criteria_hash": "mismatch", "problem_codes": ["CRITERIA_HASH_MISMATCH"]}
+        i = copy.deepcopy(i)
+        i["receipt"]["receipt"]["criteria"]["sha256"] = hashlib.sha256(b).hexdigest()
+        build.criteria_token(i)
+        build.refresh(i)
+        yield "1.4.11: criteria file %s" % name, {"inputs": i}, exp
+
 def fam_rp(base):
     """Profile 1.4.5 step 12 (README U1-U9): expectations from the sentences, not from running the verifier."""
     inp = copy.deepcopy(base)
@@ -519,7 +562,8 @@ FAMILIES = [("parties", fam_parties), ("unknown member", fam_unknown_member), ("
             ("wrong type", fam_wrong_type), ("lone surrogate", fam_surrogate), ("numbers", fam_numbers),
             ("DER / TSTInfo", fam_der), ("Ed25519", fam_ed25519), ("key_id confusion", fam_keyid),
             ("time ties and grammar", fam_time), ("criteria bytes", fam_criteria_bytes),
-            ("relying party keys", fam_rp), ("relying party keys 1.4.7", fam_rp_147), ("1.4.8", fam_148)]
+            ("relying party keys", fam_rp), ("relying party keys 1.4.7", fam_rp_147), ("1.4.8", fam_148),
+            ("1.4.11", fam_1411)]
 
 
 def _ours(case):
