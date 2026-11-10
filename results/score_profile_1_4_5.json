@@ -1,7 +1,7 @@
 {
- "agree": 117,
- "fields": 1157,
- "fields_agree": 1147,
+ "agree": 119,
+ "fields": 1175,
+ "fields_agree": 1165,
  "options": {
   "criteria_noncharacters": "readable",
   "criteria_unreadable": "mismatch",
@@ -1014,9 +1014,23 @@
    "disagreements": [],
    "fields": 9,
    "fields_agree": 9,
+   "file": "fonti/upstream_5f7517a/vectors/127-criteria-file-noncharacter-in-string.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
+   "file": "fonti/upstream_5f7517a/vectors/128-criteria-file-noncharacter-in-member-name.json"
+  },
+  {
+   "agree": true,
+   "disagreements": [],
+   "fields": 9,
+   "fields_agree": 9,
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "8ce7f42",
- "total": 127
+ "set": "5f7517a",
+ "total": 129
 }

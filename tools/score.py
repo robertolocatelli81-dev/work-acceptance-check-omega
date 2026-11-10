@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Score war_verify field by field (code lists as sets) on a published vector set + the live issuer record.
-  --set 8ce7f42 (default) the 126 vectors of profile 1.4.11 at maximusrufus/work-acceptance-record@8ce7f42 + live
+  --set 5f7517a (default) the 128 vectors of profile 1.4.12 at maximusrufus/work-acceptance-record@5f7517a + live
+               record: the files of --set 8ce7f42 and 127-128 of 5f7517a (01-126 blob-identical at 5f7517a, compared
+               blob by blob on 2026-11-10)
+  --set 8ce7f42 the 126 vectors of profile 1.4.11 at maximusrufus/work-acceptance-record@8ce7f42 + live
                record: the files of --set 3e53aac and 119-126 of 8ce7f42 (01-118 unchanged at 8ce7f42: no file of vectors/
                changed or removed in 3e53aac..8ce7f42, compared on 2026-11-10)
   --set 3e53aac the 118 vectors of profile 1.4.8 at maximusrufus/work-acceptance-record@3e53aac + live
@@ -28,7 +31,7 @@
   --set 1.2.1  the 23 vectors + 12b + 22-sha1 of the 1.2.1 round + live record (26 documents)
 Vector 20 (1.3, 1.4 and 1.4.1, byte-identical) states a contributor's differing expectation in its `difference` member; it is also scored
 against that expectation (CONTRIBUTOR_EXPECTATIONS), reported separately, never folded into the total.
-usage: python3 -B tools/score.py [--json OUT] [--set 8ce7f42|3e53aac|6f7a075|c4b4bd4|1b81ec9|6bb7d0b|85a310d|bc5a138|48ab8c9|1.4.1|1.4|1.3|1.2.1] [--profile 1.4.8|1.4.7|1.4.5|1.4.4|1.4.3|1.4.2|1.2.1] [war_verify options as key=value ...]"""
+usage: python3 -B tools/score.py [--json OUT] [--set 5f7517a|8ce7f42|3e53aac|6f7a075|c4b4bd4|1b81ec9|6bb7d0b|85a310d|bc5a138|48ab8c9|1.4.1|1.4|1.3|1.2.1] [--profile 1.4.8|1.4.7|1.4.5|1.4.4|1.4.3|1.4.2|1.2.1] [war_verify options as key=value ...]"""
 import glob, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -46,22 +49,24 @@ CONTRIBUTOR_EXPECTATIONS = {"fonti/upstream_42b4ed0/vectors/20-producer-undeclar
                             "fonti/upstream_85a310d/vectors/20-producer-undeclared.json": {"problem_codes": []}}
 
 
-def vector_files(which="8ce7f42"):
-    if which in ("8ce7f42", "3e53aac", "6f7a075", "c4b4bd4", "1b81ec9", "6bb7d0b"):
+def vector_files(which="5f7517a"):
+    if which in ("5f7517a", "8ce7f42", "3e53aac", "6f7a075", "c4b4bd4", "1b81ec9", "6bb7d0b"):
         f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_85a310d/vectors/*.json")))
         f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_cb7e8f1/vectors/*.json")))
         f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_6bb7d0b/vectors/*.json")),
                     key=lambda p: int(os.path.basename(p).split("-")[0]))
-        if which in ("8ce7f42", "3e53aac", "6f7a075", "c4b4bd4", "1b81ec9"):
+        if which in ("5f7517a", "8ce7f42", "3e53aac", "6f7a075", "c4b4bd4", "1b81ec9"):
             f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_1b81ec9/vectors/*.json")))
-        if which in ("8ce7f42", "3e53aac", "6f7a075", "c4b4bd4"):
+        if which in ("5f7517a", "8ce7f42", "3e53aac", "6f7a075", "c4b4bd4"):
             f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_c4b4bd4/vectors/*.json")))
-        if which in ("8ce7f42", "3e53aac", "6f7a075"):
+        if which in ("5f7517a", "8ce7f42", "3e53aac", "6f7a075"):
             f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_6f7a075/vectors/*.json")))
-        if which in ("8ce7f42", "3e53aac"):
+        if which in ("5f7517a", "8ce7f42", "3e53aac"):
             f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_3e53aac/vectors/*.json")))
-        if which == "8ce7f42":
+        if which in ("5f7517a", "8ce7f42"):
             f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_8ce7f42/vectors/*.json")))
+        if which == "5f7517a":
+            f += sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_5f7517a/vectors/*.json")))
     elif which in ("85a310d", "bc5a138", "48ab8c9"):
         f = sorted(glob.glob(os.path.join(ROOT, "fonti/upstream_%s/vectors/*.json" % which)))
     elif which == "1.4.1":
@@ -80,7 +85,7 @@ def vector_files(which="8ce7f42"):
     return f + [os.path.join(ROOT, LIVE)]
 
 
-def score(options=None, files=None, verify_fn=None, which="8ce7f42"):
+def score(options=None, files=None, verify_fn=None, which="5f7517a"):
     rows = []
     for f in files or vector_files(which):
         with open(f, "rb") as fh:
@@ -105,7 +110,7 @@ def score(options=None, files=None, verify_fn=None, which="8ce7f42"):
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    out, which, opts = None, "8ce7f42", {}
+    out, which, opts = None, "5f7517a", {}
     while args and args[0] in ("--json", "--set", "--profile"):
         flag, val = args[0], args[1]
         args = args[2:]

@@ -2233,5 +2233,20 @@
   "path": "fonti/upstream_8ce7f42/vectors/126-criteria-file-scalar-at-level-65.json",
   "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/8ce7f42193786af9262294e5bb7c656a2e663de4/vectors/126-criteria-file-scalar-at-level-65.json",
   "sha256": "8b2214ca488707dbb6de6eeb81f9867152bdd3385fbe4710ff99dd46dc7d970c"
+ },
+ {
+  "path": "fonti/upstream_5f7517a/README.md",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/5f7517a812d3d5aa6489627f215fd5fd19d26ac8/README.md",
+  "sha256": "9953342a58a958a717ae3fcbb2b2fd79797b4a64594da665ec9375ffcf94ea31"
+ },
+ {
+  "path": "fonti/upstream_5f7517a/vectors/127-criteria-file-noncharacter-in-string.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/5f7517a812d3d5aa6489627f215fd5fd19d26ac8/vectors/127-criteria-file-noncharacter-in-string.json",
+  "sha256": "d1c89298b74e9df15357a42037adf5cc14c1b039dc8fcd3281509fa72c1cddc4"
+ },
+ {
+  "path": "fonti/upstream_5f7517a/vectors/128-criteria-file-noncharacter-in-member-name.json",
+  "url": "https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/5f7517a812d3d5aa6489627f215fd5fd19d26ac8/vectors/128-criteria-file-noncharacter-in-member-name.json",
+  "sha256": "69666ca60093458ef2da4e22e027f63e768c9f4fb3bc064945f8f9228ce9fb76"
  }
 ]

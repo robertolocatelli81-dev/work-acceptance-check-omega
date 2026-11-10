@@ -24,12 +24,12 @@ jobs:
         run: |
           openssl version
           python -c "import shutil, sys; p = shutil.which('openssl'); print(p); sys.exit(0 if p else 1)"
-      - name: The whole suite (448 tests, as the README states, none skipped)
+      - name: The whole suite (455 tests, as the README states, none skipped)
         run: |
           set -e
           out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
           echo "$out" | tail -3
-          echo "$out" | grep -qx "Ran 448 tests in [0-9.]*s" || { echo "::error::discovery did not run 448 tests"; exit 1; }
+          echo "$out" | grep -qx "Ran 455 tests in [0-9.]*s" || { echo "::error::discovery did not run 455 tests"; exit 1; }
           [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
   cryptography-versions:
     runs-on: ubuntu-latest
@@ -40,15 +40,15 @@ jobs:
           python-version: "3.11"
       - name: Third-party inputs
         run: python tools/fetch_sources.py
-      # 0.12.0, measured locally on 2026-11-10 (Python 3.11.2): 40.0.0 448/448; 39.0.2 61 failures + 8 errors = 69 of 448.
-      - name: "cryptography 40.0.0: 448/448 pass (README)"
+      # 0.12.0 with the 1.4.12 set, measured locally on 2026-11-10 (Python 3.11.2): 40.0.0 455/455; 39.0.2 64 failures + 8 errors = 72 of 455.
+      - name: "cryptography 40.0.0: 455/455 pass (README)"
         run: |
           set -e
           python -m pip install "cryptography==40.0.0"
           out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
-          echo "$out" | grep -qx "Ran 448 tests in [0-9.]*s" || { echo "::error::did not run 448 tests"; exit 1; }
+          echo "$out" | grep -qx "Ran 455 tests in [0-9.]*s" || { echo "::error::did not run 455 tests"; exit 1; }
           [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
-      - name: "cryptography 39.0.2: 69 of 448 fail by design, 379 pass (README); any other count, or a skip, is red"
+      - name: "cryptography 39.0.2: 72 of 455 fail by design, 383 pass (README); any other count, or a skip, is red"
         run: |
           set -e
           python -m pip install "cryptography==39.0.2"
@@ -56,10 +56,10 @@ jobs:
           echo "$out" | tail -3
           n=$(echo "$out" | sed -n 's/^Ran \([0-9]*\) test.*/\1/p')
           fl=$(echo "$out" | sed -n 's/^FAILED (.*failures=\([0-9]*\).*/\1/p'); er=$(echo "$out" | sed -n 's/^FAILED (.*errors=\([0-9]*\).*/\1/p')
-          bad=$(( ${fl:-0} + ${er:-0} ))   # unittest splits the 69 into failures and errors
+          bad=$(( ${fl:-0} + ${er:-0} ))   # unittest splits the 72 into failures and errors
           echo "ran $n, exit $rc, failures ${fl:-0} + errors ${er:-0} = $bad"
           case "$(echo "$out" | tail -1)" in *skipped=*) echo "::error::a test was skipped"; exit 1;; esac
-          [ "$n" = 448 ] && [ "$rc" = 1 ] && [ "$bad" = 69 ] || { echo "::error::expected 448 run and 69 not passing"; exit 1; }
+          [ "$n" = 455 ] && [ "$rc" = 1 ] && [ "$bad" = 72 ] || { echo "::error::expected 455 run and 72 not passing"; exit 1; }
   mutants:
     # the 68 targeted mutants of the README (tools/mutate14.py): about 14 minutes, so a job of its own
     runs-on: ubuntu-latest

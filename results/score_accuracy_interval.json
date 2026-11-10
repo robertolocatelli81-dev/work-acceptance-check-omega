@@ -1,7 +1,7 @@
 {
  "agree": 46,
- "fields": 1157,
- "fields_agree": 1075,
+ "fields": 1175,
+ "fields_agree": 1091,
  "options": {
   "accuracy": "interval"
  },
@@ -1483,6 +1483,34 @@
    "file": "fonti/upstream_8ce7f42/vectors/126-criteria-file-scalar-at-level-65.json"
   },
   {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "undetermined"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_5f7517a/vectors/127-criteria-file-noncharacter-in-string.json"
+  },
+  {
+   "agree": false,
+   "disagreements": [
+    {
+     "agree": false,
+     "expected": "yes",
+     "field": "criteria_committed_before_check",
+     "ours": "undetermined"
+    }
+   ],
+   "fields": 9,
+   "fields_agree": 8,
+   "file": "fonti/upstream_5f7517a/vectors/128-criteria-file-noncharacter-in-member-name.json"
+  },
+  {
    "agree": true,
    "disagreements": [],
    "fields": 9,
@@ -1490,6 +1518,6 @@
    "file": "fonti/issuer_274159c/selftest-pass.json"
   }
  ],
- "set": "8ce7f42",
- "total": 127
+ "set": "5f7517a",
+ "total": 129
 }

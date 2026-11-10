@@ -94,6 +94,9 @@ def glue(case_doc, war_inputs):
 
 
 def main():
+    if not os.path.isfile(X402):          # without the other checker every row would read "unparseable output"
+        sys.stderr.write("compose.py: %s not found; nothing written\n" % X402)
+        return 2
     os.makedirs(OUT, exist_ok=True)
     war = build.base()
     war_fail = build.base()
@@ -143,4 +146,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

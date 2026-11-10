@@ -40,7 +40,7 @@ base = [outcome(i, None) for i in recs]
 print("defaults: %d of %d documents CRITERIA_UNREADABLE" % (sum(w.UNREADABLE in o["problem_codes"] for o in base), len(recs)))
 for key, value in (("criteria_noncharacters", "unreadable"), ("criteria_noncharacters", "readable"), ("criteria_limits", "readable")):
     got = [outcome(i, {key: value}) for i in recs]
-    res = score.score({key: value})
+    res = score.score({key: value}, which="8ce7f42")
     print("--%s %s: %d of %d documents differ; 8ce7f42 set %d/%d %s" % (key.replace("_", "-"), value, sum(a != b for a, b in zip(base, got)),
                                                                      len(recs), sum(r["agree"] for r in res), len(res), v.nums(res)))
 q = [y.q31_record(rp, claim, pname, key, kid) for (_rl, rp), claim, (pname, _p), key, kid in
@@ -48,6 +48,6 @@ q = [y.q31_record(rp, claim, pname, key, kid) for (_rl, rp), claim, (pname, _p),
 qb = [outcome(i, None) for i in q]
 for value in ("always", "off"):
     got = [outcome(i, {"rp_point": value}) for i in q]
-    res = score.score({"rp_point": value})
+    res = score.score({"rp_point": value}, which="8ce7f42")
     print("--rp-point %s: %d of %d records differ; 8ce7f42 set %d/%d %s" % (value, sum(a != b for a, b in zip(qb, got)), len(q),
                                                                         sum(r["agree"] for r in res), len(res), v.nums(res)))

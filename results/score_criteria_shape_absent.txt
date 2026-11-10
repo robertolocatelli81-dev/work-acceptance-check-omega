@@ -125,5 +125,7 @@ fonti/upstream_8ce7f42/vectors/123-criteria-file-number-overflows.json      AGRE
 fonti/upstream_8ce7f42/vectors/124-criteria-file-nesting-65.json            AGREE    9/9
 fonti/upstream_8ce7f42/vectors/125-criteria-file-scalar-at-level-64.json    AGREE    9/9
 fonti/upstream_8ce7f42/vectors/126-criteria-file-scalar-at-level-65.json    AGREE    9/9
+fonti/upstream_5f7517a/vectors/127-criteria-file-noncharacter-in-string.json AGREE    9/9
+fonti/upstream_5f7517a/vectors/128-criteria-file-noncharacter-in-member-name.json AGREE    9/9
 fonti/issuer_274159c/selftest-pass.json                                     AGREE    9/9
-TOTAL set 8ce7f42: documents 127/127 agree; fields 1157/1157; options {'criteria_shape': 'absent'}
+TOTAL set 5f7517a: documents 129/129 agree; fields 1175/1175; options {'criteria_shape': 'absent'}
