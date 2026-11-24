@@ -45,7 +45,7 @@ def run(d):
 class NemesisRound1(unittest.TestCase):
     def test_all_checks_pass_under_the_1_2_1_readings(self):
         with tempfile.TemporaryDirectory() as t:
-            with open(os.path.join(t, "war_verify.py"), "w") as fh:
+            with open(os.path.join(t, "war_verify.py"), "w", encoding="utf-8") as fh:
                 fh.write(SHIM % os.path.join(_paths.ROOT, "war_verify.py"))
             p = run(t)
         fails = {ln[5:] for ln in p.stdout.splitlines() if ln.startswith("FAIL ")}

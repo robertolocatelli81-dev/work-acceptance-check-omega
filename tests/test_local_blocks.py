@@ -43,7 +43,7 @@ class Blocks(unittest.TestCase):
 
     def test_live_record_clean_only_with_keys_and_pkix(self):
         doc = load(os.path.join(LIVE, "selftest-pass.json"))
-        keys = load(os.path.join(LIVE, "checker-keys-live.json"))
+        keys = load(os.path.join(LIVE, "checker-keys-20261018.json"))
         rep = wv.verify(doc["inputs"], {"tokens": "pkix", "tsa_roots": ROOTS}, keys)
         self.assertTrue(rep["accepted_as_stated"])
         self.assertEqual(rep["local_blocks"], [])

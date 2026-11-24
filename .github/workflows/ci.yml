@@ -1,36 +1,91 @@
 name: ci
 on:
-  push:
-    branches: [main]
+  push:            # every branch, so a branch is measured before it reaches main
   pull_request:
+defaults:
+  run:
+    shell: bash    # the same shell on Linux, macOS and Windows (Git Bash on Windows)
 jobs:
   tests:
-    # 3.9 has no setup-python build for ubuntu-26.04, which `ubuntu-latest` is becoming between 2026-10-19 and 2026-11-19
-    # (actions/runner-images#14748): the floor runs on ubuntu-24.04, the other two on the current label
-    runs-on: ${{ matrix.python-version == '3.9' && 'ubuntu-24.04' || 'ubuntu-latest' }}
+    # Every Python from the declared floor (3.9) to 3.14, on Linux, macOS and Windows, with each set of dependencies:
+    #   full           cryptography (the declared dependency) and the openssl command line (the optional differential of
+    #                  tests/test_tsa_pkix.py), the whole suite, 470 tests, none skipped;
+    #   no-openssl     cryptography, no openssl on the PATH: the whole suite, 470 tests, none skipped (the differential
+    #                  then compares nothing, and the test still runs every case);
+    #   no-cryptography the documented exit 74 path, with cryptography really absent (not masked): the tests that do not
+    #                  need it, and the command line on vectors 02 (exit 74) and 21 (exit 2, refused before any crypto).
+    # 3.9 has no setup-python build for ubuntu-26.04 (actions/runner-images#14748): on Linux it runs on ubuntu-24.04.
+    runs-on: ${{ matrix.os == 'ubuntu' && (matrix.python-version == '3.9' && 'ubuntu-24.04' || 'ubuntu-latest') || format('{0}-latest', matrix.os) }}
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.9", "3.11", "3.13"]   # the README declares Python 3.9 or newer: the floor is tested too
+        os: [ubuntu, macos, windows]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        deps: [full, no-openssl, no-cryptography]
     steps:
       - uses: actions/checkout@v7       # Node 24: Node 20 actions are no longer run (GitHub changelog, 2026-09-23)
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Dependency (cryptography, current release)
-        run: python -m pip install cryptography
-      - name: Third-party inputs, fetched from SOURCES.json and kept only if their sha256 matches
+      - name: Third-party inputs, fetched from the dated copies of SOURCES.json and kept only if their sha256 matches
         run: python tools/fetch_sources.py
-      - name: "openssl is on the PATH the tests use (shutil.which), so tests/test_tsa_pkix.py compares every TSA case with `openssl ts -verify` instead of returning None"
+      - name: Dependency (cryptography, current release)
+        if: matrix.deps != 'no-cryptography'
+        run: python -m pip install cryptography
+      - name: "full: openssl is on the PATH the tests use (shutil.which)"
+        if: matrix.deps == 'full'
         run: |
           openssl version
           python -c "import shutil, sys; p = shutil.which('openssl'); print(p); sys.exit(0 if p else 1)"
-      - name: The whole suite (455 tests, as the README states, none skipped)
+      - name: "no-openssl: a PATH that holds the interpreter's folder only"
+        if: matrix.deps == 'no-openssl'
+        run: |
+          d=$(python -c "import os, sys; print(os.path.dirname(sys.executable))")
+          if command -v cygpath > /dev/null; then d=$(cygpath -u "$d"); fi      # Git Bash on Windows reads POSIX paths
+          echo "WAR_PATH=$d" >> "$GITHUB_ENV"
+          PATH="$d" python -c "import shutil, sys; p = shutil.which('openssl'); print('openssl:', p); sys.exit(1 if p else 0)"
+      - name: "The whole suite (470 tests, none skipped)"
+        if: matrix.deps != 'no-cryptography'
         run: |
           set -e
-          out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
+          set +e; out=$(PATH="${WAR_PATH:-$PATH}" python -B -m unittest discover -s tests 2>&1); rc=$?; set -e   # PATH for python only
+          [ $rc = 0 ] || { echo "$out" | tail -80; exit 1; }
           echo "$out" | tail -3
-          echo "$out" | grep -qx "Ran 455 tests in [0-9.]*s" || { echo "::error::discovery did not run 455 tests"; exit 1; }
-          [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
+          echo "$out" | grep -Eq "^Ran 470 tests in [0-9.]+s" || { echo "::error::discovery did not run 470 tests"; exit 1; }
+          [ "$(echo "$out" | tail -1 | tr -d '\r')" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
+      - name: "no-cryptography: the module is absent, and the tests that do not need it pass"
+        if: matrix.deps == 'no-cryptography'
+        run: |
+          set -e
+          python -c "import importlib.util, sys; sys.exit(1 if importlib.util.find_spec('cryptography') else 0)"
+          cd tests
+          set +e; out=$(python -B -m unittest test_release_0121 test_cli.CLI.test_exit_74_without_cryptography_full_report test_cli.CLI.test_refused_before_crypto_needs_no_crypto test_cli.CLI.test_refusal_report 2>&1); rc=$?; set -e
+          [ $rc = 0 ] || { echo "$out" | tail -60; exit 1; }
+          echo "$out" | tail -3
+          echo "$out" | grep -Eq "^Ran 18 tests in [0-9.]+s" || { echo "::error::expected 18 tests"; exit 1; }
+          [ "$(echo "$out" | tail -1 | tr -d '\r')" = "OK" ] || { echo "::error::not a plain OK (a skip?)"; exit 1; }
+      - name: "no-cryptography: the command line gives exit 74 on vector 02 and exit 2 on vector 21"
+        if: matrix.deps == 'no-cryptography'
+        run: |
+          set +e
+          python -B war_verify.py fonti/upstream_f7d8984/vectors/02-criteria-committed-after-issue.json > out74.json; a=$?
+          python -B war_verify.py fonti/tetsurohhori_4f6cf49/21-unknown-schema.json > out2.json; b=$?
+          set -e
+          echo "exit $a and $b"
+          [ "$a" = 74 ] && [ "$b" = 2 ] || { cat out74.json out2.json; exit 1; }
+          python -c "import json; r = json.load(open('out74.json', encoding='utf-8'))['report']; assert r['cannot_run'] and r['signature_valid'] is None, r"
+  live-sources:
+    # Optional and informative: the live URLs of SOURCES.json against the pinned bytes. A drift is reported (exit 3)
+    # and never breaks the suite, which uses the dated copies only.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Live URLs against the pinned bytes (informative)
+        run: python tools/fetch_sources.py --live
   cryptography-versions:
     runs-on: ubuntu-latest
     steps:
@@ -40,15 +95,16 @@ jobs:
           python-version: "3.11"
       - name: Third-party inputs
         run: python tools/fetch_sources.py
-      # 0.12.0 with the 1.4.12 set, measured locally on 2026-11-10 (Python 3.11.2): 40.0.0 455/455; 39.0.2 64 failures + 8 errors = 72 of 455.
-      - name: "cryptography 40.0.0: 455/455 pass (README)"
+      # 0.12.1, measured locally on 2026-11-24 (Python 3.11.2): 40.0.0 470/470; 39.0.2 64 failures + 8 errors = 72 of 470.
+      - name: "cryptography 40.0.0: 470/470 pass (README)"
         run: |
           set -e
           python -m pip install "cryptography==40.0.0"
-          out=$(python -B -m unittest discover -s tests 2>&1) || { echo "$out" | tail -60; exit 1; }
-          echo "$out" | grep -qx "Ran 455 tests in [0-9.]*s" || { echo "::error::did not run 455 tests"; exit 1; }
+          set +e; out=$(python -B -m unittest discover -s tests 2>&1); rc=$?; set -e
+          [ $rc = 0 ] || { echo "$out" | tail -60; exit 1; }
+          echo "$out" | grep -Eq "^Ran 470 tests in [0-9.]+s" || { echo "::error::did not run 470 tests"; exit 1; }
           [ "$(echo "$out" | tail -1)" = "OK" ] || { echo "::error::the summary line is not a plain OK (a skip?)"; exit 1; }
-      - name: "cryptography 39.0.2: 72 of 455 fail by design, 383 pass (README); any other count, or a skip, is red"
+      - name: "cryptography 39.0.2: 72 of 470 fail by design, 398 pass (README); any other count, or a skip, is red"
         run: |
           set -e
           python -m pip install "cryptography==39.0.2"
@@ -59,9 +115,10 @@ jobs:
           bad=$(( ${fl:-0} + ${er:-0} ))   # unittest splits the 72 into failures and errors
           echo "ran $n, exit $rc, failures ${fl:-0} + errors ${er:-0} = $bad"
           case "$(echo "$out" | tail -1)" in *skipped=*) echo "::error::a test was skipped"; exit 1;; esac
-          [ "$n" = 455 ] && [ "$rc" = 1 ] && [ "$bad" = 72 ] || { echo "::error::expected 455 run and 72 not passing"; exit 1; }
+          [ "$n" = 470 ] && [ "$rc" = 1 ] && [ "$bad" = 72 ] || { echo "::error::expected 470 run and 72 not passing"; exit 1; }
   mutants:
-    # the 68 targeted mutants of the README (tools/mutate14.py): about 14 minutes, so a job of its own
+    # the targeted mutants of the README: about 14 minutes, so a job of its own (Linux: the scripts link the
+    # unmutated files into each copy with os.symlink)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

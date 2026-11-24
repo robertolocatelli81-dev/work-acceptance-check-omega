@@ -15,8 +15,9 @@
   "sha256": "0c167a92185e23e01810ea9f9e29000ed0924225c7fe58e4aa3beda74f826fb0"
  },
  {
-  "path": "fonti/issuer_274159c/checker-keys-live.json",
-  "url": "https://api.babyblueviper.com/.well-known/invinoveritas-checker-keys.json",
+  "path": "fonti/issuer_274159c/checker-keys-20261018.json",
+  "derived_from": "fonti/issuer_274159c/selftest-pass.json",
+  "live_url": "https://api.babyblueviper.com/.well-known/invinoveritas-checker-keys.json",
   "sha256": "2a4eb3cc1cf71402f0331ebd42d652cfde0f50fdb81685689fe1788c7e70d403"
  },
  {
@@ -291,13 +292,15 @@
  },
  {
   "path": "roots/freetsa_cacert.pem",
-  "url": "https://freetsa.org/files/cacert.pem",
-  "sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438"
+  "url": "https://web.archive.org/web/20261105230604id_/https://freetsa.org/files/cacert.pem",
+  "sha256": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+  "live_url": "https://freetsa.org/files/cacert.pem"
  },
  {
   "path": "roots/freetsa_tsa.crt",
-  "url": "https://freetsa.org/files/tsa.crt",
-  "sha256": "8bfb0305bb64e2571ca507552ef3245cb1c2fee8728e0ff8689225081ea13467"
+  "url": "https://web.archive.org/web/20261014224905id_/http://freetsa.org/files/tsa.crt",
+  "sha256": "8bfb0305bb64e2571ca507552ef3245cb1c2fee8728e0ff8689225081ea13467",
+  "live_url": "https://freetsa.org/files/tsa.crt"
  },
  {
   "path": "fonti/upstream_eb0f30b/README.md",

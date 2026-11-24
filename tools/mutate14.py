@@ -6,7 +6,7 @@ usage: python3 -B tools/mutate14.py PYTHON   (an interpreter with cryptography >
 import os, shutil, subprocess, sys, tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.argv[1]
-src = open(os.path.join(REPO, "war_verify.py")).read()
+src = open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read()
 M = [
  ("precedence order", '"failed-first": ("failed", "no_signer", "unsupported", "untrusted")', '"failed-first": ("unsupported", "failed", "no_signer", "untrusted")'),
  ("issuer defect untrusted without the anchor (0.4.1)", 'bad("failed", msg)       # or not', 'bad("failed" if anchored else "untrusted", msg)       # or not'),
@@ -95,7 +95,7 @@ for name, o, n in M:
             shutil.copytree(os.path.join(REPO, x), os.path.join(d, x))
         for x in ("fonti", "roots"):
             os.symlink(os.path.join(REPO, x), os.path.join(d, x))
-        open(os.path.join(d, "war_verify.py"), "w").write(src.replace(o, n))
+        open(os.path.join(d, "war_verify.py"), "w", encoding="utf-8").write(src.replace(o, n))
         env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
         dead = [t for t in TESTS if subprocess.run([PY, "-B", t], cwd=d, env=env, capture_output=True).returncode != 0]
         print("KILLED " if dead else "ALIVE  ", name, [os.path.basename(t) for t in dead])

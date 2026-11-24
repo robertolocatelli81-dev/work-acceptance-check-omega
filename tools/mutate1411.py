@@ -5,7 +5,7 @@ counted from 0, so that N processes share the list: the totals are then the sum 
 import os, shutil, subprocess, sys, tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.argv[1]
-src = open(os.path.join(REPO, "war_verify.py")).read()
+src = open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read()
 GATE = 'if opts["criteria_noncharacters"] == "unreadable":                        # X4, Q36'
 TEST = 'if 0xFDD0 <= c <= 0xFDEF or c & 0xFFFE == 0xFFFE:'
 WALK = ("            stack.extend(v)\n            stack.extend(v.values())\n        elif isinstance(v, list):\n            stack.extend(v)\n"
@@ -59,7 +59,7 @@ M = [
  ("X7 usage line of the profile", "  --profile 1.4.8              the reading 0.11.0 gave to 1.4.8", "  --profile 1.4.8              the reading 0.10.0 gave to 1.4.8"),
  ("X7 usage error names the profile", "--profile takes 1.4.8, 1.4.7,", "--profile takes 1.4.7,"),
  ("X7 usage line of the defaults", "defaults follow profile 1.4.11 (", "defaults follow profile 1.4.8 ("),
- ("the version", 'VERSION = "war_verify 0.12.0"', 'VERSION = "war_verify 0.11.0"'),
+ ("the version", 'VERSION = "war_verify 0.12.1"', 'VERSION = "war_verify 0.11.0"'),
  ("the docstring", "draft profile 1.4.11 (schema identifier 1.2).", "draft profile 1.4.8 (schema identifier 1.2)."),
 ]
 TESTS = ["tests/test_profile1411.py", "tests/test_profile148.py", "tests/test_cli.py"]
@@ -71,7 +71,7 @@ def run(text):
             shutil.copytree(os.path.join(REPO, x), os.path.join(d, x))
         for x in ("fonti", "roots"):
             os.symlink(os.path.join(REPO, x), os.path.join(d, x))
-        open(os.path.join(d, "war_verify.py"), "w").write(text)
+        open(os.path.join(d, "war_verify.py"), "w", encoding="utf-8").write(text)
         env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
         dead = []
         for t in TESTS:                                 # stops at the first test file that fails

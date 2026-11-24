@@ -490,7 +490,7 @@ class CommandLine(unittest.TestCase):
 
     def test_exit_0_with_a_repeated_key_id(self):           # the live record and a list that repeats a key_id it does not use
         live = os.path.join(score.ROOT, "fonti", "issuer_274159c")
-        base = ("--keys", os.path.join(live, "checker-keys-live.json"), "--tokens", "pkix", "--tsa-roots",
+        base = ("--keys", os.path.join(live, "checker-keys-20261018.json"), "--tokens", "pkix", "--tsa-roots",
                 os.path.join(score.ROOT, "roots", "freetsa_cacert.pem"))
         lst = self.write("rp.json", rpdoc([entry("a", K2), entry("a", K3)]))
         rec = os.path.join(live, "selftest-pass.json")

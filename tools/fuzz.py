@@ -633,5 +633,5 @@ if __name__ == "__main__":
         if not r["ours_ok"]:
             print("OURS FAILS:", r["family"], "|", r["case"], "| expected", r["expected"], "| got", r["ours"])
     if len(sys.argv) > 2 and sys.argv[1] == "--json":
-        with open(sys.argv[2], "w") as fh:
+        with open(sys.argv[2], "w", encoding="utf-8") as fh:
             json.dump(rows, fh, indent=1, sort_keys=True, default=str)

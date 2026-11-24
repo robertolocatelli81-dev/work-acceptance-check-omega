@@ -32,7 +32,7 @@ class Key:
         self.pub=self.sk.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
     def entry(self, status='active'): return {"alg":"Ed25519","key_id":self.kid,"public_key_base64":b64(self.pub),"status":status}
 def base_receipt(snap):
-    d=json.load(open(snap+'/fonti/upstream_f7d8984/vectors/01-valid.json')); return copy.deepcopy(d['inputs'])
+    d=json.load(open(snap+'/fonti/upstream_f7d8984/vectors/01-valid.json', encoding="utf-8")); return copy.deepcopy(d['inputs'])
 def build(inputs, key, receipt=None, sig_kid=None, crit_gen=None, rec_gen=None, ts_meta='granted', keys=None, crit_digest=None):
     i=copy.deepcopy(inputs); r=receipt if receipt is not None else i['receipt']['receipt']
     canon=jcs(r); sig=key.sk.sign(canon)

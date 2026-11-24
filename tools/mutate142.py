@@ -4,7 +4,7 @@ usage: python3 -B tools/mutate142.py PYTHON   (an interpreter with cryptography 
 import os, shutil, subprocess, sys, tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.argv[1]
-src = open(os.path.join(REPO, "war_verify.py")).read()
+src = open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read()
 M = [
  # R1 canonical base64
  ("R1 b64 re-encoding not compared", '    return raw if base64.b64encode(raw).decode("ascii") == s else None', '    return raw'),
@@ -74,7 +74,7 @@ def run(text):
             shutil.copytree(os.path.join(REPO, x), os.path.join(d, x))
         for x in ("fonti", "roots"):
             os.symlink(os.path.join(REPO, x), os.path.join(d, x))
-        open(os.path.join(d, "war_verify.py"), "w").write(text)
+        open(os.path.join(d, "war_verify.py"), "w", encoding="utf-8").write(text)
         env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
         return [t for t in TESTS if subprocess.run([PY, "-B", t], cwd=d, env=env, capture_output=True).returncode != 0]
     finally:

@@ -683,7 +683,7 @@ class RootsTypesBeforePkix(unittest.TestCase):
                 f = os.path.join(d, "v.json")
                 i = fixture()
                 i["tsa_roots_base64"] = roots
-                with open(f, "w") as fh:
+                with open(f, "w", encoding="utf-8") as fh:
                     json.dump({"inputs": i, "expected": {}}, fh)
                 code = ("import sys; sys.modules['cryptography'] = None; import runpy; sys.argv = [%r, %r]; "
                         "runpy.run_path(%r, run_name='__main__')" % (wvp, f, wvp))

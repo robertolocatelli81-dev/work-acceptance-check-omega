@@ -94,7 +94,7 @@ def score(options=None, files=None, verify_fn=None, which="5f7517a"):
             rep, cmp_ = wv.run_vector_bytes(raw, options)
         else:
             rep, cmp_ = verify_fn(json.loads(raw.decode("utf-8", "surrogatepass")))
-        rel = os.path.relpath(f, ROOT)
+        rel = os.path.relpath(f, ROOT).replace(os.sep, "/")       # the keys of CONTRIBUTOR_EXPECTATIONS on Windows too
         row = {"file": rel, "agree": cmp_["agree"],
                "disagreements": [r for r in cmp_["fields"] if not r["agree"]],
                "fields": len(cmp_["fields"]), "fields_agree": sum(r["agree"] for r in cmp_["fields"])}
@@ -108,21 +108,49 @@ def score(options=None, files=None, verify_fn=None, which="5f7517a"):
     return rows
 
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    out, which, opts = None, "5f7517a", {}
+SETS = ("5f7517a", "8ce7f42", "3e53aac", "6f7a075", "c4b4bd4", "1b81ec9", "6bb7d0b", "85a310d", "bc5a138", "48ab8c9",
+        "1.4.1", "1.4", "1.3", "1.2.1")
+
+
+def parse_args(args):
+    """(out, which, opts) or raise ValueError with the reason: closed, an unknown flag, option or value is refused."""
+    out, which, opts, given = None, "5f7517a", {}, {}
     while args and args[0] in ("--json", "--set", "--profile"):
+        if len(args) < 2 or args[0] in given:
+            raise ValueError("%s needs one value and is given once" % args[0])
         flag, val = args[0], args[1]
+        given[flag] = val
         args = args[2:]
         if flag == "--json":
             out = val
         elif flag == "--set":
+            if val not in SETS:
+                raise ValueError("--set takes one of " + ", ".join(SETS))
             which = val
         elif val in wv.PROFILES:
             opts.update(wv.PROFILES[val])
         else:
-            raise SystemExit("--profile takes 1.4.8, 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 or 1.2.1")
-    opts.update(dict(a.split("=", 1) for a in args))
+            raise ValueError("--profile takes 1.4.8, 1.4.7, 1.4.5, 1.4.4, 1.4.3, 1.4.2 or 1.2.1")
+    seen = set()
+    for a in args:
+        k, eq, v = a.partition("=")
+        if not eq or k not in wv.DEFAULT_OPTIONS or k == "tsa_roots" and not v:
+            raise ValueError("%r is not a war_verify option as key=value (keys: %s)" % (a, ", ".join(sorted(wv.DEFAULT_OPTIONS))))
+        if k in seen:
+            raise ValueError("option %s given twice" % k)
+        if k != "tsa_roots" and v not in wv.OPTION_VALUES[k]:
+            raise ValueError("bad value %r for %s (one of %s)" % (v, k, ", ".join(wv.OPTION_VALUES[k])))
+        seen.add(k)
+        opts[k] = v
+    return out, which, opts
+
+
+if __name__ == "__main__":
+    try:
+        out, which, opts = parse_args(sys.argv[1:])
+    except ValueError as e:
+        sys.stderr.write("score.py: %s\n" % e)
+        sys.exit(2)
     rows = score(opts, which=which)
     for r in rows:
         print("%-75s %s %d/%d" % (r["file"], "AGREE   " if r["agree"] else "DISAGREE", r["fields_agree"], r["fields"]))
@@ -137,6 +165,6 @@ if __name__ == "__main__":
     fa = sum(r["fields_agree"] for r in rows); ft = sum(r["fields"] for r in rows)
     print("TOTAL set %s: documents %d/%d agree; fields %d/%d; options %s" % (which, a, n, fa, ft, opts or "defaults"))
     if out:
-        with open(out, "w") as fh:
+        with open(out, "w", encoding="utf-8") as fh:
             json.dump({"set": which, "options": opts, "rows": rows, "agree": a, "total": n, "fields_agree": fa,
                        "fields": ft}, fh, indent=1, sort_keys=True, default=str)

@@ -6,7 +6,7 @@ are then the sum of their lines)"""
 import os, shutil, subprocess, sys, tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.argv[1]
-src = open(os.path.join(REPO, "war_verify.py")).read()
+src = open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read()
 MIXED = 'if sig_r == "prime-order" and not _pequal(_pmul(_L, R), _IDENT):'
 READ = 'crit_hash == "match" or opts["criteria_read"] == "always"):'
 DOCOBJ = 'return "the document is not an object" if absent else None'
@@ -102,7 +102,7 @@ M = [
  ("usage line of --criteria-shape", '  --criteria-shape typed|absent       (default typed)\n', ''),
  ("usage line of --criteria-types", '  --criteria-types read|known         (default read)\n', ''),
  ("usage line of --criteria-limits", '  --criteria-limits unreadable|readable   (default unreadable)\n', ''),
- ("the version", 'VERSION = "war_verify 0.12.0"', 'VERSION = "war_verify 0.11.0"'),
+ ("the version", 'VERSION = "war_verify 0.12.1"', 'VERSION = "war_verify 0.11.0"'),
  ("B5 the note says derived again", '"rule of step 2 and establishes no producer (profile 1.4.7 step 12, "', '"rule of step 2 and establishes no producer: derived self-checked (profile 1.4.7 step 12, "'),
 ]
 TESTS = ["tests/test_profile148.py", "tests/test_profile145.py", "tests/test_cli.py"]
@@ -115,7 +115,7 @@ def run(text):
             shutil.copytree(os.path.join(REPO, x), os.path.join(d, x))
         for x in ("fonti", "roots"):
             os.symlink(os.path.join(REPO, x), os.path.join(d, x))
-        open(os.path.join(d, "war_verify.py"), "w").write(text)
+        open(os.path.join(d, "war_verify.py"), "w", encoding="utf-8").write(text)
         env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
         dead = []
         for t in TESTS:                                 # stops at the first test file that fails

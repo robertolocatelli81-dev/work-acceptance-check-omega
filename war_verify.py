@@ -58,7 +58,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.12.0"
+VERSION = "war_verify 0.12.1"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm
@@ -323,6 +323,37 @@ def _check_strings(obj):
             stack.extend(v)
 
 
+# 0.12.1: json.loads raises RecursionError at a depth that depends on the interpreter and its stack (2,000 nested arrays:
+# refused on CPython 3.9.25, read on 3.14.8, measured 2026-11-24), so the nesting is counted on the text before any parse:
+# the same verdict on every Python. The count reads one quote, escape or bracket at a time, in constant memory (as
+# apc_siglib.json_too_deep in agent-payment-chain, 3843b3a, by the same author).
+_JSON_TOKEN = re.compile(r'[\[\]{}"]|\\.', re.S)
+MAX_DEPTH = 64                   # _check_values: nothing deeper than 64 below the top value, so 65 containers at most
+MAX_DEPTH_LIFTED = 512           # limits=False (README Q35): parsed by every Python from 3.9 on, whatever the stack
+
+
+def json_too_deep(text, limit):
+    """True when the arrays and objects of a JSON text open more than `limit` deep, counted outside strings. Not a
+    validator: a text within the bound that is not JSON is the parser's to refuse."""
+    depth, in_str = 0, False
+    for m in _JSON_TOKEN.finditer(text):
+        c = m.group()
+        if in_str:                      # inside a string only its closing quote counts (an escaped one is a pair)
+            in_str = c != '"'
+            continue
+        if len(c) == 2:                 # outside a string a backslash escapes nothing: the character after it counts
+            c = c[1]
+        if c == '"':
+            in_str = True
+        elif c == "[" or c == "{":
+            depth += 1
+            if depth > limit:
+                return True
+        elif c == "]" or c == "}":
+            depth -= 1
+    return False
+
+
 def strict_json_loads(data, limits=True):
     """bytes -> value. Refuses: BOM, invalid UTF-8, duplicate member names, NaN/Infinity, lone surrogates,
     integers outside +-(2^53-1), nesting > 64, trailing garbage. limits=False (README Q35) lifts the BOM, the number and
@@ -338,6 +369,8 @@ def strict_json_loads(data, limits=True):
         text = bytes(data).decode("utf-8", errors="strict")
     except UnicodeDecodeError as e:
         raise Refusal("JSON text is not valid UTF-8", str(e))
+    if json_too_deep(text, MAX_DEPTH + 1 if limits else MAX_DEPTH_LIFTED):
+        raise Refusal("JSON nesting deeper than %d" % (MAX_DEPTH if limits else MAX_DEPTH_LIFTED))
     try:
         if limits:
             obj = json.loads(text, object_pairs_hook=_pairs, parse_constant=_no_constant)
@@ -345,8 +378,6 @@ def strict_json_loads(data, limits=True):
             obj = json.loads(text, object_pairs_hook=_pairs, parse_constant=_no_constant, parse_int=lambda _s: 0)
     except _Dup as e:
         raise Refusal("duplicate JSON member name", repr(e.args[0]))
-    except RecursionError:
-        raise Refusal("JSON nesting too deep")
     except ValueError as e:
         raise Refusal("not JSON", str(e))
     if limits:
@@ -1150,6 +1181,18 @@ def _load_cert(der):
     return cert
 
 
+MAX_FILE_BYTES = 16 * 1024 * 1024     # 0.12.1: every file is read with a bound (the live record is 17 kB)
+
+
+def read_bounded(path):
+    """The bytes of a file, or Refusal past MAX_FILE_BYTES: a device or a pipe that never ends is not read to the end."""
+    with open(path, "rb") as fh:
+        data = fh.read(MAX_FILE_BYTES + 1)
+    if len(data) > MAX_FILE_BYTES:
+        raise Refusal("file larger than %d bytes" % MAX_FILE_BYTES, path)
+    return data
+
+
 def load_roots(path):
     _require_pkix()
     from cryptography import x509
@@ -1161,10 +1204,11 @@ def load_roots(path):
     roots = []
     for f in files:
         try:
-            with open(f, "rb") as fh:
-                data = fh.read()
+            data = read_bounded(f)
         except OSError as e:
             raise CannotRun("cannot read TSA root %s: %s" % (f, e))
+        except Refusal as e:
+            raise CannotRun("cannot read TSA root %s: %s" % (f, e.reason))
         try:
             if b"-----BEGIN CERTIFICATE-----" in data:
                 from cryptography.hazmat.primitives.serialization import Encoding
@@ -1979,6 +2023,8 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
     """inputs: the vector's `inputs` object (already strictly parsed). Returns a report dict; raises Refusal."""
     opts = dict(DEFAULT_OPTIONS)
     opts.update(options or {})
+    if set(opts) - set(DEFAULT_OPTIONS):                    # 0.12.1: an unknown option is an error, never ignored
+        raise ValueError("unknown option(s) %s" % ", ".join(sorted(set(opts) - set(DEFAULT_OPTIONS))))
     for k, allowed in OPTION_VALUES.items():
         if opts[k] not in allowed:
             raise ValueError("option %s=%r" % (k, opts[k]))
@@ -2747,7 +2793,8 @@ def compare(rep, exp, accepted=None):
     for k in sorted(exp):
         mine = rep.get(k, "<absent>")
         theirs = exp[k]
-        if k in ("problem_codes", "warning_codes") and isinstance(theirs, list) and isinstance(mine, list):
+        if k in ("problem_codes", "warning_codes") and isinstance(theirs, list) and isinstance(mine, list) \
+                and all(isinstance(c, str) for c in theirs):      # 0.12.1: a list holding a list was a TypeError
             ok = set(mine) == set(theirs) and len(set(theirs)) == len(theirs)
         elif k == "reason" and rep.get("refused"):
             ok = mine == theirs
@@ -2912,18 +2959,15 @@ def main(argv):
         sys.stdout.write(json.dumps(obj, indent=1, sort_keys=True, default=str) + "\n")
 
     try:
-        with open(path, "rb") as fh:
-            raw = fh.read()
+        raw = read_bounded(path)
         override = None
         if keyfile:
-            with open(keyfile, "rb") as fh:
-                override = strict_json_loads(fh.read())
+            override = strict_json_loads(read_bounded(keyfile))
             if override is None and opts.get("rp_input") != "unknown":       # 0.8.0 read it as no file (README U7)
                 raise TypeRefusal("the --keys file holds null")
         rp_override = NOT_GIVEN
         if rpfile is not None:
-            with open(rpfile, "rb") as fh:
-                rp_override = strict_json_loads(fh.read())
+            rp_override = strict_json_loads(read_bounded(rpfile))
         if vector_mode:
             rep, cmp_ = run_vector_bytes(raw, opts, override, rp_override=rp_override)
         else:

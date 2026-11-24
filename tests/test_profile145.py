@@ -638,12 +638,12 @@ class CommandLine(unittest.TestCase):
 
     def live(self, *args):
         live = os.path.join(score.ROOT, "fonti", "issuer_274159c")
-        return self.report("--keys", os.path.join(live, "checker-keys-live.json"), "--tokens", "pkix", "--tsa-roots",
+        return self.report("--keys", os.path.join(live, "checker-keys-20261018.json"), "--tokens", "pkix", "--tsa-roots",
                            os.path.join(score.ROOT, "roots", "freetsa_cacert.pem"), *args)
 
     def test_exit_0_and_the_local_block(self):
         live = os.path.join(score.ROOT, "fonti", "issuer_274159c")
-        rec, kf = os.path.join(live, "selftest-pass.json"), os.path.join(live, "checker-keys-live.json")
+        rec, kf = os.path.join(live, "selftest-pass.json"), os.path.join(live, "checker-keys-20261018.json")
         rc, out = self.live("--relying-party-keys", kf, rec)
         self.assertEqual(rc, 0)                                 # a real key file reads; the record has no producer key_id
         self.assertIn("X_RP_KEYS_NOT_APPLIED", out["report"]["extension_codes"])
@@ -694,7 +694,7 @@ class CommandLine(unittest.TestCase):
         self.assertEqual(self.report("--rp-lookup", "both", f)[1]["report"]["problem_codes"], [])
 
     def test_version(self):
-        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.12.0")
+        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.12.1")
 
     def test_usage_text_names_every_flag(self):
         rc, out, _ = self.run_cli("--help")

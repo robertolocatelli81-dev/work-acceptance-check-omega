@@ -20,14 +20,14 @@ def first_suite(killed_by):
 
 
 def main(a_dir, b_dir, c_dir, out):
-    A = json.load(open(os.path.join(a_dir, "SUMMARY.json")))
-    B = json.load(open(os.path.join(b_dir, "SUMMARY.json"))) if b_dir and os.path.exists(os.path.join(b_dir, "SUMMARY.json")) else {"rows": []}
-    base = json.load(open(os.path.join(a_dir, "baseline.json")))
-    src = open(mutate.SRC_PATH).read()
+    A = json.load(open(os.path.join(a_dir, "SUMMARY.json"), encoding="utf-8"))
+    B = json.load(open(os.path.join(b_dir, "SUMMARY.json"), encoding="utf-8")) if b_dir and os.path.exists(os.path.join(b_dir, "SUMMARY.json")) else {"rows": []}
+    base = json.load(open(os.path.join(a_dir, "baseline.json"), encoding="utf-8"))
+    src = open(mutate.SRC_PATH, encoding="utf-8").read()
     assert hashlib.sha256(src.encode()).hexdigest() == base["source_sha256"], "war_verify.py changed since the battery"
     rows = {r["k"]: r for r in A["rows"]}
     brow = {r["k"]: r for r in B["rows"]}
-    C = json.load(open(os.path.join(c_dir, "SUMMARY.json")))
+    C = json.load(open(os.path.join(c_dir, "SUMMARY.json"), encoding="utf-8"))
     crow = {r["k"]: r for r in C["rows"]}
     total = len(rows)
     order = ["vectors23", "newvectors", "fuzz"]
@@ -75,7 +75,7 @@ def main(a_dir, b_dir, c_dir, out):
            "killed_by_exception_first": sum(1 for r in rows.values() if r["killed_by"] and r["killed_by"][0].startswith("exception")),
            "new_vector_kills_stage1_survivors": kills, "final_survivors": surv,
            "our_verifier_agrees_on_new_vectors": sum(good), "new_vectors": len(good)}
-    with open(out, "w") as fh:
+    with open(out, "w", encoding="utf-8") as fh:
         json.dump(res, fh, indent=1, sort_keys=True)
     print(json.dumps(res["survivors_after"]), "of", total, "| timeouts", res["killed_by_timeout"],
           "| exceptions", res["killed_by_exception_first"])

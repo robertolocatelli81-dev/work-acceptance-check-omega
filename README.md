@@ -2,7 +2,8 @@
 
 `war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.12 at
 maximusrufus/work-acceptance-record@5f7517a, vectors 01-128, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
-1.2.1) the way the profile README describes, and refuses anything it does not understand. Version 0.12.0 follows step 4 of 1.4.12,
+1.2.1) the way the profile README describes, and refuses anything it does not understand. Version 0.12.1 corrects defects of
+0.12.0 and changes no reading (see "Version 0.12.1"). Version 0.12.0 follows step 4 of 1.4.12,
 which states in the text the readings Q36-Q38 that 0.12.0 already took (Q36 on the outcome fields; the note stays) and changes no
 code here (see "Profile 1.4.12"), steps 4 and 12
 of 1.4.11 (see "Profile 1.4.11 rules", X1-X7), steps 2 and 4 of 1.4.8 (see "Profile 1.4.8 rules", W1-W8), the
@@ -44,10 +45,18 @@ commits and URLs pinned in `SOURCES.json` into `fonti/` and `roots/`, and keeps 
 the tests need them. Their licences are their authors': the profile README is CC BY 4.0
 (maximusrufus/work-acceptance-record), the upstream vectors (127-128 at 5f7517a; 119-126 at 8ce7f42; 116-118 at 3e53aac; 112-115 at 6f7a075; 110-111 at c4b4bd4; 108-109 at 1b81ec9; 91-107 at 6bb7d0b; 88-90 at cb7e8f1; 01-87 at 85a310d; 01-59 at 48ab8c9, then the head of PR #1, merged on
 2026-10-27; 01-57 at bc5a138; 01-47 at 06d3b94, 01-46 at 4daf721, 01-36 at eb0f30b, 01-27 at 42b4ed0) and the Tetsurohhori vectors carry
-CC0-1.0, and the babyblueviper1
-vectors and the issuer files (`selftest-pass.json`, its README, `checker-keys-live.json`) state no licence. The
-issuer's key file is fetched from its live URL, so it can change: the script then reports a mismatch and does not
-use it.
+CC0-1.0, and the babyblueviper1 vectors and the issuer files (`selftest-pass.json` and its README) are under the MIT licence of
+babyblueviper1/preaction-governance-conformance (its root `LICENSE`, the same blob at 431525f and 274159c, read on 2026-11-24; up to
+0.12.0 this sentence said they state no licence). Every file is fetched from a dated copy: a commit, or for the two FreeTSA
+certificates a web.archive.org capture (14 October and 5 November 2026) whose bytes have the SHA-256 pinned since 2026-10-18; their
+site states no licence, so they are not included. The issuer's key file, which no licence covers at its live URL
+(api.babyblueviper.com), is not fetched there: `checker-keys-20261018.json` is rebuilt from the `inputs.keys` of `selftest-pass.json`
+at 274159c, in the member order of the file fetched from that URL on 2026-10-18, and has the SHA-256 of that file (2a4eb3cc...).
+`python3 tools/fetch_sources.py --live` compares the live URLs with the pinned bytes and reports drift (exit 3) without changing
+anything; the suite never reads a live URL. Measured on 2026-11-24: the live key file has changed (SHA-256 301a3531..., a member
+`evaluators` added; `keys` unchanged), and `war_verify.py` refuses it as a `--keys` file (exit 2, unknown member in `keys`); the
+two FreeTSA files are unchanged. Up to 0.12.0 the key file was pinned at its live URL, so a fresh clone stopped at 449/450 sources
+and four tests failed (`test_cli`, `test_local_blocks`, `test_profile145`, `test_profile147`).
 
 ## What it checks
 
@@ -198,6 +207,45 @@ The profile does not define the envelope, key-file or criteria-document formats.
 them are those found in the published inputs (the 26 documents of the 1.2.1 round and the 27 vectors of 1.3). For the criteria document, only `criteria[].id`, `required` and
 `title` are interpreted, and the other members are listed in `notes`; which of them have a type is reading Q34. `--unknown-fields report` turns refusals
 for unknown members into notes (the four exceptions above are notes under both values).
+
+The verifier's own limits (0.12.1) are fixed in the code, not left to the interpreter: a file (record, `--keys`,
+`--relying-party-keys`, each `--tsa-roots` file) larger than 16 MiB (16,777,216 bytes) is refused with the reason
+"file larger than 16777216 bytes" before it is parsed, and is read no further (0.12.0 read every file to its end); the nesting of a
+JSON text is counted on the text before it is parsed, so a text deeper than 64 is refused with the same reason on every Python
+(see "Version 0.12.1"); an option key that `war_verify.verify` does not know is an error (`ValueError`), and so is an option of
+`tools/score.py` (exit 2, with the reason).
+
+## Version 0.12.1 (2026-11-24): corrections, no reading changed
+
+Defects of 0.12.0 found on 2026-11-24 by a review and by a search of every entry point; each correction has a test in
+`tests/test_release_0121.py` that fails on 0.12.0 (see "Tests"). No outcome of any vector changes. Measured on 2026-11-24:
+`tools/score.py` gives 129/129 documents and 1175/1175 fields on the default set (5f7517a with the live record), as 0.12.0 did; at
+the head of maximusrufus/work-acceptance-record on that day, b56d959, vectors 01-128 are blob-identical to the default set, and 129
+and 130 (control characters in the criteria file, CC0, published after 0.12.0) agree 9/9 fields each with `--vector`, on 0.12.1 and
+on 0.12.0: 131/131 documents and 1193/1193 fields with the live record. The whole-set tests of the older sets pass unchanged (see
+"Tests"); `tools/fuzz.py` gives 930/930, `tools/readings1411.py` and `tools/readings148.py` the counts stated below.
+
+- `tools/fetch_sources.py` pinned the issuer's key file at its live URL, which changed: a fresh clone verified 449/450 sources and
+  exited 1, and four tests failed. Every row of `SOURCES.json` is now a dated copy, and the key file is rebuilt from the record at its
+  commit (see the licence paragraph above). The rows have two closed forms; any other row, a path outside `fonti/` and `roots/` or a
+  URL that is not a dated copy is refused (exit 2), and a download is read up to 16 MiB. `--live` is the separate, optional drift check.
+- `tools/score.py` accepted an unknown option and ignored it (`criteria-noncharacters=report`, with a hyphen, gave 129/129 and exit
+  0). An unknown flag, option or value, an option given twice, an argument without `=` and an unknown `--set` are now refused with
+  exit 2 and the reason (0.12.0 kept the last of two values given for one option, and stopped with a traceback on an argument
+  without `=` and on an unknown `--set`). `war_verify.verify` ignored an unknown option key
+  too; it now raises `ValueError`.
+- `strict_json_loads` left its nesting bound to `RecursionError`, which `json.loads` raises at a depth that depends on the Python
+  and its stack: measured on 0.12.0 with 2,000 nested arrays under `--criteria-limits readable`, Python 3.9.25 refused the text
+  ("JSON nesting too deep") and Python 3.14.8 read it. The depth is now counted on the text first, in constant memory: deeper than 64
+  is refused as "JSON nesting deeper than 64" (the reason the limit already gave where Python parsed the text), and under
+  `--criteria-limits readable` deeper than 512 as "JSON nesting deeper than 512", on every Python.
+- Every file was read to its end, so a device or a pipe that never ends was read until memory ran out; now 16 MiB at most (see
+  "Closed by construction").
+- `compare`, used by `--vector`, stopped with a `TypeError` traceback when an expected `problem_codes` or `warning_codes` list held a
+  list or an object; such a list now disagrees.
+- Tests and tools open every text file with `encoding="utf-8"`, `tools/score.py` names files with `/` on every system, and
+  `.gitattributes` keeps every file's bytes as committed (`* -text`). The CI runs on every branch push, on Linux, macOS and Windows,
+  Python 3.9 to 3.14, each with the openssl command line, without it, and without `cryptography` (see "Tests").
 
 ## Profile 1.4.12 (5f7517a, vectors 127-128; version 0.12.0, no change of code)
 
@@ -684,7 +732,7 @@ From 0.7.0 the readings of R1 (an entry named by no party), R2 (other strings), 
 ```
 python3 war_verify.py RECORD_OR_VECTOR.json             # exit 0 only with every guard below, 1 otherwise, 2 refused
 python3 war_verify.py --vector VECTOR.json              # compare with "expected": exit 0 agree, 3 disagree
-python3 war_verify.py --keys fonti/issuer_274159c/checker-keys-live.json --tokens pkix \
+python3 war_verify.py --keys fonti/issuer_274159c/checker-keys-20261018.json --tokens pkix \
         --tsa-roots roots/freetsa_cacert.pem fonti/issuer_274159c/selftest-pass.json      # exit 0 (measured)
 python3 war_verify.py --keys ISSUER_KEYS.json --relying-party-keys MY_OWN_KEYS.json RECORD.json   # step 12 of 1.4.7
 python3 war_verify.py --vector --profile 1.4.8 VECTOR.json   # the reading of 0.11.0
@@ -708,7 +756,7 @@ Exit 0 is stricter than "accepted as stated". It requires all of the following:
 Each condition that is not met is listed in `local_blocks` and gives exit 1. The profile fields are unchanged by
 these guards, so `--vector` scoring is the profile's. Measured on 2026-10-18 (42b4ed0): vector 01 gives exit 1 with
 `local_blocks` `X_KEY_FROM_INPUT`, `X_TEST_KEY` and `X_TSA_NOT_VERIFIED`. The live record gives exit 0 only with
-the live key file and `--tokens pkix`.
+the issuer's key file of 2026-10-18 and `--tokens pkix`.
 
 The report also says where the key came from (`details.key_source`), the signer key's status
 (`details.signer_key_status`), and whether each token was authenticated (`details.token_authentication`).
@@ -789,7 +837,7 @@ overrides either profile.
 | `--criteria-read` | `matched`: the document is read when the hash matches | `always`: also on a mismatch, so both codes can stand | reading Q32 |
 | `--criteria-shape` | `typed`: an absent member, or a document that is no object, is not unreadable | `absent`: they are | reading Q33 |
 | `--criteria-types` | `read`: `criteria`, its elements, `id` and `required` have a type | `known`: also `criteria_set`, `title`, `version`, `result_vocabulary` and, in a criterion, `title` and `requirement`, when present | reading Q34 |
-| `--criteria-limits` | `unreadable`: a byte order mark, an integer outside +-(2^53-1), a number that overflows, depth over 64 (1.4.11) | `readable`: read past them, up to the depth Python's parser reaches; **outside profile 1.4.11** for 121-124 and 126 | 1.4.11 step 4 "The file must also be I-JSON (RFC 7493) and is otherwise unreadable when ..."; vectors 121-126; Q35, closed (X1) |
+| `--criteria-limits` | `unreadable`: a byte order mark, an integer outside +-(2^53-1), a number that overflows, depth over 64 (1.4.11) | `readable`: read past them, up to a depth of 512 counted on the text (0.12.0: where Python's parser stopped, which depends on the Python); **outside profile 1.4.11** for 121-124 and 126 | 1.4.11 step 4 "The file must also be I-JSON (RFC 7493) and is otherwise unreadable when ..."; vectors 121-126; Q35, closed (X1) |
 | `--criteria-noncharacters` | `report`: a noncharacter in a member name or a string value inside the document is read, with the note `X_CRITERIA_NOT_I_JSON` (1.4.11, X4; 1.4.12) | `unreadable` (`CRITERIA_UNREADABLE`, the other reading of Q36; **outside profile 1.4.12** for 127 and 128); `readable` (0.11.0, 1.4.8: read, no note; the same outcome as `report`) | 1.4.12 step 4 "a noncharacter in a member name or a string value does not make the file unreadable (127, 128)"; RFC 7493 2.1; Q36, closed (X4) |
 | `--correspondence` | `ids-required` (same ids, same `required`) | `strict` (titles too) | step 4 "check the results correspond to the criteria" |
 
@@ -1056,7 +1104,8 @@ but are not kept. The 1.2.1 sources were first fetched on
 - `fonti/babyblueviper1_431525f/`: proposed vectors 22-23;
 - `fonti/tetsurohhori_8ff69f4/`: proposed vectors `12b-signer-is-not-the-checker` and `22-criteria-token-sha1-imprint`,
   posted on 2026-10-18 at about 07:10Z;
-- `fonti/issuer_274159c/`: the issuer's `selftest-pass.json`, its README and `checker-keys-live.json` (the live key file).
+- `fonti/issuer_274159c/`: the issuer's `selftest-pass.json`, its README and `checker-keys-20261018.json` (the key file as served at its live URL on 2026-10-18, rebuilt
+  from `selftest-pass.json`: see above).
   Its `keys` equal the `keys` embedded in `selftest-pass.json`.
 
 The following standards were fetched from rfc-editor.org on 2026-10-18 (the first 16 hex digits of each SHA-256 are
@@ -1171,7 +1220,7 @@ reach each branch, and says that a switch changes outcomes, not how often it wou
 | Q32 | A document whose hash does not match and that cannot be read. "When it matches, check the results correspond" conditions the correspondence; the sentence on `CRITERIA_UNREADABLE` states no condition. | `CRITERIA_HASH_MISMATCH` alone: the document is not the committed one, so what it holds says nothing of the record. 07, 67, 89 and 94 mismatch with readable or no bytes, and do not decide it. | `--criteria-read always` reads it too, and gives both codes: 143 of the 198 documents with a hash that does not match |
 | Q33 | No member `criteria`, a criterion without `id` or `required`, a document that is no object (`[]`). "A wrongly typed member" needs a member. | `CRITERIA_RESULTS_MISMATCH`, as in 0.10.0: the results correspond to nothing that was read. Our vectors omega-04 and omega-05 hold two of them. | `--criteria-shape absent` makes them `CRITERIA_UNREADABLE`: 9 of 198 |
 | Q34 | A member this verifier does not read, of a type other than in the published files (`"title": 1`). The profile defines no format, and gives one example, "a criterion id that is not a string". | Not unreadable: only `criteria`, its elements, `id` and `required` have a type here, and the others stay notes. | `--criteria-types known` adds the form of every published criteria file (`tests/test_profile148.py` checks that they all have it): 7 of 198 |
-| Q35 | What this parser refuses and the sentence does not list: a byte order mark (RFC 8259 8.1 lets a parser ignore it), an integer outside +-(2^53-1), a number that overflows such as `1e400`, depth over 64 (RFC 8259 9 allows limits). The title of commit 8994178, which wrote the list of step 4, says it lists "every CRITERIA_UNREADABLE trigger": these four are our addition to that list, not a reading of it. | `CRITERIA_UNREADABLE`, under "cannot be read", with the reason in `details`. Limits that this verifier keeps for the record, and one code for a document it does not read. **Closed by 1.4.11 (8ce7f42, step 4; vectors 121-126), as read here (X1)**: `--criteria-limits readable` is outside the profile for 121-124 and 126. | `--criteria-limits readable` reads past them, every integer as zero; nesting then ends where Python's parser ends, at a depth that depends on the Python, and that is `CRITERIA_UNREADABLE`: 9 of 198 |
+| Q35 | What this parser refuses and the sentence does not list: a byte order mark (RFC 8259 8.1 lets a parser ignore it), an integer outside +-(2^53-1), a number that overflows such as `1e400`, depth over 64 (RFC 8259 9 allows limits). The title of commit 8994178, which wrote the list of step 4, says it lists "every CRITERIA_UNREADABLE trigger": these four are our addition to that list, not a reading of it. | `CRITERIA_UNREADABLE`, under "cannot be read", with the reason in `details`. Limits that this verifier keeps for the record, and one code for a document it does not read. **Closed by 1.4.11 (8ce7f42, step 4; vectors 121-126), as read here (X1)**: `--criteria-limits readable` is outside the profile for 121-124 and 126. | `--criteria-limits readable` reads past them, every integer as zero; nesting then ends at 512, counted on the text, on every Python (0.12.0: where Python's parser ended, at a depth that depends on the Python), and that is `CRITERIA_UNREADABLE`: 9 of 198 |
 
 ### Profile 1.4.11: readings not fixed by the text (questions for the profile author)
 
@@ -1937,10 +1986,25 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 ## Tests
 
 ```
-python3 tools/fetch_sources.py                   # third-party inputs, pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 455 tests
+python3 tools/fetch_sources.py                   # third-party inputs, from dated copies pinned by SHA-256 (needs network once)
+python3 -B -m unittest discover -s tests          # 470 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
+
+Measured on 2026-11-24 (0.12.1), with the sources fetched by `tools/fetch_sources.py` from the dated copies into an empty tree
+(450/450): 470/470 pass on Python 3.9.25, 3.11.2, 3.12.15, 3.13.15 and 3.14.8, each with `cryptography` 50.0.2; on Python 3.11.2 with `cryptography` 40.0.0, 470/470; with 39.0.2, 72 of the 470 fail
+by design (64 failures and 8 errors, as at 0.12.0: the 15 new tests need no TSA check). The 15 tests of `tests/test_release_0121.py` (the defects of
+"Version 0.12.1"): on a copy of 0.12.0 (`git archive` of 6df465c) with this file added, 13 of the 15 fail, on Python 3.9.25 and on
+3.14.8 (5 failures and 8 errors); the two that pass there guard what did not change (a usage error of `tools/fetch_sources.py`, and the
+bound of 64 where Python parses the text). Without `cryptography` (a virtual environment of Python 3.11.2 with no package), the 15 tests
+of that file and the three exit-code tests of `tests/test_cli.py` that need no `cryptography` pass (18/18), and the command line gives
+exit 74 on vector 02 and exit 2 on vector 21, as the CI checks; the rest of the suite needs `cryptography`. On 0.12.0 a fresh clone
+gave 449/450 sources and 4 of 455 tests failed (`test_cli`, `test_local_blocks`, `test_profile145`, `test_profile147`: 3 failures and
+1 error, Python 3.11.2). A search of the entry points on 0.12.1: 61,200 runs of `war_verify.verify` (an unknown member added to each
+object, and 15 values put in each member, of 23 documents, under both values of `--unknown-fields`) gave no exception other than a
+refusal and accepted no unknown member; 4,348 runs of the `--keys` and relying-party inputs and of `run_vector_bytes` (whole vector
+files with `expected` changed the same way) found the `compare` defect above, and none after its correction; 250 random command lines
+of `war_verify.py` gave only the documented exit codes and no traceback.
 
 Measured on 2026-11-10 (0.12.0, the 1.4.12 set as default), on a clean copy of the tree (`git archive` of this commit, with `fonti/` and `roots/` copied in and checked by
 `tools/fetch_sources.py`, 450/450): 455/455 pass on Python 3.9.25, 3.11.2 and 3.13.15,

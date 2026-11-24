@@ -299,7 +299,7 @@ class CLI(unittest.TestCase):
         d["inputs"]["tsa_roots_base64"] = []
         with tempfile.TemporaryDirectory() as td:
             p = os.path.join(td, "v.json")
-            with open(p, "w") as fh:
+            with open(p, "w", encoding="utf-8") as fh:
                 json.dump(d, fh)
             rc, out = self.run_cli("--vector", p, pre="import cryptography.x509 as x; x.Certificate = type('C', (), {})")
         self.assertEqual(rc, 3, out)        # 31 expects verified: disagree, but no exit 74

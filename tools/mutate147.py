@@ -5,7 +5,7 @@ from the Ith, counted from 0, so that N processes share the list: the totals are
 import os, shutil, subprocess, sys, tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.argv[1]
-src = open(os.path.join(REPO, "war_verify.py")).read()
+src = open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read()
 NOTE_IF = 'if repeated and opts["rp_repeated"] == "bytes":'
 DEFECT = 'elif repeated and opts["rp_repeated"] == "no-key":'
 COND = 'if pk_pub is not None and opts["independence_rule"] == "derived" and (opts["rp_point"] == "always" or (\n            opts["rp_point"] == "step12" and rp is not None and r["independence"] == "independent")):'
@@ -68,7 +68,7 @@ def run(text):
             shutil.copytree(os.path.join(REPO, x), os.path.join(d, x))
         for x in ("fonti", "roots"):
             os.symlink(os.path.join(REPO, x), os.path.join(d, x))
-        open(os.path.join(d, "war_verify.py"), "w").write(text)
+        open(os.path.join(d, "war_verify.py"), "w", encoding="utf-8").write(text)
         env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
         dead = []
         for t in TESTS:                                 # stops at the first test file that fails

@@ -8,7 +8,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "tools"))
 import mutate
 PY, OLD = sys.argv[1], sys.argv[2]
-src = open(os.path.join(REPO, "war_verify.py")).read()
+src = open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read()
 EQUIVALENT = {}
 TESTS = ["tests/test_profile148.py", "tests/test_cli.py"]
 
@@ -20,7 +20,7 @@ def run(text):
             shutil.copytree(os.path.join(REPO, x), os.path.join(d, x))
         for x in ("fonti", "roots"):
             os.symlink(os.path.join(REPO, x), os.path.join(d, x))
-        open(os.path.join(d, "war_verify.py"), "w").write(text)
+        open(os.path.join(d, "war_verify.py"), "w", encoding="utf-8").write(text)
         env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
         for t in TESTS:                                 # stops at the first test file that fails
             if subprocess.run([PY, "-B", t, "-f"], cwd=d, env=env, capture_output=True).returncode != 0:
@@ -54,6 +54,6 @@ for k, s in sites:
         print("EQUIV  ", label, "|", EQUIVALENT[k], flush=True)
     else:
         alive += 1
-        print("ALIVE  ", label, "|", open(os.path.join(REPO, "war_verify.py")).read().split("\n")[s[1] - 1].strip()[:90], flush=True)
+        print("ALIVE  ", label, "|", open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read().split("\n")[s[1] - 1].strip()[:90], flush=True)
 print("sites %d: killed %d, equivalent %d, alive %d" % (len(sites), killed, equivalent, alive))
 sys.exit(1 if alive else 0)

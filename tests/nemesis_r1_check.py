@@ -8,7 +8,7 @@ from _nemesis_forge import *
 V01 = os.path.join(FONTI, "upstream_f7d8984/vectors/01-valid.json")
 k = Key(7, "ck")
 def base():
-    i = copy.deepcopy(json.load(open(V01))["inputs"]); r = i["receipt"]["receipt"]
+    i = copy.deepcopy(json.load(open(V01, encoding="utf-8"))["inputs"]); r = i["receipt"]["receipt"]
     r["key_id"] = "ck"; r["parties"]["checker"]["key_id"] = "ck"; return i, r
 def mk(r=None, i=None, **kw):
     if i is None: i, r0 = base(); r = r if r is not None else r0
@@ -20,7 +20,7 @@ def run(x, opts=None, keys=None):
 def cli(args, doc=None):
     with tempfile.TemporaryDirectory() as t:
         f = os.path.join(t, "in.json")
-        if doc is not None: json.dump(doc, open(f, "w"))
+        if doc is not None: json.dump(doc, open(f, "w", encoding="utf-8"))
         # adapted by the author: "-I" -> "-B" with PYTHONPATH removed ("-I" hides a user-site cryptography)
         env = dict(os.environ); env.pop("PYTHONPATH", None)
         p = subprocess.run([sys.executable, "-B", os.path.join(D, "war_verify.py")] + [a if a != "@" else f for a in args],
@@ -34,7 +34,7 @@ def check(name, cond):
 # ---------------------------------------------------------------- vectors (24, 22 under its proposed rule)
 for sub in ("upstream_f7d8984/vectors", "tetsurohhori_4f6cf49", "babyblueviper1_431525f", "issuer_274159c"):
     for f in sorted(os.listdir(os.path.join(FONTI, sub))):
-        if not f.endswith(".json") or f in ("TEST_KEY.json", "checker-keys-live.json"): continue
+        if not f.endswith(".json") or f in ("TEST_KEY.json", "checker-keys-20261018.json"): continue
         d = wv.strict_json_loads(open(os.path.join(FONTI, sub, f), "rb").read())
         rep, cmp_ = wv.run_vector(d, {"reference_time": "earlier"} if f.startswith("22-") else None)
         check("vector " + f, cmp_["agree"])
@@ -103,7 +103,7 @@ check("F2 --keys '' -> 64", cli(["--keys", "", "@"], mk())[0] == 64)
 check("F3 --tsa-roots without readable roots -> 74", cli(["--tsa-roots", "/nonexistent", "@"], mk())[0] == 74)
 check("F3 repeated option -> 64", cli(["--tokens", "structural", "--tokens", "structural", "@"], mk())[0] == 64)
 rep = run(mk()); check("F4 key from input reported", "X_KEY_FROM_INPUT" in rep["extension_codes"])
-rep = run(json.load(open(V01))["inputs"]); check("F4 test key reported", "X_TEST_KEY" in rep["extension_codes"])
+rep = run(json.load(open(V01, encoding="utf-8"))["inputs"]); check("F4 test key reported", "X_TEST_KEY" in rep["extension_codes"])
 x = mk(); x["delivered_file_base64"] = b64(b"not the delivered file"); rc, out = cli(["@"], x)
 check("F5 delivered mismatch -> exit 1", rc == 1 and out["report"]["accepted_as_stated"] is True)
 i, r = base(); r["criteria"]["committed_at"] = "2026-06-01T12:30:00Z"; r["issued_utc"] = "2026-06-01T13:00:00Z"

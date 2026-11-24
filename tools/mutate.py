@@ -191,7 +191,7 @@ def outcome_unittests(mod, names=("test_jcs_json", "test_der_times", "test_ed255
 
 
 def evaluate(k, suites, baseline):
-    src = open(SRC_PATH).read()
+    src = open(SRC_PATH, encoding="utf-8").read()
     res = {"k": k, "killed_by": [], "error": None}
     try:
         mod = load_module(mutant_source(src, k))
@@ -219,7 +219,7 @@ def evaluate(k, suites, baseline):
 
 
 def baseline(suites):
-    src = open(SRC_PATH).read()
+    src = open(SRC_PATH, encoding="utf-8").read()
     mod = load_module(ast.unparse(ast.parse(src)))   # the unparsed original must behave like the original
     out = {}
     for s in suites:
@@ -260,21 +260,21 @@ def main(argv):
         elif x == "--timeout":
             timeout = int(a.pop(0))
         elif x == "--only":
-            with open(a.pop(0)) as fh:
+            with open(a.pop(0), encoding="utf-8") as fh:
                 only = set(json.load(fh))
     os.makedirs(outdir, exist_ok=True)
     bpath = os.path.join(outdir, "baseline.json")
     if one is not None:
-        with open(bpath) as fh:
+        with open(bpath, encoding="utf-8") as fh:
             b = json.load(fh)
         r = evaluate(one, b["suites"], b["outcomes"])
-        with open(os.path.join(outdir, "m%04d.json" % one), "w") as fh:
+        with open(os.path.join(outdir, "m%04d.json" % one), "w", encoding="utf-8") as fh:
             json.dump(r, fh)
         return 0
-    src = open(SRC_PATH).read()
+    src = open(SRC_PATH, encoding="utf-8").read()
     allsites = sites(ast.parse(src))
     if not os.path.exists(bpath):
-        with open(bpath, "w") as fh:
+        with open(bpath, "w", encoding="utf-8") as fh:
             json.dump({"suites": suites, "outcomes": baseline(suites),
                        "source_sha256": __import__("hashlib").sha256(src.encode()).hexdigest()}, fh)
     todo = [k for k, s in enumerate(allsites) if s[2] != "<module>" and (only is None or k in only)
@@ -287,7 +287,7 @@ def main(argv):
             subprocess.run(["nice", "-n", "10", sys.executable, "-B", os.path.abspath(__file__), "--one", str(k),
                             "--outdir", outdir], env=env, timeout=timeout, capture_output=True)
         except subprocess.TimeoutExpired:
-            with open(os.path.join(outdir, "m%04d.json" % k), "w") as fh:
+            with open(os.path.join(outdir, "m%04d.json" % k), "w", encoding="utf-8") as fh:
                 json.dump({"k": k, "killed_by": ["timeout"], "error": "timeout %ds" % timeout}, fh)
         return k
 
@@ -301,7 +301,7 @@ def main(argv):
         if not os.path.exists(p):
             missing.append(k)            # a worker died without writing: counted, never silently dropped
             continue
-        with open(p) as fh:
+        with open(p, encoding="utf-8") as fh:
             r = json.load(fh)
         rows.append({"id": "m%04d" % k, "k": k, "kind": kind, "line": line, "function": fn, "mutation": desc,
                      "killed_by": r["killed_by"], "error": r["error"]})
@@ -313,7 +313,7 @@ def main(argv):
         byfn[r["function"]] = byfn.get(r["function"], 0) + 1
     for fn, n in sorted(byfn.items(), key=lambda x: -x[1]):
         print("  survivors in %-24s %d" % (fn, n))
-    with open(os.path.join(outdir, "SUMMARY.json"), "w") as fh:
+    with open(os.path.join(outdir, "SUMMARY.json"), "w", encoding="utf-8") as fh:
         json.dump({"suites": suites, "rows": rows, "missing": missing, "survivors": [r["id"] for r in surv]}, fh, indent=1)
     return 0
 

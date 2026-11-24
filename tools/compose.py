@@ -70,7 +70,7 @@ def case(rec, acc):
 
 def run_x402(name, c):
     path = os.path.join(OUT, name + ".json")
-    with open(path, "w") as fh:
+    with open(path, "w", encoding="utf-8") as fh:
         json.dump(c, fh, indent=1, sort_keys=True)
     env = dict(os.environ)
     env.pop("PYTHONPATH", None)
@@ -138,7 +138,7 @@ def main():
     c6["delegation"] = {"Example Client": ["cp-1", "omega-test-1"]}
     rc, rep = run_x402("6-checker-signs-acceptance", c6)
     rows.append(("the checker's own key signs the counterparty acceptance", rc, rep.get("result"), rep.get("conditions"), None))
-    with open(os.path.join(OUT, "RESULTS.json"), "w") as fh:
+    with open(os.path.join(OUT, "RESULTS.json"), "w", encoding="utf-8") as fh:
         json.dump([{"case": a, "x402_exit": b, "x402_result": c, "x402_detail": d, "glue": e} for a, b, c, d, e in rows],
                   fh, indent=1, sort_keys=True)
     for r in rows:

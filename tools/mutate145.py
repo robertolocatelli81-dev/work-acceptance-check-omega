@@ -5,7 +5,7 @@ from the Ith, counted from 0, so that N processes share the list: the totals are
 import os, shutil, subprocess, sys, tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.argv[1]
-src = open(os.path.join(REPO, "war_verify.py")).read()
+src = open(os.path.join(REPO, "war_verify.py"), encoding="utf-8").read()
 APPLIES = 'if r["independence"] != "independent" or pk is None or opts["independence_rule"] != "derived":'
 HELD = 'elif pk_pub is None or pk_pub not in rp["held"]:'
 MEMBERS = '(INPUT_MEMBERS | ({RP_INPUT} if opts["rp_input"] == "step12" else set())) - {"keys", "receipt"})'
@@ -109,7 +109,7 @@ M = [
  ("P CLI --rp-repeated unknown", '"--rp-repeated": "rp_repeated", ', ''),
  ("P CLI --rp-entry-defect unknown", '"--rp-entry-defect": "rp_entry_defect", ', ''),
  ("P CLI --rp-lookup unknown", ', "--rp-lookup": "rp_lookup"', ''),
- ("P version", 'VERSION = "war_verify 0.12.0"', 'VERSION = "war_verify 0.9.0"'),
+ ("P version", 'VERSION = "war_verify 0.12.1"', 'VERSION = "war_verify 0.9.0"'),
 ]
 TESTS = ["tests/test_profile145.py", "tests/test_vectors.py", "tests/test_cli.py", "tests/test_profile147.py"]
 
@@ -121,7 +121,7 @@ def run(text):
             shutil.copytree(os.path.join(REPO, x), os.path.join(d, x))
         for x in ("fonti", "roots"):
             os.symlink(os.path.join(REPO, x), os.path.join(d, x))
-        open(os.path.join(d, "war_verify.py"), "w").write(text)
+        open(os.path.join(d, "war_verify.py"), "w", encoding="utf-8").write(text)
         env = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
         dead = []
         for t in TESTS:                                 # stops at the first test file that fails

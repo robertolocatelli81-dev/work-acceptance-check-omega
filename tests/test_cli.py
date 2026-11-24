@@ -33,7 +33,7 @@ class CLI(unittest.TestCase):
         self.assertTrue(rep["accepted_as_stated"])
         self.assertEqual(rep["local_blocks"], ["X_KEY_FROM_INPUT", "X_TEST_KEY", "X_TSA_NOT_VERIFIED"])
         live = os.path.join(_paths.ROOT, "fonti", "issuer_274159c")
-        self.assertEqual(run("--keys", os.path.join(live, "checker-keys-live.json"), "--tokens", "pkix", "--tsa-roots",
+        self.assertEqual(run("--keys", os.path.join(live, "checker-keys-20261018.json"), "--tokens", "pkix", "--tsa-roots",
                              os.path.join(_paths.ROOT, "roots", "freetsa_cacert.pem"),
                              os.path.join(live, "selftest-pass.json"))[0], 0)
         self.assertEqual(run("--keys", "", os.path.join(V, "01-valid.json"))[0], 64)
