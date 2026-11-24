@@ -209,8 +209,8 @@ them are those found in the published inputs (the 26 documents of the 1.2.1 roun
 for unknown members into notes (the four exceptions above are notes under both values).
 
 The verifier's own limits (0.12.1) are fixed in the code, not left to the interpreter: a file (record, `--keys`,
-`--relying-party-keys`, each `--tsa-roots` file) larger than 16 MiB (16,777,216 bytes) is refused with the reason
-"file larger than 16777216 bytes" before it is parsed, and is read no further (0.12.0 read every file to its end); the nesting of a
+`--relying-party-keys`, each `--tsa-roots` file) larger than 16 MiB (16,777,216 bytes) is not used, with the reason
+"file larger than 16777216 bytes", before it is parsed, and is read no further: a refusal (exit 2) for the record and the two key files, a check that cannot run (exit 74) for a `--tsa-roots` file (0.12.0 read every file to its end); the nesting of a
 JSON text is counted on the text before it is parsed, so a text deeper than 64 is refused with the same reason on every Python
 (see "Version 0.12.1"); an option key that `war_verify.verify` does not know is an error (`ValueError`), and so is an option of
 `tools/score.py` (exit 2, with the reason).
@@ -231,7 +231,7 @@ on 0.12.0: 131/131 documents and 1193/1193 fields with the live record. The whol
   URL that is not a dated copy is refused (exit 2), and a download is read up to 16 MiB. `--live` is the separate, optional drift check
   (exit 3 on a drift, 4 when a live URL cannot be downloaded; the CI reports both as warnings).
 - `tools/score.py` accepted an unknown option and ignored it (`criteria-noncharacters=report`, with a hyphen, gave 129/129 and exit
-  0). An unknown flag, option or value, an option given twice, an argument without `=` and an unknown `--set` are now refused with
+  0). An unknown flag, option or value, an option given twice, an argument without `=`, an unknown `--set` and a flag given another flag as its value are now refused with
   exit 2 and the reason (0.12.0 kept the last of two values given for one option, and stopped with a traceback on an argument
   without `=` and on an unknown `--set`). `war_verify.verify` ignored an unknown option key
   too; it now raises `ValueError`.
@@ -239,7 +239,9 @@ on 0.12.0: 131/131 documents and 1193/1193 fields with the live record. The whol
   and its stack: measured on 0.12.0 with 2,000 nested arrays under `--criteria-limits readable`, Python 3.9.25 refused the text
   ("JSON nesting too deep") and Python 3.14.8 read it. The depth is now counted on the text first, in constant memory: deeper than 64
   is refused as "JSON nesting deeper than 64" (the reason the limit already gave where Python parsed the text), and under
-  `--criteria-limits readable` deeper than 512 as "JSON nesting deeper than 512", on every Python.
+  `--criteria-limits readable` deeper than 512 as "JSON nesting deeper than 512", on every Python. A library caller already deep in its
+  own stack can still reach Python's limit within 512 levels (a review measured it with a caller 600 frames deep: `RecursionError` on
+  Python 3.9.25 and 3.11.2, read on 3.13.15 and 3.14.8); that is refused as "JSON nesting too deep for the call stack", never raised.
 - Every file was read to its end, so a device or a pipe that never ends was read until memory ran out; now 16 MiB at most (see
   "Closed by construction").
 - `compare`, used by `--vector`, stopped with a `TypeError` traceback when an expected `problem_codes` or `warning_codes` list held a
@@ -897,6 +899,31 @@ Only these files; their URLs and SHA-256 values are in `SOURCES.json`, or given 
 but are not kept. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- for 0.12.1, on 2026-11-24 (corrections of 0.12.0, no reading changed): no file was added to `fonti/` or `roots/`; the 450 rows of
+  `SOURCES.json` carry the SHA-256 values they carried at 0.12.0, and three rows changed their source (the two FreeTSA certificates,
+  now from web.archive.org captures, and the issuer's key file, now rebuilt from `selftest-pass.json`). Read and not kept: vectors 129
+  and 130 at b56d959 of maximusrufus/work-acceptance-record, the head of `master` when read
+  (`https://raw.githubusercontent.com/maximusrufus/work-acceptance-record/b56d9598d81418c77809846a33ec4d9fc99ad798/vectors/129-criteria-file-control-character-escaped.json`,
+  SHA-256 fda7253eae9865577c22e63d46954bdc97ecfc099367bcb6eb988d6ca0aa389f, and
+  `.../vectors/130-criteria-file-control-character-raw.json`,
+  SHA-256 cc0c84b900b756717ea6b5092aa4f1591a57c0f6cc05f2d87a874420aca63dfb), run with `--vector`; the names and blob identifiers of
+  `vectors/` at b56d959 (130 entries, the first 128 equal, blob by blob, to the local files of the default set); the root `LICENSE` of
+  babyblueviper1/preaction-governance-conformance at 431525f and 274159c (blob 68bea61be2fc171c9b1ed36899fb26cca74a095c at both); the
+  key file served on that day at `https://api.babyblueviper.com/.well-known/invinoveritas-checker-keys.json` (SHA-256 301a3531...,
+  see the licence paragraph); the site freetsa.org, for a licence of the two certificates; and `apc_siglib.json_too_deep` of agent-payment-chain
+  3843b3a, by the same author, which the nesting count follows. Also read on that day: the names of the top-level entries of
+  maximusrufus/work-acceptance-record at b56d959 (names only), its `LICENSE` (first lines) and `LICENSES.md` at b56d959, the
+  subject lines of its last five commits (one says "war-verify 0.12.0 run here on vectors 01-130, 130/130"), the file names of
+  babyblueviper1/invinoveritas at `main`, and the results of a GitHub code search for the issuer's public key, which showed a copy of
+  the current key file in holistis/agent-receipt-verify and two lines of Poke-nushi/Verifiable-Agent-Trust-Envelope; and, as models
+  for `release.yml` and `SECURITY.md`, the same files of agent-payment-chain at 2fdf128 (same author). The agent that
+  wrote 0.12.1 opened or downloaded no file of `verifier/`, `interop/`, `composition/` or `x402_capture/` of
+  maximusrufus/work-acceptance-record, at any commit, and no other implementation of the profile; it read none of
+  `CONFORMANCE.md`. Its brief, from the coordinator, named the two defects of the first two points of "Version 0.12.1" with
+  the two SHA-256 values of the key file and the `score.py` option, the commits of agent-payment-chain to follow for the nesting
+  count, and the rules of work; later messages of the coordinator carried the results of the CI and of a separate review
+  (NEMESIS), whose patch adds the first part of this paragraph (up to agent-payment-chain 3843b3a), the `RecursionError` guard of a deep caller, the
+  refusal of a `tools/score.py` value starting with `-` and assertions in `tests/test_release_0121.py`.
 - for the 1.4.12 set (0.12.0, no change of code), on 2026-11-10: `fonti/upstream_5f7517a/` (the README at 5f7517a, the head of
   `master` when read, and vectors 127-128; SHA-256 in `SOURCES.json`, 3 entries added, fetched with `tools/fetch_sources.py` from
   raw.githubusercontent.com at the full commit). The agent that made it the default set read, through `gh api` and raw files of
@@ -2003,17 +2030,19 @@ bound of 64 where Python parses the text). Without `cryptography` (a virtual env
 of that file and the three exit-code tests of `tests/test_cli.py` that need no `cryptography` pass (19/19), and the command line gives
 exit 74 on vector 02 and exit 2 on vector 21, as the CI checks; the rest of the suite needs `cryptography`. On 0.12.0 a fresh clone
 gave 449/450 sources and 4 of 455 tests failed (`test_cli`, `test_local_blocks`, `test_profile145`, `test_profile147`: 3 failures and
-1 error, Python 3.11.2). A search of the entry points on 0.12.1: 61,200 runs of `war_verify.verify` (an unknown member added to each
+1 error, Python 3.11.2). A search of the entry points on 0.12.1 (`tools/search0121.py verify|inputs|argv`, each exits 0 when it finds
+nothing): 61,200 runs of `war_verify.verify` (an unknown member added to each
 object, and 15 values put in each member, of 23 documents, under both values of `--unknown-fields`) gave no exception other than a
 refusal and accepted no unknown member; 4,348 runs of the `--keys` and relying-party inputs and of `run_vector_bytes` (whole vector
 files with `expected` changed the same way) found the `compare` defect above, and none after its correction; 250 random command lines
-of `war_verify.py` gave only the documented exit codes and no traceback.
+of `war_verify.py` gave only the documented exit codes and no traceback. Run again on the final tree (2026-11-24, Python 3.11.2): the same
+counts, nothing found; positive control, `inputs` on 0.12.0 finds the `compare` defect (16 of the 4,348 runs, exit 1).
 
 CI, read from the logs of run 45386789622 (2026-11-24, commit 3d88b56 of this branch, 470 tests then): the 54 jobs of the
 matrix passed. 36 ran 470 tests with none skipped: 18 with the openssl command line (3.0.13 on `ubuntu-24.04` with Python
 3.9, 3.5.5 on `ubuntu-latest`, 4.1.0 on `macos-latest`, 3.5.9 on `windows-latest`) and 18 with no openssl on the PATH; the
 18 without `cryptography` ran their 18 tests and gave exit 74 and 2 on vectors 02 and 21. `cryptography` 40.0.0 470/470, 39.0.2
-72 of 470 (64 failures and 8 errors). Every job fetched 450/450 sources. Two jobs failed, and are corrected here: the mutant
+72 of 470 (64 failures and 8 errors). Every job that fetches the sources (56 of the 57; the job of the live URLs does not) fetched 450/450. Two jobs failed, and are corrected here: the mutant
 "Q35 the walk skips arrays" of `tools/mutate148.py` no longer applied, because its pattern ended at the next function and
 0.12.1 puts the nesting count there (80/81; the pattern now ends at the new block, and on 2026-11-24 the bench killed 81/81 after a control run, Python 3.11.2), so the step of
 `tools/mutate1411.py` did not run (locally, the same day, 44/44 after a control run); and the informative job of the live URLs was red on the real drift of the key

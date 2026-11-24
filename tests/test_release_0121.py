@@ -48,11 +48,13 @@ class Sources(unittest.TestCase):
         good = {"path": "fonti/a/b.json", "sha256": "0" * 64,
                 "url": "https://raw.githubusercontent.com/o/r/" + "a" * 40 + "/b.json"}
         self.assertIsNone(fetch_sources.row_error(good))
+        self.assertIsNone(fetch_sources.row_error(dict(good, url="https://web.archive.org/web/20261105230604id_/https://freetsa.org/files/cacert.pem")))
         for bad in (dict(good, extra="x"), dict(good, url="https://example.org/b.json"),
                     dict(good, url="https://raw.githubusercontent.com/o/r/main/b.json"),
                     dict(good, path="fonti/../../x"), dict(good, path="/etc/x"), dict(good, path="tests/x"),
                     dict(good, sha256="A" * 64), dict(good, sha256=1), {"path": good["path"], "sha256": "0" * 64},
-                    dict(good, live_url="http://x"), [], None):
+                    dict(good, live_url="http://x"), [], None,
+                    dict(good, url="https://web.archive.org/web/20261105230604/https://freetsa.org/files/cacert.pem")):
             self.assertIsNotNone(fetch_sources.row_error(bad), bad)
 
     def test_the_key_file_is_rebuilt_from_the_record_at_its_commit(self):
@@ -68,6 +70,61 @@ class Sources(unittest.TestCase):
         rc, out, _ = cli(os.path.join("tools", "fetch_sources.py"), "--check")
         self.assertEqual(rc, 0, out[-400:])
         self.assertIn("%d/%d sources verified" % (len(rows()), len(rows())), out)
+        # a file is kept only if its SHA-256 matches: a missing file, a mismatch or a refused row is never exit 0
+        good = b"pinned bytes"
+        row = {"path": "fonti/a/b.json", "sha256": hashlib.sha256(good).hexdigest(),
+               "url": "https://raw.githubusercontent.com/o/r/" + "a" * 40 + "/b.json"}
+        d = tempfile.TemporaryDirectory()
+        self.addCleanup(d.cleanup)
+        self.addCleanup(setattr, fetch_sources, "ROOT", fetch_sources.ROOT)
+        real = fetch_sources.download
+        self.addCleanup(setattr, fetch_sources, "download", real)
+        fetch_sources.ROOT = d.name
+        dst = os.path.join(d.name, "fonti", "a", "b.json")
+
+        def main(doc, argv, served):
+            with open(os.path.join(d.name, "SOURCES.json"), "w", encoding="utf-8") as fh:
+                json.dump(doc, fh)
+            fetch_sources.download = lambda url, attempts=3: served
+            with contextlib.redirect_stdout(io.StringIO()) as o:
+                return fetch_sources.main(argv), o.getvalue()
+
+        self.assertEqual(main([row], ["--check"], good)[0], 1)                  # missing
+        rc, out = main([row], [], b"other bytes")                               # downloaded bytes of another SHA-256
+        self.assertEqual(rc, 1)
+        self.assertIn("SHA256 MISMATCH", out)
+        self.assertFalse(os.path.exists(dst))                                   # not written
+        self.assertEqual(main([row], [], good)[0], 0)
+        self.assertEqual(fetch_sources.read_local(dst), good)
+        with open(dst, "wb") as fh:
+            fh.write(b"changed on disk")
+        for argv in ([], ["--check"]):
+            self.assertEqual(main([row], argv, good)[0], 1, argv)
+        self.assertEqual(fetch_sources.read_local(dst), b"changed on disk")     # reported, not replaced
+        self.assertEqual(main([dict(row, url="https://example.org/b.json")], [], good)[0], 2)
+        self.assertEqual(main({"rows": [row]}, [], good)[0], 2)
+        # a download is read up to the bound and one byte more, then is an error
+        self.assertEqual(fetch_sources.MAX_BYTES, 16 * 1024 * 1024)
+
+        class Resp(io.BytesIO):
+            asked = []
+
+            def read(self, n=-1):
+                Resp.asked.append(n)
+                return io.BytesIO.read(self, n)
+
+        self.addCleanup(setattr, fetch_sources.urllib.request, "urlopen", fetch_sources.urllib.request.urlopen)
+        fetch_sources.urllib.request.urlopen = lambda url, timeout=60: Resp(b"\0" * (fetch_sources.MAX_BYTES + 2))
+        with self.assertRaises(ValueError):
+            real("https://example.org/x")
+        self.assertEqual(Resp.asked, [fetch_sources.MAX_BYTES + 1])
+        fetch_sources.urllib.request.urlopen = lambda url, timeout=60: Resp(b"\0" * 10)
+        self.assertEqual(real("https://example.org/x"), b"\0" * 10)
+        big = os.path.join(d.name, "big")
+        with open(big, "wb") as fh:
+            fh.truncate(fetch_sources.MAX_BYTES + 1)
+        with self.assertRaises(ValueError):
+            fetch_sources.read_local(big)
 
     def test_live_exit_codes(self):                     # 0 none, 3 drift, 4 not downloaded; never 1 or 2
         live = [r for r in rows() if "live_url" in r]
@@ -78,6 +135,9 @@ class Sources(unittest.TestCase):
             fetch_sources.download = fake
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(fetch_sources.live(rows()), want)
+        fetch_sources.download = lambda url, attempts=3: b"other bytes" if "freetsa" in url else 1 / 0
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(fetch_sources.live(rows()), 4)             # a drift and a URL not downloaded: 4
         pinned = {r["live_url"]: r for r in live}
         here = lambda p: fetch_sources.read_local(os.path.join(ROOT, p))     # noqa: E731
         fetch_sources.download = lambda url, attempts=3: (fetch_sources.derive_keyfile(here(pinned[url]["derived_from"]))
@@ -103,7 +163,8 @@ class ScoreOptions(unittest.TestCase):
         self.assertEqual(score.parse_args(["--set", "1.3", "--profile", "1.4.8"])[1:], ("1.3", wv.PROFILE_1_4_8))
         for bad in (["bogus=1"], ["criteria_noncharacters"], ["criteria_noncharacters=nope"],
                     ["sig_r=prime-order", "sig_r=not-small"], ["--set", "zzz"], ["--set"], ["--json"],
-                    ["--set", "1.3", "--set", "1.4"], ["--profile", "9"], ["tsa_roots="]):
+                    ["--set", "1.3", "--set", "1.4"], ["--profile", "9"], ["tsa_roots="], ["--json", "--set"],
+                    ["--json", "--set", "1.3"]):
             with self.assertRaises(ValueError, msg=bad):
                 score.parse_args(bad)
 
@@ -131,6 +192,7 @@ class Nesting(unittest.TestCase):
     def test_same_reason_at_every_depth(self):          # RecursionError came at about 1,000 on 3.9-3.12, 100,000 on 3.14
         for n in (66, 1000, 20000, 200000):
             self.assertEqual(self.reason(b"[" * n + b"]" * n), "JSON nesting deeper than 64", n)
+            self.assertEqual(self.reason(b"[" * n), "JSON nesting deeper than 64", n)        # past the bound: too deep, JSON or not
             self.assertEqual(self.reason(b'{"a":' * n + b"1" + b"}" * n), "JSON nesting deeper than 64", n)
 
     def test_bound_unchanged_where_it_parses(self):
@@ -141,6 +203,9 @@ class Nesting(unittest.TestCase):
     def test_lifted_limits_have_one_bound_on_every_python(self):
         self.assertIsNone(self.reason(b"[" * 512 + b"]" * 512, False))
         self.assertIsNone(self.reason(b'{"a":' * 512 + b"1" + b"}" * 512, False))
+        def deep(k):                                    # a caller 700 frames down its own stack
+            return self.reason(b"[" * 512 + b"]" * 512, False) if k == 0 else deep(k - 1)
+        self.assertIn(deep(700), (None, "JSON nesting too deep for the call stack"))    # read or refused, no exception
         for n in (513, 2000, 20000, 200000):
             self.assertEqual(self.reason(b"[" * n + b"]" * n, False), "JSON nesting deeper than 512", n)
 
@@ -167,6 +232,14 @@ class BoundedReads(unittest.TestCase):
         with open(ok, "wb") as fh:
             fh.truncate(wv.MAX_FILE_BYTES)
         self.assertEqual(len(wv.read_bounded(ok)), wv.MAX_FILE_BYTES)
+        self.assertEqual(wv.MAX_FILE_BYTES, 16 * 1024 * 1024)
+        try:
+            wv._require_pkix()
+        except wv.CannotRun:                            # no cryptography, or one before 40.0: no TSA root is read
+            return
+        with self.assertRaises(wv.CannotRun) as c:      # a --tsa-roots file past the bound: cannot run (exit 74)
+            wv.load_roots(self.big)
+        self.assertIn("file larger than %d bytes" % wv.MAX_FILE_BYTES, str(c.exception))
 
     def test_cli_refuses_a_file_past_the_bound(self):
         rec = os.path.join(LIVE, "selftest-pass.json")

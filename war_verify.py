@@ -329,7 +329,7 @@ def _check_strings(obj):
 # apc_siglib.json_too_deep in agent-payment-chain, 3843b3a, by the same author).
 _JSON_TOKEN = re.compile(r'[\[\]{}"]|\\.', re.S)
 MAX_DEPTH = 64                   # _check_values: nothing deeper than 64 below the top value, so 65 containers at most
-MAX_DEPTH_LIFTED = 512           # limits=False (README Q35): parsed by every Python from 3.9 on, whatever the stack
+MAX_DEPTH_LIFTED = 512           # limits=False (README Q35): the same bound on every Python from 3.9 on
 
 
 def json_too_deep(text, limit):
@@ -378,6 +378,8 @@ def strict_json_loads(data, limits=True):
             obj = json.loads(text, object_pairs_hook=_pairs, parse_constant=_no_constant, parse_int=lambda _s: 0)
     except _Dup as e:
         raise Refusal("duplicate JSON member name", repr(e.args[0]))
+    except RecursionError:          # a caller already deep in its own stack (512 levels): a refusal, never an exception
+        raise Refusal("JSON nesting too deep for the call stack")
     except ValueError as e:
         raise Refusal("not JSON", str(e))
     if limits:

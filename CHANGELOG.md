@@ -15,13 +15,15 @@ Corrections of 0.12.0; no reading of the profile changes, and no outcome of any 
   forms (anything else: exit 2); downloads are read up to 16 MiB. `--live` reports drift (exit 3) or a URL that cannot
   be downloaded (exit 4) and writes nothing.
 - `tools/score.py` refuses an unknown flag, option or value, a repeated option, an argument without `=` and an unknown
-  `--set` with exit 2 and the reason (0.12.0 ignored `criteria-noncharacters=report` and gave 129/129, exit 0).
+  `--set`, and a flag given another flag as its value, with exit 2 and the reason (0.12.0 ignored `criteria-noncharacters=report` and gave 129/129, exit 0).
   `war_verify.verify` raises `ValueError` on an unknown option key.
 - `strict_json_loads` counts the nesting on the text before parsing, in constant memory: deeper than 64 is refused,
   deeper than 512 under `--criteria-limits readable`, with the same reason on every Python (0.12.0 relied on
-  `RecursionError`: 2,000 nested arrays were refused on Python 3.9.25 and read on 3.14.8).
+  `RecursionError`: 2,000 nested arrays were refused on Python 3.9.25 and read on 3.14.8). A caller deep in its own
+  stack that still reaches Python's limit gets the refusal "JSON nesting too deep for the call stack".
 - Every file the command line reads (record, `--keys`, `--relying-party-keys`, `--tsa-roots`) is read up to 16 MiB,
-  then refused.
+  then refused (exit 2; a `--tsa-roots` file past the bound is a check that cannot run, exit 74).
+- `tools/search0121.py`: the search of the entry points behind these corrections (`verify`, `inputs`, `argv`).
 - `compare` (`--vector`) no longer stops with `TypeError` when an expected code list holds a list.
 - Tests and tools open text files with `encoding="utf-8"`; `tools/score.py` names files with `/`; `.gitattributes`
   `* -text`.

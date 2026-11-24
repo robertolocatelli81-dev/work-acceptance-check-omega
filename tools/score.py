@@ -119,6 +119,8 @@ def parse_args(args):
         if len(args) < 2 or args[0] in given:
             raise ValueError("%s needs one value and is given once" % args[0])
         flag, val = args[0], args[1]
+        if val.startswith("-"):                 # `--json --set` wrote a file named --set
+            raise ValueError("%s needs a value, and %r is a flag" % (flag, val))
         given[flag] = val
         args = args[2:]
         if flag == "--json":
