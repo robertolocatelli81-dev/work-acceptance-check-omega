@@ -52,7 +52,7 @@ certificates a web.archive.org capture (14 October and 5 November 2026) whose by
 site states no licence, so they are not included. The issuer's key file, which no licence covers at its live URL
 (api.babyblueviper.com), is not fetched there: `checker-keys-20261018.json` is rebuilt from the `inputs.keys` of `selftest-pass.json`
 at 274159c, in the member order of the file fetched from that URL on 2026-10-18, and has the SHA-256 of that file (2a4eb3cc...).
-`python3 tools/fetch_sources.py --live` compares the live URLs with the pinned bytes and reports drift (exit 3) without changing
+`python3 tools/fetch_sources.py --live` compares the live URLs with the pinned bytes and reports drift (exit 3; 4 when a live URL cannot be downloaded) without changing
 anything; the suite never reads a live URL. Measured on 2026-11-24: the live key file has changed (SHA-256 301a3531..., a member
 `evaluators` added; `keys` unchanged), and `war_verify.py` refuses it as a `--keys` file (exit 2, unknown member in `keys`); the
 two FreeTSA files are unchanged. Up to 0.12.0 the key file was pinned at its live URL, so a fresh clone stopped at 449/450 sources
@@ -228,7 +228,8 @@ on 0.12.0: 131/131 documents and 1193/1193 fields with the live record. The whol
 - `tools/fetch_sources.py` pinned the issuer's key file at its live URL, which changed: a fresh clone verified 449/450 sources and
   exited 1, and four tests failed. Every row of `SOURCES.json` is now a dated copy, and the key file is rebuilt from the record at its
   commit (see the licence paragraph above). The rows have two closed forms; any other row, a path outside `fonti/` and `roots/` or a
-  URL that is not a dated copy is refused (exit 2), and a download is read up to 16 MiB. `--live` is the separate, optional drift check.
+  URL that is not a dated copy is refused (exit 2), and a download is read up to 16 MiB. `--live` is the separate, optional drift check
+  (exit 3 on a drift, 4 when a live URL cannot be downloaded; the CI reports both as warnings).
 - `tools/score.py` accepted an unknown option and ignored it (`criteria-noncharacters=report`, with a hyphen, gave 129/129 and exit
   0). An unknown flag, option or value, an option given twice, an argument without `=` and an unknown `--set` are now refused with
   exit 2 and the reason (0.12.0 kept the last of two values given for one option, and stopped with a traceback on an argument
@@ -245,7 +246,9 @@ on 0.12.0: 131/131 documents and 1193/1193 fields with the live record. The whol
   list or an object; such a list now disagrees.
 - Tests and tools open every text file with `encoding="utf-8"`, `tools/score.py` names files with `/` on every system, and
   `.gitattributes` keeps every file's bytes as committed (`* -text`). The CI runs on every branch push, on Linux, macOS and Windows,
-  Python 3.9 to 3.14, each with the openssl command line, without it, and without `cryptography` (see "Tests").
+  Python 3.9 to 3.14, each with the openssl command line, without it, and without `cryptography` (see "Tests"), with the actions
+  pinned by commit; `release.yml` publishes the source archives of a tag with SHA256SUMS and build provenance (see `CHANGELOG.md`;
+  `SECURITY.md` for reports).
 
 ## Profile 1.4.12 (5f7517a, vectors 127-128; version 0.12.0, no change of code)
 
@@ -1987,17 +1990,17 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, from dated copies pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 470 tests
+python3 -B -m unittest discover -s tests          # 471 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
 
 Measured on 2026-11-24 (0.12.1), with the sources fetched by `tools/fetch_sources.py` from the dated copies into an empty tree
-(450/450): 470/470 pass on Python 3.9.25, 3.11.2, 3.12.15, 3.13.15 and 3.14.8, each with `cryptography` 50.0.2; on Python 3.11.2 with `cryptography` 40.0.0, 470/470; with 39.0.2, 72 of the 470 fail
-by design (64 failures and 8 errors, as at 0.12.0: the 15 new tests need no TSA check). The 15 tests of `tests/test_release_0121.py` (the defects of
-"Version 0.12.1"): on a copy of 0.12.0 (`git archive` of 6df465c) with this file added, 13 of the 15 fail, on Python 3.9.25 and on
-3.14.8 (5 failures and 8 errors); the two that pass there guard what did not change (a usage error of `tools/fetch_sources.py`, and the
-bound of 64 where Python parses the text). Without `cryptography` (a virtual environment of Python 3.11.2 with no package), the 15 tests
-of that file and the three exit-code tests of `tests/test_cli.py` that need no `cryptography` pass (18/18), and the command line gives
+(450/450): 471/471 pass on Python 3.9.25, 3.11.2, 3.12.15, 3.13.15 and 3.14.8, each with `cryptography` 50.0.2; on Python 3.11.2 with `cryptography` 40.0.0, 471/471; with 39.0.2, 72 of the 471 fail
+by design (64 failures and 8 errors, as at 0.12.0: the 16 new tests need no TSA check). The 16 tests of `tests/test_release_0121.py` (the defects of
+"Version 0.12.1"): on a copy of 0.12.0 (`git archive` of 6df465c) with this file added, 14 of the 16 fail, on Python 3.9.25 and on
+3.14.8 (6 failures and 8 errors); the two that pass there guard what did not change (a usage error of `tools/fetch_sources.py`, and the
+bound of 64 where Python parses the text). Without `cryptography` (a virtual environment of Python 3.11.2 with no package), the 16 tests
+of that file and the three exit-code tests of `tests/test_cli.py` that need no `cryptography` pass (19/19), and the command line gives
 exit 74 on vector 02 and exit 2 on vector 21, as the CI checks; the rest of the suite needs `cryptography`. On 0.12.0 a fresh clone
 gave 449/450 sources and 4 of 455 tests failed (`test_cli`, `test_local_blocks`, `test_profile145`, `test_profile147`: 3 failures and
 1 error, Python 3.11.2). A search of the entry points on 0.12.1: 61,200 runs of `war_verify.verify` (an unknown member added to each
@@ -2005,6 +2008,17 @@ object, and 15 values put in each member, of 23 documents, under both values of 
 refusal and accepted no unknown member; 4,348 runs of the `--keys` and relying-party inputs and of `run_vector_bytes` (whole vector
 files with `expected` changed the same way) found the `compare` defect above, and none after its correction; 250 random command lines
 of `war_verify.py` gave only the documented exit codes and no traceback.
+
+CI, read from the logs of run 45386789622 (2026-11-24, commit 3d88b56 of this branch, 470 tests then): the 54 jobs of the
+matrix passed. 36 ran 470 tests with none skipped: 18 with the openssl command line (3.0.13 on `ubuntu-24.04` with Python
+3.9, 3.5.5 on `ubuntu-latest`, 4.1.0 on `macos-latest`, 3.5.9 on `windows-latest`) and 18 with no openssl on the PATH; the
+18 without `cryptography` ran their 18 tests and gave exit 74 and 2 on vectors 02 and 21. `cryptography` 40.0.0 470/470, 39.0.2
+72 of 470 (64 failures and 8 errors). Every job fetched 450/450 sources. Two jobs failed, and are corrected here: the mutant
+"Q35 the walk skips arrays" of `tools/mutate148.py` no longer applied, because its pattern ended at the next function and
+0.12.1 puts the nesting count there (80/81; the pattern now ends at the new block, and on 2026-11-24 the bench killed 81/81 after a control run, Python 3.11.2), so the step of
+`tools/mutate1411.py` did not run (locally, the same day, 44/44 after a control run); and the informative job of the live URLs was red on the real drift of the key
+file, which it now reports as a warning (red only when the tool itself fails). The other mutant benches killed 68/68, 40/40,
+32/32, 54/54, 87/87 and 40/40.
 
 Measured on 2026-11-10 (0.12.0, the 1.4.12 set as default), on a clean copy of the tree (`git archive` of this commit, with `fonti/` and `roots/` copied in and checked by
 `tools/fetch_sources.py`, 450/450): 455/455 pass on Python 3.9.25, 3.11.2 and 3.13.15,

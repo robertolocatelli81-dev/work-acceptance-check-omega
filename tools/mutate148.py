@@ -76,7 +76,7 @@ M = [
  ("Q35 the walk has limits", '    if limits:\n        _check_values(obj)\n    else:\n        _check_strings(obj)\n', '    _check_values(obj)\n'),
  ("Q35 the walk skips names", '_check_values(v)\n        elif isinstance(v, dict):\n            stack.extend(v)\n            stack.extend(v.values())', '_check_values(v)\n        elif isinstance(v, dict):\n            stack.extend(v.values())'),
  ("Q35 the walk skips values", '_check_values(v)\n        elif isinstance(v, dict):\n            stack.extend(v)\n            stack.extend(v.values())', '_check_values(v)\n        elif isinstance(v, dict):\n            stack.extend(v)'),
- ("Q35 the walk skips arrays", '        elif isinstance(v, list):\n            stack.extend(v)\n\n\ndef strict_json_loads', '\n\n\ndef strict_json_loads'),
+ ("Q35 the walk skips arrays", '        elif isinstance(v, list):\n            stack.extend(v)\n\n\n# 0.12.1: json.loads', '\n\n\n# 0.12.1: json.loads'),
  ("Q35 the correspondence keeps the limits", LIMITS, 'True)'),
  ("Q35 the limits leave 0.10.0", LIMITS, 'opts["criteria_limits"] == "unreadable")'),
  ("Q35 one value", '"criteria_limits": ("unreadable", "readable")', '"criteria_limits": ("unreadable",)'),

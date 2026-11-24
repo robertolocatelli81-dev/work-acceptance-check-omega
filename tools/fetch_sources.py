@@ -8,7 +8,7 @@ exit 1 and writes nothing for that file; a SOURCES.json row outside the two form
   python3 tools/fetch_sources.py            # fetch what is missing, check everything
   python3 tools/fetch_sources.py --check    # check only, no network
   python3 tools/fetch_sources.py --live     # optional: download the live URLs and report drift from the pinned bytes
-                                            # (exit 0 none, 3 drift, 1 download error); writes nothing
+                                            # (exit 0 none, 3 drift, 4 a live URL not downloaded); writes nothing
 
 Row forms (closed): {"path", "url", "sha256"} with url a dated copy, optionally "live_url"; {"path", "derived_from",
 "live_url", "sha256"}, the key file rebuilt from the `inputs.keys` of derived_from.
@@ -104,7 +104,7 @@ def live(rows):
             print("LIVE DRIFT", r["path"], r["live_url"], "sha256", got, "pinned", r["sha256"],
                   "(the pinned bytes are still used; the live file is not)")
     print("%d live URL(s) drifted, %d not downloaded" % (drift, err))
-    return 1 if err else (3 if drift else 0)
+    return 4 if err else (3 if drift else 0)        # 1 and 2 stay the tool's own failures
 
 
 def main(argv):

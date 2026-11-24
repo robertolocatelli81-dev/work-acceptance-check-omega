@@ -3,7 +3,9 @@
 - tools/score.py ignored an unknown option (criteria-noncharacters=report gave 129/129, exit 0).
 - war_verify.verify() ignored an unknown option key; compare() raised TypeError on an expected code list holding a list; strict_json_loads left the nesting bound to RecursionError, whose
   depth differs between Python versions; every file was read to its end, whatever its size."""
+import contextlib
 import hashlib
+import io
 import json
 import os
 import re
@@ -66,6 +68,23 @@ class Sources(unittest.TestCase):
         rc, out, _ = cli(os.path.join("tools", "fetch_sources.py"), "--check")
         self.assertEqual(rc, 0, out[-400:])
         self.assertIn("%d/%d sources verified" % (len(rows()), len(rows())), out)
+
+    def test_live_exit_codes(self):                     # 0 none, 3 drift, 4 not downloaded; never 1 or 2
+        live = [r for r in rows() if "live_url" in r]
+        self.assertEqual(len(live), 3)
+        real = fetch_sources.download
+        self.addCleanup(setattr, fetch_sources, "download", real)
+        for fake, want in ((lambda url, attempts=3: b"other bytes", 3), (lambda url, attempts=3: 1 / 0, 4)):
+            fetch_sources.download = fake
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(fetch_sources.live(rows()), want)
+        pinned = {r["live_url"]: r for r in live}
+        here = lambda p: fetch_sources.read_local(os.path.join(ROOT, p))     # noqa: E731
+        fetch_sources.download = lambda url, attempts=3: (fetch_sources.derive_keyfile(here(pinned[url]["derived_from"]))
+                                                          if "derived_from" in pinned[url] else here(pinned[url]["path"]))
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(fetch_sources.live(rows()), 0)
+        self.assertIn("0 live URL(s) drifted, 0 not downloaded", out.getvalue())
 
     def test_unknown_mode_is_a_usage_error(self):
         self.assertEqual(cli(os.path.join("tools", "fetch_sources.py"), "--bogus")[0], 64)
