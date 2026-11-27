@@ -215,6 +215,29 @@ JSON text is counted on the text before it is parsed, so a text deeper than 64 i
 (see "Version 0.12.1"); an option key that `war_verify.verify` does not know is an error (`ValueError`), and so is an option of
 `tools/score.py` (exit 2, with the reason).
 
+## Unreleased: a secret given by mistake does not come out
+
+war-verify reads public material only (a signed record, public Ed25519 keys, TSA certificates); it reads no environment
+variable, starts no process and opens no connection. A secret can enter only by mistake: a private key, a seed or a
+password put in `--keys`, `--relying-party-keys`, `inputs.keys`, `inputs.relying_party_keys`, `--tsa-roots`,
+`inputs.tsa_roots_base64` or the record file itself. None of it comes out in the report, in standard error or in a
+traceback:
+
+- an unknown member (a JWK `d`, a `private_key`) is refused or noted by its name, never its value;
+- a member name, a `key_id` or a `status` is repeated up to 32 characters, a longer one only by its length
+  (`<a name of 43 characters>`), since a key put where a name goes is a key (0.12.1 repeated them whole);
+- a file that is not UTF-8 (a raw seed given as a key file) is named by the position of its first bad byte (0.12.1
+  repeated the byte);
+- a `--tsa-roots` file that holds a PEM private key is refused, exit 74, with any version of `cryptography` (0.12.1
+  read the certificates beside it).
+
+`tests/test_secrets_20261127.py` puts a canary in each of those inputs (23 key-file shapes by four channels, four raw
+files by three, three PEM private keys as a `--tsa-roots` file and in a folder, three other root files, three
+`tsa_roots_base64` items, a canary in the environment of every run) and
+searches standard output, standard error and every file left, raw and in hex, HEX, decimal, base64 and base64url at
+each offset; an audit hook counts any process or connection. On the files of the 0.12.1 release 8 of its 13 tests
+fail (the canary comes out in 43 of the 92 pairs of a key-file shape and a channel); see "Tests" for the measures.
+
 ## Version 0.12.1 (2026-11-24): corrections, no reading changed
 
 Defects of 0.12.0 found on 2026-11-24 by a review and by a search of every entry point; each correction has a test in
@@ -2017,9 +2040,23 @@ free-form `record_id`; one time format; and a rule saying that the relying party
 
 ```
 python3 tools/fetch_sources.py                   # third-party inputs, from dated copies pinned by SHA-256 (needs network once)
-python3 -B -m unittest discover -s tests          # 471 tests
+python3 -B -m unittest discover -s tests          # 484 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
+
+Measured on 2026-11-27 (unreleased 0.12.2, branch `release-0.12.2`), with the sources fetched by `tools/fetch_sources.py`
+(450/450): 484/484 pass on Python 3.9.25 and 3.13.15 with `cryptography` 50.0.2, and on Python 3.11.2 with `cryptography`
+40.0.0; with 39.0.2, 72 of the 484 fail by design (64 failures and 8 errors, as at 0.12.1: the 13 new tests pass). The 13
+tests of `tests/test_secrets_20261127.py`, on the files of the 0.12.1 release (`war-verify-0.12.1.tar.gz`, SHA256SUMS
+checked, the same 276 files as the tag): 8 of the 13 fail, on Python 3.9.25 and on 3.13.15 (53 failures and 2 errors of
+subtests); the five that pass there are the positive controls of the search and checks of what did not change (no
+environment variable read, the raw files and the other root shapes). Every vector file: 3,912 runs
+of `--vector` (489 files under `fonti/`, `vectors/` and `compose/`, with the defaults and with each of the 7 profiles)
+give the same exit code and the same bytes on standard output and error as 0.12.1 (positive control: the same comparison
+found a note quoted twice in a draft of this change). Hand mutants of the new lines: 18, each killed by the new tests
+under `cryptography` 50.0.2 or 39.0.2 (17 under each: the check of a private key before the version check of
+`cryptography` matters only where TSA checks cannot run, the one after it only where they can). gitleaks 8.30.1 on the
+tree: no leak; positive control, a GitHub token pattern added to a copy is found.
 
 Measured on 2026-11-24 (0.12.1), with the sources fetched by `tools/fetch_sources.py` from the dated copies into an empty tree
 (450/450): 471/471 pass on Python 3.9.25, 3.11.2, 3.12.15, 3.13.15 and 3.14.8, each with `cryptography` 50.0.2; on Python 3.11.2 with `cryptography` 40.0.0, 471/471; with 39.0.2, 72 of the 471 fail

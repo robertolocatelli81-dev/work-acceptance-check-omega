@@ -3,6 +3,30 @@
 Versions up to 0.12.0 are described in their commit messages and in the README sections named after each profile
 ("Profile 1.4.12", "Profile 1.4.11 rules", ...).
 
+## Unreleased (0.12.2)
+
+A secret given by mistake does not come out; no reading of the profile changes, and no outcome of any vector (README,
+"Unreleased: a secret given by mistake does not come out").
+
+- war-verify reads public material only, so a secret enters only by mistake: a private key, a seed or a password put in
+  a key file, a relying party's list, a record or a TSA root file. 0.12.1 repeated some of it in its reports: a member
+  name or a `key_id` of any length (in a refusal, a note, `details.rejected_keys`), the value of a key entry's
+  `status`, and one byte of a file that is not UTF-8 ("can't decode byte 0x.. in position N"). Measured on the files
+  of the 0.12.1 release (SHA256SUMS checked): 8 of the 13 tests of `tests/test_secrets_20261127.py` fail there (53 failures and 2 errors
+  of subtests, on Python 3.9.25 and 3.13.15); in 43 of the 92 pairs of a key-file shape and a channel the canary comes
+  out (13 of the 23 shapes).
+- Now a member name, a `key_id` or a `status` is repeated up to 32 characters, a longer one only by its length
+  ("<a name of 43 characters>"; two such `key_id`s of one length stay two entries of `rejected_keys`); a file that is
+  not UTF-8 is named by the position of the first bad byte, not by the byte.
+- A `--tsa-roots` file holding a PEM private key (any `-----BEGIN ... PRIVATE KEY-----` block, encrypted or not) is
+  refused as a check that cannot run (exit 74, "holds a private key (PEM)"), with any version of `cryptography`;
+  0.12.1 read the certificates beside it and ignored the key.
+- `tests/test_secrets_20261127.py`: a canary (an Ed25519 seed, a key put where a name goes, a password, an environment
+  variable) in every input that takes a key, searched in standard output and error and in every file left, raw and in
+  hex, HEX, decimal, base64 and base64url at each offset; an audit hook checks that the command line starts no process
+  and opens no connection; the source reads no environment variable. Positive control: the search finds each form, and
+  a producer that repeats names is caught.
+
 ## 0.12.1 (2026-11-24)
 
 Corrections of 0.12.0; no reading of the profile changes, and no outcome of any vector (README, "Version 0.12.1").

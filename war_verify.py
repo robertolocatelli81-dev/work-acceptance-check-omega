@@ -263,6 +263,18 @@ class CannotRun(Exception):
     """A check that was asked for cannot run in this environment (exit 74)."""
 
 
+NAME_SHOWN = 32
+
+
+def _named(s, quoted=False):
+    """A member name, key_id or status taken from an input, as a reason, a note or the report repeats it (0.12.2): up to
+    32 characters as written (quoted: its repr), a longer one by its length only, so that a key put where a name goes
+    does not come out."""
+    if isinstance(s, str) and len(s) <= NAME_SHOWN:
+        return repr(s) if quoted else s
+    return "<a name of %d characters>" % len(s)
+
+
 # ======================================================================================== strict JSON (RFC 8259)
 class _Dup(Exception):
     pass
@@ -368,7 +380,7 @@ def strict_json_loads(data, limits=True):
     try:
         text = bytes(data).decode("utf-8", errors="strict")
     except UnicodeDecodeError as e:
-        raise Refusal("JSON text is not valid UTF-8", str(e))
+        raise Refusal("JSON text is not valid UTF-8", "byte at position %d is not UTF-8" % e.start)   # never the byte
     if json_too_deep(text, MAX_DEPTH + 1 if limits else MAX_DEPTH_LIFTED):
         raise Refusal("JSON nesting deeper than %d" % (MAX_DEPTH if limits else MAX_DEPTH_LIFTED))
     try:
@@ -377,7 +389,7 @@ def strict_json_loads(data, limits=True):
         else:
             obj = json.loads(text, object_pairs_hook=_pairs, parse_constant=_no_constant, parse_int=lambda _s: 0)
     except _Dup as e:
-        raise Refusal("duplicate JSON member name", repr(e.args[0]))
+        raise Refusal("duplicate JSON member name", _named(e.args[0], True))
     except RecursionError:          # a caller already deep in its own stack (512 levels): a refusal, never an exception
         raise Refusal("JSON nesting too deep for the call stack")
     except ValueError as e:
@@ -1195,14 +1207,28 @@ def read_bounded(path):
     return data
 
 
+_PEM_PRIVATE = re.compile(rb"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----")
+
+
+def _no_private_key(f, data):
+    if _PEM_PRIVATE.search(data):
+        raise CannotRun("TSA root %s holds a private key (PEM): refused" % f)
+
+
 def load_roots(path):
-    _require_pkix()
-    from cryptography import x509
     files = []
     if path and os.path.isdir(path):
         files = [os.path.join(path, f) for f in sorted(os.listdir(path))]
     elif path and os.path.isfile(path):
         files = [path]
+    for f in files:             # 0.12.2: a private key among the anchors is refused, with any cryptography, and not shown
+        if os.path.isfile(f):   # a regular file only: a pipe is read once, below
+            try:
+                _no_private_key(f, read_bounded(f))
+            except (OSError, Refusal):
+                pass            # reported by the reading below, as in 0.12.1
+    _require_pkix()
+    from cryptography import x509
     roots = []
     for f in files:
         try:
@@ -1211,6 +1237,7 @@ def load_roots(path):
             raise CannotRun("cannot read TSA root %s: %s" % (f, e))
         except Refusal as e:
             raise CannotRun("cannot read TSA root %s: %s" % (f, e.reason))
+        _no_private_key(f, data)
         try:
             if b"-----BEGIN CERTIFICATE-----" in data:
                 from cryptography.hazmat.primitives.serialization import Encoding
@@ -1629,10 +1656,10 @@ class Ctx(object):
         unknown = set(obj) - set(required) - set(optional)
         if unknown:
             if self.opts["unknown_fields"] == "refuse":
-                raise Refusal("unknown member(s) in %s" % path, ", ".join(sorted(unknown)))
+                raise Refusal("unknown member(s) in %s" % path, ", ".join(_named(u) for u in sorted(unknown)))
             for u in sorted(unknown):
                 self.notes.append("X_UNKNOWN_MEMBER: %s.%s (reported, not interpreted: --unknown-fields report)"
-                                  % (path, u))
+                                  % (path, _named(u)))
 
 
 def TypeRefusal(msg):
@@ -1708,12 +1735,12 @@ def check_keyfile(ctx, kf):
         kid = _str(k["key_id"], p + ".key_id", nonempty=True)
         _str(k["status"], p + ".status")
         if k["status"] not in KEY_STATUSES:
-            raise Refusal("%s.status %r is not one of %s" % (p, k["status"], KEY_STATUSES))
+            raise Refusal("%s.status %s is not one of %s" % (p, _named(k["status"], True), KEY_STATUSES))
         if "since" in k:
             _str(k["since"], p + ".since")
         _str(k["public_key_base64"], p + ".public_key_base64")
         if ctx.opts["key_rule"] == "refuse" and kid in table:     # 1.2.1 behaviour of this verifier
-            raise Refusal("duplicate key_id in the key file", kid)
+            raise Refusal("duplicate key_id in the key file", _named(kid))
         if kid in table:
             # Profile 1.4.2 R3 (vectors 75, 79): a key_id listed more than once names no single key: KEY_REJECTED,
             # whichever entry comes first. Every entry under that identifier is rejected.
@@ -1737,8 +1764,8 @@ def check_keyfile(ctx, kf):
             cls = ed_point_class(pub)
             if cls != "prime-order":
                 if ctx.opts["ed25519"] == "strict" or cls not in ("small-order", "mixed-order"):
-                    raise Refusal("%s public key is %s" % (p, cls), kid)
-                ctx.notes.append("X_WEAK_KEY: %s is %s (accepted in --ed25519 rfc8032)" % (kid, cls))
+                    raise Refusal("%s public key is %s" % (p, cls), _named(kid))
+                ctx.notes.append("X_WEAK_KEY: %s is %s (accepted in --ed25519 rfc8032)" % (_named(kid), cls))
         else:                                           # 1.3 key rule: a finding about the key list, not a refusal
             cls = ed_point_class(pub) if len(pub) == 32 else "not 32 bytes"
             if cls != "prime-order":
@@ -1782,7 +1809,7 @@ def check_rp_keys(ctx, kf):
         kid = _str(k["key_id"], p + ".key_id", nonempty=True)
         _str(k["status"], p + ".status")
         if k["status"] not in KEY_STATUSES:
-            raise Refusal("%s.status %r is not one of %s" % (p, k["status"], KEY_STATUSES))
+            raise Refusal("%s.status %s is not one of %s" % (p, _named(k["status"], True), KEY_STATUSES))
         if "since" in k:
             _str(k["since"], p + ".since")
         _str(k["public_key_base64"], p + ".public_key_base64")
@@ -1794,12 +1821,12 @@ def check_rp_keys(ctx, kf):
         repeated = listed[k["key_id"]] > 1
         why = None
         if repeated and opts["rp_repeated"] == "bytes":                      # README V1, vector 113: not a defect
-            ctx.notes.append("X_RP_KEY_ID_REPEATED: %s: key_id %r is listed more than once: matched by key, compared by "
-                             "its bytes (profile 1.4.7 step 12, vector 113)" % (p, k["key_id"]))
+            ctx.notes.append("X_RP_KEY_ID_REPEATED: %s: key_id %s is listed more than once: matched by key, compared by "
+                             "its bytes (profile 1.4.7 step 12, vector 113)" % (p, _named(k["key_id"], True)))
         if pub is None:
             why = "public_key_base64 is not canonical base64: holds no key (README U9)"
         elif repeated and opts["rp_repeated"] == "no-key":
-            why = "key_id %r is listed more than once: holds no key (README U9, reading Q26)" % (k["key_id"],)
+            why = "key_id %s is listed more than once: holds no key (README U9, reading Q26)" % _named(k["key_id"], True)
         else:
             cls = ed_point_class(pub)
             if cls != "prime-order":
@@ -2159,7 +2186,10 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
     entry = keytable.get(used_kid)
     rejected_keys = sorted(k for k, v in keytable.items() if v.get("rejected"))
     if rejected_keys:
-        details["rejected_keys"] = {k: keytable[k]["rejected"] for k in rejected_keys}
+        shown = details["rejected_keys"] = {}
+        for k in rejected_keys:                 # two long key_ids of one length stay two entries
+            n = _named(k)
+            shown[n if n not in shown else "%s #%d" % (n, len(shown) + 1)] = keytable[k]["rejected"]
     details["key_source"] = ("--keys (supplied by the relying party)" if keys_override is not None
                              else "inputs.keys (travels with the record: not a trust anchor)")
     if keys_override is None:
@@ -2187,7 +2217,7 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
         ext.add("X_UNUSED_KEY_REJECTED")
         ctx.notes.append("X_UNUSED_KEY_REJECTED: entr%s %s not canonical base64 and not read (no party names it and it "
                          "did not sign): no KEY_REJECTED (profile 1.4.3, vector 91)"
-                         % ("y" if len(unread_noncanon) == 1 else "ies", ", ".join(repr(k) for k in unread_noncanon)))
+                         % ("y" if len(unread_noncanon) == 1 else "ies", ", ".join(_named(k, True) for k in unread_noncanon)))
     if entry is None:            # an empty key_id too: the key file has no empty key_id (refused), README S2
         sig_ok, why = False, "key_id %r not in the key file" % used_kid
     elif entry.get("rejected"):                 # 1.3 step 2: "no signature check is run"
