@@ -58,7 +58,7 @@ import sys
 import unicodedata
 from fractions import Fraction
 
-VERSION = "war_verify 0.12.1"
+VERSION = "war_verify 0.12.2"
 
 try:  # the only third-party dependency; its absence is exit 74, never a silent skip
     from cryptography.exceptions import InvalidSignature, UnsupportedAlgorithm

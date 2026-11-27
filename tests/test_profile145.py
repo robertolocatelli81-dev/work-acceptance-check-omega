@@ -694,7 +694,7 @@ class CommandLine(unittest.TestCase):
         self.assertEqual(self.report("--rp-lookup", "both", f)[1]["report"]["problem_codes"], [])
 
     def test_version(self):
-        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.12.1")
+        self.assertEqual(self.report(self.v111)[1]["verifier"], "war_verify 0.12.2")
 
     def test_usage_text_names_every_flag(self):
         rc, out, _ = self.run_cli("--help")

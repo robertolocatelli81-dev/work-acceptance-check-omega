@@ -2,7 +2,8 @@
 
 `war_verify.py` checks a work-acceptance record (Trilatic draft profile 1.4.12 at
 maximusrufus/work-acceptance-record@5f7517a, vectors 01-128, schema identifier `trilatic.acceptance-receipt/1.2`, unchanged since
-1.2.1) the way the profile README describes, and refuses anything it does not understand. Version 0.12.1 corrects defects of
+1.2.1) the way the profile README describes, and refuses anything it does not understand. Version 0.12.2 keeps a secret given by
+mistake out of its output and changes no reading (see "Version 0.12.2"). Version 0.12.1 corrects defects of
 0.12.0 and changes no reading (see "Version 0.12.1"). Version 0.12.0 follows step 4 of 1.4.12,
 which states in the text the readings Q36-Q38 that 0.12.0 already took (Q36 on the outcome fields; the note stays) and changes no
 code here (see "Profile 1.4.12"), steps 4 and 12
@@ -215,7 +216,7 @@ JSON text is counted on the text before it is parsed, so a text deeper than 64 i
 (see "Version 0.12.1"); an option key that `war_verify.verify` does not know is an error (`ValueError`), and so is an option of
 `tools/score.py` (exit 2, with the reason).
 
-## Unreleased: a secret given by mistake does not come out
+## Version 0.12.2 (2026-11-27): a secret given by mistake does not come out
 
 war-verify reads public material only (a signed record, public Ed25519 keys, TSA certificates); it reads no environment
 variable, starts no process and opens no connection. A secret can enter only by mistake: a private key, a seed or a
@@ -929,6 +930,9 @@ Only these files; their URLs and SHA-256 values are in `SOURCES.json`, or given 
 but are not kept. The 1.2.1 sources were first fetched on
 2026-10-18T06:14:50Z, the 1.3 sources at 2026-10-18T15:31Z:
 
+- for 0.12.2, on 2026-11-27 (a secret given by mistake does not come out, no reading changed): no file was added to `fonti/`
+  or `roots/`, and `SOURCES.json` is the file of 0.12.1 (450 rows, unchanged). The files of this repository's own 0.12.1 release
+  (`war-verify-0.12.1.tar.gz` and its SHA256SUMS) were used to run the new tests on 0.12.1 (see "Tests").
 - for 0.12.1, on 2026-11-24 (corrections of 0.12.0, no reading changed): no file was added to `fonti/` or `roots/`; the 450 rows of
   `SOURCES.json` carry the SHA-256 values they carried at 0.12.0, and three rows changed their source (the two FreeTSA certificates,
   now from web.archive.org captures, and the issuer's key file, now rebuilt from `selftest-pass.json`). Read and not kept: vectors 129
@@ -2051,7 +2055,7 @@ python3 -B -m unittest discover -s tests          # 484 tests
 sh tools/run_results.sh                           # regenerates results/ (scores, fuzz, Ed25519, live record, composition)
 ```
 
-Measured on 2026-11-27 (unreleased 0.12.2, branch `release-0.12.2`), with the sources fetched by `tools/fetch_sources.py`
+Measured on 2026-11-27 (0.12.2), with the sources fetched by `tools/fetch_sources.py`
 (450/450): 484/484 pass on Python 3.9.25 and 3.13.15 with `cryptography` 50.0.2, and on Python 3.11.2 with `cryptography`
 40.0.0; with 39.0.2, 72 of the 484 fail by design (64 failures and 8 errors, as at 0.12.1: the 13 new tests pass). The 13
 tests of `tests/test_secrets_20261127.py`, on the files of the 0.12.1 release (`war-verify-0.12.1.tar.gz`, SHA256SUMS

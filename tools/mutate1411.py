@@ -59,7 +59,7 @@ M = [
  ("X7 usage line of the profile", "  --profile 1.4.8              the reading 0.11.0 gave to 1.4.8", "  --profile 1.4.8              the reading 0.10.0 gave to 1.4.8"),
  ("X7 usage error names the profile", "--profile takes 1.4.8, 1.4.7,", "--profile takes 1.4.7,"),
  ("X7 usage line of the defaults", "defaults follow profile 1.4.11 (", "defaults follow profile 1.4.8 ("),
- ("the version", 'VERSION = "war_verify 0.12.1"', 'VERSION = "war_verify 0.11.0"'),
+ ("the version", 'VERSION = "war_verify 0.12.2"', 'VERSION = "war_verify 0.11.0"'),
  ("the docstring", "draft profile 1.4.11 (schema identifier 1.2).", "draft profile 1.4.8 (schema identifier 1.2)."),
 ]
 TESTS = ["tests/test_profile1411.py", "tests/test_profile148.py", "tests/test_cli.py"]

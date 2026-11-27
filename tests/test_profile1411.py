@@ -615,7 +615,7 @@ class Profiles(unittest.TestCase):
         self.assertEqual((wv.DEFAULT_OPTIONS["criteria_limits"], wv.DEFAULT_OPTIONS["rp_point"]), ("unreadable", "step12"))
 
     def test_version(self):
-        self.assertEqual(wv.VERSION, "war_verify 0.12.1")
+        self.assertEqual(wv.VERSION, "war_verify 0.12.2")
         self.assertIn("draft profile 1.4.11", wv.__doc__.splitlines()[0])
 
 

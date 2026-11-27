@@ -107,7 +107,7 @@ jobs:
           python-version: "3.11"
       - name: Third-party inputs
         run: python tools/fetch_sources.py
-      # 0.12.2 (unreleased), measured locally on 2026-11-27 (Python 3.11.2): 40.0.0 484/484; 39.0.2 64 failures + 8 errors
+      # 0.12.2, measured locally on 2026-11-27 (Python 3.11.2): 40.0.0 484/484; 39.0.2 64 failures + 8 errors
       # = 72 of 484 (the 13 tests of test_secrets_20261127 pass on both).
       - name: "cryptography 40.0.0: 484/484 pass (README)"
         run: |

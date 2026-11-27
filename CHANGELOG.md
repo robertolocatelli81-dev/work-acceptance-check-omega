@@ -3,10 +3,10 @@
 Versions up to 0.12.0 are described in their commit messages and in the README sections named after each profile
 ("Profile 1.4.12", "Profile 1.4.11 rules", ...).
 
-## Unreleased (0.12.2)
+## 0.12.2 (2026-11-27)
 
 A secret given by mistake does not come out; no reading of the profile changes, and no outcome of any vector (README,
-"Unreleased: a secret given by mistake does not come out").
+"Version 0.12.2").
 
 - war-verify reads public material only, so a secret enters only by mistake: a private key, a seed or a password put in
   a key file, a relying party's list, a record or a TSA root file. 0.12.1 repeated some of it in its reports: a member

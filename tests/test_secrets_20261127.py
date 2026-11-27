@@ -1,4 +1,4 @@
-"""0.12.2 (unreleased, 2026-11-27): a secret given to war-verify does not come out of it.
+"""0.12.2 (2026-11-27): a secret given to war-verify does not come out of it.
 
 war-verify reads public material only (a signed record, public Ed25519 keys, TSA certificates), so a secret enters only
 by mistake: a private key, a seed or a password put in a key file, a relying party's list, a document or a TSA root
@@ -10,7 +10,7 @@ The command line starts no process and opens no connection (an audit hook counts
 
 Positive control: the search finds each form, a producer that repeats a name finds the canary, and the audit hook
 sees a process and a connection; on 0.12.1 (dee0989)
-the tests of the new behaviour fail (CHANGELOG, "Unreleased")."""
+the tests of the new behaviour fail (CHANGELOG, "0.12.2")."""
 import base64
 import contextlib
 import datetime

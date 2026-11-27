@@ -102,7 +102,7 @@ M = [
  ("usage line of --criteria-shape", '  --criteria-shape typed|absent       (default typed)\n', ''),
  ("usage line of --criteria-types", '  --criteria-types read|known         (default read)\n', ''),
  ("usage line of --criteria-limits", '  --criteria-limits unreadable|readable   (default unreadable)\n', ''),
- ("the version", 'VERSION = "war_verify 0.12.1"', 'VERSION = "war_verify 0.11.0"'),
+ ("the version", 'VERSION = "war_verify 0.12.2"', 'VERSION = "war_verify 0.11.0"'),
  ("B5 the note says derived again", '"rule of step 2 and establishes no producer (profile 1.4.7 step 12, "', '"rule of step 2 and establishes no producer: derived self-checked (profile 1.4.7 step 12, "'),
 ]
 TESTS = ["tests/test_profile148.py", "tests/test_profile145.py", "tests/test_cli.py"]
