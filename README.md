@@ -216,7 +216,7 @@ JSON text is counted on the text before it is parsed, so a text deeper than 64 i
 (see "Version 0.12.1"); an option key that `war_verify.verify` does not know is an error (`ValueError`), and so is an option of
 `tools/score.py` (exit 2, with the reason).
 
-## Version 0.12.2 (2026-11-27): a secret given by mistake does not come out
+## Version 0.12.2 (2026-11-28): a secret given by mistake does not come out
 
 war-verify reads public material only (a signed record, public Ed25519 keys, TSA certificates); it reads no environment
 variable, starts no process and opens no connection. A secret can enter only by mistake: a private key, a seed or a
@@ -2063,8 +2063,10 @@ checked, the same 276 files as the tag): 9 of the 13 fail, on Python 3.9.25 and 
 subtests); the four that pass there are the positive controls of the search and checks of what did not change (no
 environment variable read, the raw files). Every vector file: 3,912 runs
 of `--vector` (489 files under `fonti/`, `vectors/` and `compose/`, with the defaults and with each of the 7 profiles)
-give the same exit code and the same bytes on standard output and error as 0.12.1 (positive control: the same comparison
-found a note quoted twice in a draft of this change). Hand mutants of the new lines: 18, each killed by the new tests
+give the same exit code, the same bytes on standard error and, but for the version string (`"verifier": "war_verify 0.12.2"`
+where 0.12.1 writes `0.12.1`), the same bytes on standard output as 0.12.1: measured again on the release commit, the
+version string is the only difference, in 3,904 of the 3,912 outputs (the other 8, `compose/RESULTS.json`, are identical)
+(positive control: the same comparison found a note quoted twice in a draft of this change). Hand mutants of the new lines: 18, each killed by the new tests
 under `cryptography` 50.0.2 or 39.0.2 (17 under each: the check of a private key before the version check of
 `cryptography` matters only where TSA checks cannot run, the one after it only where they can). Six more on the lines added by the review (DER and PGP private keys among the roots, a short `key_id` spelled
 like a shown one, the member names of the criteria document): each killed under `cryptography` 50.0.2. gitleaks 8.30.1 on the

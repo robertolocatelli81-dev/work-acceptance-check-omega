@@ -3,7 +3,7 @@
 Versions up to 0.12.0 are described in their commit messages and in the README sections named after each profile
 ("Profile 1.4.12", "Profile 1.4.11 rules", ...).
 
-## 0.12.2 (2026-11-27)
+## 0.12.2 (2026-11-28)
 
 A secret given by mistake does not come out; no reading of the profile changes, and no outcome of any vector (README,
 "Version 0.12.2").
