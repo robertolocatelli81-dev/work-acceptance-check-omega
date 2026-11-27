@@ -18,7 +18,7 @@ M = [
  ("V1 note on every entry", NOTE_IF, 'if opts["rp_repeated"] == "bytes":'),
  ("V1 repeated stays a defect", DEFECT, 'elif repeated:'),
  ("V1 no-key is no defect", DEFECT, 'elif False:'),
- ("V1 a repeated entry skips the class", 'reading Q26)" % (k["key_id"],)\n        else:\n', 'reading Q26)" % (k["key_id"],)\n        elif not repeated:\n'),
+ ("V1 a repeated entry skips the class", 'reading Q26)" % _named(k["key_id"], True)\n        else:\n', 'reading Q26)" % _named(k["key_id"], True)\n        elif not repeated:\n'),
  ("V1 one value of the switch", '"rp_repeated": ("bytes", "no-key")', '"rp_repeated": ("bytes",)'),
  ("V1 usage default", '(default bytes)', '(default no-key)'),
  # V3 the point rule
