@@ -224,18 +224,25 @@ password put in `--keys`, `--relying-party-keys`, `inputs.keys`, `inputs.relying
 traceback:
 
 - an unknown member (a JWK `d`, a `private_key`) is refused or noted by its name, never its value;
-- a member name, a `key_id` or a `status` is repeated up to 32 characters, a longer one only by its length
-  (`<a name of 43 characters>`), since a key put where a name goes is a key (0.12.1 repeated them whole);
+- a member name (of the record, a key file, a relying party's list or the criteria document), and a `key_id` or a
+  `status` of a key file or a relying party's list, is repeated up to 32 characters, a longer one only by its length
+  (`<a name of 43 characters>`), since a key put where a name goes is a key (0.12.1 repeated them whole). The values
+  the signed record states, its `key_id`s among them (`signature.key_id`, `receipt.key_id`,
+  `receipt.parties.*.key_id`), are the public evidence the verifier is asked about and are repeated as written
+  (`details.verification_key_id`, `signature_reason`, `X_KEY_ID_SPLIT`), as is a key file's `key_id` that the record
+  names;
 - a file that is not UTF-8 (a raw seed given as a key file) is named by the position of its first bad byte (0.12.1
   repeated the byte);
-- a `--tsa-roots` file that holds a PEM private key is refused, exit 74, with any version of `cryptography` (0.12.1
-  read the certificates beside it).
+- a `--tsa-roots` file that holds a private key, PEM (any `-----BEGIN ... PRIVATE KEY-----` or
+  `PRIVATE KEY BLOCK-----` block, encrypted or not) or DER (PKCS#8, encrypted PKCS#8, PKCS#1, SEC1), is refused,
+  exit 74, with any version of `cryptography` (0.12.1 read the certificates beside it and ignored the key).
 
 `tests/test_secrets_20261127.py` puts a canary in each of those inputs (23 key-file shapes by four channels, four raw
-files by three, three PEM private keys as a `--tsa-roots` file and in a folder, three other root files, three
+files by three, three PEM private keys as a `--tsa-roots` file and in a folder, four DER private keys as a file and
+beside a certificate in a folder, three other root files, three
 `tsa_roots_base64` items, a canary in the environment of every run) and
 searches standard output, standard error and every file left, raw and in hex, HEX, decimal, base64 and base64url at
-each offset; an audit hook counts any process or connection. On the files of the 0.12.1 release 8 of its 13 tests
+each offset; an audit hook counts any process or connection. On the files of the 0.12.1 release 9 of its 13 tests
 fail (the canary comes out in 43 of the 92 pairs of a key-file shape and a channel); see "Tests" for the measures.
 
 ## Version 0.12.1 (2026-11-24): corrections, no reading changed
@@ -2048,14 +2055,15 @@ Measured on 2026-11-27 (unreleased 0.12.2, branch `release-0.12.2`), with the so
 (450/450): 484/484 pass on Python 3.9.25 and 3.13.15 with `cryptography` 50.0.2, and on Python 3.11.2 with `cryptography`
 40.0.0; with 39.0.2, 72 of the 484 fail by design (64 failures and 8 errors, as at 0.12.1: the 13 new tests pass). The 13
 tests of `tests/test_secrets_20261127.py`, on the files of the 0.12.1 release (`war-verify-0.12.1.tar.gz`, SHA256SUMS
-checked, the same 276 files as the tag): 8 of the 13 fail, on Python 3.9.25 and on 3.13.15 (53 failures and 2 errors of
-subtests); the five that pass there are the positive controls of the search and checks of what did not change (no
-environment variable read, the raw files and the other root shapes). Every vector file: 3,912 runs
+checked, the same 276 files as the tag): 9 of the 13 fail, on Python 3.9.25 and on 3.13.15 (61 failures and 3 errors of
+subtests); the four that pass there are the positive controls of the search and checks of what did not change (no
+environment variable read, the raw files). Every vector file: 3,912 runs
 of `--vector` (489 files under `fonti/`, `vectors/` and `compose/`, with the defaults and with each of the 7 profiles)
 give the same exit code and the same bytes on standard output and error as 0.12.1 (positive control: the same comparison
 found a note quoted twice in a draft of this change). Hand mutants of the new lines: 18, each killed by the new tests
 under `cryptography` 50.0.2 or 39.0.2 (17 under each: the check of a private key before the version check of
-`cryptography` matters only where TSA checks cannot run, the one after it only where they can). gitleaks 8.30.1 on the
+`cryptography` matters only where TSA checks cannot run, the one after it only where they can). Six more on the lines added by the review (DER and PGP private keys among the roots, a short `key_id` spelled
+like a shown one, the member names of the criteria document): each killed under `cryptography` 50.0.2. gitleaks 8.30.1 on the
 tree: no leak; positive control, a GitHub token pattern added to a copy is found.
 
 Measured on 2026-11-24 (0.12.1), with the sources fetched by `tools/fetch_sources.py` from the dated copies into an empty tree

@@ -1207,12 +1207,28 @@ def read_bounded(path):
     return data
 
 
-_PEM_PRIVATE = re.compile(rb"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----")
+_PEM_PRIVATE = re.compile(rb"-----BEGIN [A-Z0-9 ]*PRIVATE KEY( BLOCK)?-----")       # PKCS#8, PKCS#1, SEC1, OpenSSH, PGP
+
+
+def _der_private_key(data):
+    """A DER private key: a SEQUENCE whose first member is the version INTEGER 0 or 1 (PKCS#8 PrivateKeyInfo and
+    OneAsymmetricKey, RFC 5958 2; PKCS#1 RSAPrivateKey, RFC 8017 A.1.2; SEC1 ECPrivateKey, RFC 5915 3), or an
+    AlgorithmIdentifier SEQUENCE and an OCTET STRING (EncryptedPrivateKeyInfo, RFC 5958 3). A Certificate starts
+    with the tbsCertificate SEQUENCE and has three members (RFC 5280 4.1), so it is neither."""
+    try:
+        kids = _expect(der_parse_one(data, "TSA root"), 0x30, "TSA root").kids()
+    except Refusal:
+        return False
+    if len(kids) >= 2 and kids[0].tag == 0x02 and kids[0].content in (b"\x00", b"\x01"):
+        return True
+    return len(kids) == 2 and kids[0].tag == 0x30 and kids[1].tag == 0x04
 
 
 def _no_private_key(f, data):
     if _PEM_PRIVATE.search(data):
         raise CannotRun("TSA root %s holds a private key (PEM): refused" % f)
+    if _der_private_key(data):
+        raise CannotRun("TSA root %s holds a private key (DER): refused" % f)
 
 
 def load_roots(path):
@@ -2188,8 +2204,12 @@ def verify(inputs, options=None, keys_override=None, rp_override=NOT_GIVEN):
     if rejected_keys:
         shown = details["rejected_keys"] = {}
         for k in rejected_keys:                 # two long key_ids of one length stay two entries
-            n = _named(k)
-            shown[n if n not in shown else "%s #%d" % (n, len(shown) + 1)] = keytable[k]["rejected"]
+            n = name = _named(k)
+            i = 1
+            while name in shown:                # a short key_id may be spelled like a shown one: never overwritten
+                i += 1
+                name = "%s #%d" % (n, i)
+            shown[name] = keytable[k]["rejected"]
     details["key_source"] = ("--keys (supplied by the relying party)" if keys_override is not None
                              else "inputs.keys (travels with the record: not a trust anchor)")
     if keys_override is None:
@@ -2720,7 +2740,7 @@ def _correspondence(ctx, crit_bytes, results, mode, limits=True):
     if not isinstance(doc, dict) or not isinstance(doc.get("criteria"), list):
         return ["criteria document has no `criteria` list"]
     for m in sorted(set(doc) - {"criteria"}):
-        ctx.notes.append("criteria document member %r not interpreted" % m)
+        ctx.notes.append("criteria document member %s not interpreted" % _named(m, True))
     crit = {}
     out = []
     for i, c in enumerate(doc["criteria"]):
@@ -2728,7 +2748,7 @@ def _correspondence(ctx, crit_bytes, results, mode, limits=True):
             out.append("criteria[%d] lacks a string id or boolean required" % i)
             continue
         for m in sorted(set(c) - {"id", "required", "title"}):
-            ctx.notes.append("criteria document member criteria[%d].%s not interpreted" % (i, m))
+            ctx.notes.append("criteria document member criteria[%d].%s not interpreted" % (i, _named(m)))
         if c["id"] in crit:
             out.append("criteria id %r appears twice" % c["id"])
         crit[c["id"]] = c

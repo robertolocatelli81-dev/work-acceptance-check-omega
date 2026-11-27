@@ -8,7 +8,8 @@ out: standard output and error (refusal reasons and details, notes, tracebacks) 
 searched raw and in hex, HEX, decimal, base64 and base64url (at each of the three offsets, so inside a longer text too).
 The command line starts no process and opens no connection (an audit hook counts it), and reads no environment variable.
 
-Positive control: the search finds each form, and a producer that repeats a name finds the canary; on 0.12.1 (dee0989)
+Positive control: the search finds each form, a producer that repeats a name finds the canary, and the audit hook
+sees a process and a connection; on 0.12.1 (dee0989)
 the tests of the new behaviour fail (CHANGELOG, "Unreleased")."""
 import base64
 import contextlib
@@ -223,6 +224,20 @@ class TheSearchFinds(Base):
             f.write(base64.b64encode(b"ab" + SEED))
         with self.assertRaises(AssertionError):
             self.run_cli([DOC])
+        # and the audit hook sees a process and a connection: a stand-in war_verify that makes both
+        fake = os.path.join(self.d, "fake")
+        os.makedirs(fake)
+        self.file(os.path.join("fake", "war_verify.py"), "import socket, subprocess, sys\n"
+                  "def main(argv):\n"
+                  "    subprocess.run([sys.executable, '-c', 'pass'])\n"
+                  "    try:\n        socket.create_connection(('127.0.0.1', 9), timeout=1)\n"
+                  "    except OSError:\n        pass\n"
+                  "    print('{}')\n    return 0\n")
+        r = subprocess.run([sys.executable, "-B", os.path.join(self.d, "audit_hook.py"), fake], capture_output=True,
+                           timeout=120, cwd=self.d)
+        seen = re.findall(rb"AUDIT (\[[^\]\r\n]*\])", r.stderr)[-1]
+        self.assertIn(b"subprocess.Popen", seen, r.stderr[-500:])
+        self.assertIn(b"socket.connect", seen, r.stderr[-500:])
 
 
 class KeyFiles(Base):
@@ -284,6 +299,10 @@ class Names(unittest.TestCase):
             with self.assertRaises(wv.Refusal) as cm:
                 ctx.members({"a": 1, name: 2}, "keys", {"a"})
             self.assertEqual(name in cm.exception.detail, shown, n)
+            ctx = wv.Ctx(dict(wv.DEFAULT_OPTIONS))           # the criteria document: its member names too
+            wv._correspondence(ctx, json.dumps({"criteria": [{"id": "c", "required": True, name: 1}], name: 2}).encode(),
+                               [], "strict")
+            self.assertEqual([name in x for x in ctx.notes], [shown, shown], (n, ctx.notes))
 
     def test_a_short_name_keeps_its_text(self):
         self.assertEqual(wv._named("omega-test-1"), "omega-test-1")
@@ -302,6 +321,11 @@ class Names(unittest.TestCase):
         rep, _ = wv.run_vector(d)
         self.assertEqual(sorted(rep["details"]["rejected_keys"]),
                          ["<a name of 40 characters>", "<a name of 40 characters> #2"])
+        # a short key_id spelled like a shown one is not overwritten: three rejected entries stay three
+        d["inputs"]["keys"] = with_keys(entry(key_id=a, public_key_base64=SMALL), entry(key_id=b, public_key_base64=SMALL),
+                                        entry(key_id="<a name of 40 characters> #3", public_key_base64=SMALL))
+        rep, _ = wv.run_vector(d)
+        self.assertEqual(len(rep["details"]["rejected_keys"]), 3, rep["details"]["rejected_keys"])
 
 
 class TsaRoots(Base):
@@ -341,6 +365,38 @@ class TsaRoots(Base):
             with self.subTest(shape=name):
                 p = self.file("r.der", data)
                 self.run_cli(["--tsa-roots", p, DOC])
+        # a DER private key is refused as the PEM one is (exit 74), in every DER form; a DER certificate is still read
+        rsa = __import__("cryptography.hazmat.primitives.asymmetric.rsa", fromlist=["rsa"]).generate_private_key(
+            65537, 2048)
+        eck = ec.generate_private_key(ec.SECP256R1())
+        ders = (("PKCS#8", DER), ("PKCS#8 encrypted", PRIV.private_bytes(ser.Encoding.DER, ser.PrivateFormat.PKCS8,
+                                                                        ser.BestAvailableEncryption(PASSWORD.encode()))),
+                ("PKCS#1 RSA", rsa.private_bytes(ser.Encoding.DER, ser.PrivateFormat.TraditionalOpenSSL,
+                                                 ser.NoEncryption())),
+                ("SEC1 EC", eck.private_bytes(ser.Encoding.DER, ser.PrivateFormat.TraditionalOpenSSL, ser.NoEncryption())))
+        cert = self_signed()
+        cert_der = x509.load_pem_x509_certificate(cert).public_bytes(ser.Encoding.DER)
+        for name, data in ders:
+            for as_dir in (False, True):
+                with self.subTest(shape=name, dir=as_dir):
+                    if as_dir:
+                        os.makedirs(os.path.join(self.d, "droots"), exist_ok=True)
+                        self.file(os.path.join("droots", "a.der"), cert_der)
+                        p = self.file(os.path.join("droots", "b.der"), data)
+                        arg = os.path.dirname(p)
+                    else:
+                        p = arg = self.file("k.der", data)
+                    r = self.run_cli(["--tsa-roots", arg, DOC])
+                    cannot = json.loads(r.stdout.decode("utf-8"))["report"]["cannot_run"]
+                    self.assertEqual(r.returncode, 74)
+                    self.assertTrue(any("holds a private key (DER)" in c for c in cannot), cannot)
+        self.assertFalse(wv._der_private_key(cert_der))
+        if hasattr(x509.Certificate, "verify_directly_issued_by"):     # cryptography 40 or newer: TSA checks can run
+            self.assertEqual(len(wv.load_roots(self.file("c.der", cert_der))), 1)
+        pgp = b"-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n" + B64(SEED) + b"\n-----END PGP PRIVATE KEY BLOCK-----\n"
+        with self.assertRaises(wv.CannotRun) as cm:
+            wv.load_roots(self.file("k.asc", cert + pgp))
+        self.assertIn("holds a private key (PEM)", str(cm.exception))
         for item in (B64(DER).decode(), B64(SEED).decode(), PASSWORD):
             with self.subTest(inputs_tsa_roots_base64=item[:6]):
                 d = doc()
